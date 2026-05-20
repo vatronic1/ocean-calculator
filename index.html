@@ -350,71 +350,19 @@
       }
 
       .admin-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 280px;
-        gap: 18px;
         padding: 18px;
       }
 
-      .info-board,
-      .admin-side {
+      .info-board {
         border: 1px solid #e0e7ed;
         border-radius: 8px;
         background: #ffffff;
       }
 
-      .board-header,
-      .side-header {
+      .board-header {
         padding: 14px 16px;
         border-bottom: 1px solid #e6edf2;
         font-weight: 800;
-      }
-
-      .info-list {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-      }
-
-      .info-item {
-        display: grid;
-        grid-template-columns: 130px minmax(0, 1fr) 96px;
-        gap: 12px;
-        align-items: center;
-        min-height: 56px;
-        padding: 12px 16px;
-        border-bottom: 1px solid #eef2f5;
-      }
-
-      .info-item:last-child {
-        border-bottom: 0;
-      }
-
-      .info-type {
-        color: #4e5f70;
-        font-weight: 800;
-      }
-
-      .info-name {
-        color: #17212b;
-        font-weight: 700;
-      }
-
-      .info-state {
-        justify-self: end;
-        min-width: 72px;
-        padding: 5px 8px;
-        border-radius: 6px;
-        background: #f2f5f7;
-        color: #647383;
-        text-align: center;
-        font-size: 12px;
-        font-weight: 800;
-      }
-
-      .info-state.saved {
-        background: #eaf7ef;
-        color: #227043;
       }
 
       .data-section {
@@ -464,17 +412,6 @@
 
       tbody tr:last-child td {
         border-bottom: 0;
-      }
-
-      .side-list {
-        display: grid;
-        gap: 10px;
-        margin: 0;
-        padding: 14px 16px 16px;
-        list-style: none;
-        color: #536372;
-        font-size: 14px;
-        font-weight: 700;
       }
 
       .note-list {
@@ -555,7 +492,6 @@
         }
 
         .admin-layout {
-          grid-template-columns: 1fr;
           padding: 14px;
         }
 
@@ -564,14 +500,6 @@
           grid-template-columns: 1fr;
         }
 
-        .info-item {
-          grid-template-columns: 1fr;
-          gap: 6px;
-        }
-
-        .info-state {
-          justify-self: start;
-        }
       }
     </style>
   </head>
@@ -592,7 +520,7 @@
           정보 입력
         </button>
         <button class="tab-button" type="button" aria-selected="false" data-tab="admin">
-          관리자 정보
+          정보
         </button>
       </nav>
     </header>
@@ -818,45 +746,12 @@
       <section class="tab-panel" data-panel="admin">
         <div class="workspace">
           <div class="panel-head">
-            <h2 class="panel-title">관리자 정보</h2>
-            <span class="status-pill">비공개 자료실</span>
+            <h2 class="panel-title">정보</h2>
+            <span class="status-pill">계산 기준</span>
           </div>
           <div class="admin-layout">
-            <section class="info-board" aria-label="수집된 정보">
-              <div class="board-header">검토용 데이터</div>
-              <ul class="info-list">
-                <li class="info-item">
-                  <span class="info-type">강화 데이터</span>
-                  <span class="info-name">낚싯대 강화 단계별 재료/비용/확률</span>
-                  <span class="info-state saved">저장됨</span>
-                </li>
-                <li class="info-item">
-                  <span class="info-type">계산 공식</span>
-                  <span class="info-name">기대수익, 기대비용, 로드맵 산출 방식</span>
-                  <span class="info-state saved">저장됨</span>
-                </li>
-                <li class="info-item">
-                  <span class="info-type">재화 기준</span>
-                  <span class="info-name">골드 환산 재료와 루비 별도 표시</span>
-                  <span class="info-state saved">저장됨</span>
-                </li>
-                <li class="info-item">
-                  <span class="info-type">각인석 데이터</span>
-                  <span class="info-name">조개 탐색, 어패 행운, 정령 고래, 가오리 인도, 어부 룰렛 기본 규칙</span>
-                  <span class="info-state saved">저장됨</span>
-                </li>
-                <li class="info-item">
-                  <span class="info-type">전문가 데이터</span>
-                  <span class="info-name">심해 채집꾼, 조개 무한리필, 별별별!, 조개 좀 사조개</span>
-                  <span class="info-state saved">저장됨</span>
-                </li>
-                <li class="info-item">
-                  <span class="info-type">공예품 데이터</span>
-                  <span class="info-name">진주별 공예품 매칭과 최고 판매 가격</span>
-                  <span class="info-state saved">저장됨</span>
-                </li>
-              </ul>
-
+            <section class="info-board" aria-label="계산 기준 정보">
+              <div class="board-header">반영된 데이터값과 계산식</div>
               <div class="data-section">
                 <h3 class="data-title">낚싯대 강화 재료</h3>
                 <div class="table-wrap">
@@ -973,24 +868,6 @@
               </div>
 
               <div class="data-section">
-                <h3 class="data-title">각인석 계산 메모</h3>
-                <dl class="note-list">
-                  <dt>조개 탐색</dt>
-                  <dd>도구의 조개 등장 확률이 레벨별로 증가. 낚싯대, 각인석, 전문가의 확률 증가분을 합쳐 최종 조개 등장 확률 계산</dd>
-                  <dt>어패 행운</dt>
-                  <dd>수중 어획 시 레벨별 확률로 어패류 1개를 추가 드롭. 추가 드롭된 어패류도 등급 판정을 받는 것으로 우선 해석</dd>
-                  <dt>정령 고래</dt>
-                  <dd>수중 어획 시 레벨별 확률로 등장. 깨진 조개껍데기 또는 공예품을 지급하며, 깨진 조개껍데기는 가치 0으로 계산</dd>
-                  <dt>가오리 인도</dt>
-                  <dd>수중 어획 시 레벨별 확률로 등장. 해양 잔해에서 금속, 합금, 합성수지, 플라스틱, 섬유 재활용품 중 1~5개 획득</dd>
-                  <dt>어부 룰렛</dt>
-                  <dd>수중 어획 시 레벨별 확률로 등장. 6면 주사위, 눈 확률 균등, 등장한 주사위 중 10%는 골드 주사위. 획득 어패류에도 등급 확률 적용</dd>
-                  <dt>시세 직접 입력 예정</dt>
-                  <dd>공예품, 조개 개봉 보상, 재활용품 등 변동 시세 항목은 나중에 사용자가 직접 입력해서 계산</dd>
-                </dl>
-              </div>
-
-              <div class="data-section">
                 <h3 class="data-title">전문가 데이터</h3>
                 <div class="table-wrap">
                   <table aria-label="전문가 데이터">
@@ -1041,15 +918,6 @@
                 <ul class="formula-list" id="formula-list"></ul>
               </div>
             </section>
-
-            <aside class="admin-side" aria-label="관리 상태">
-              <div class="side-header">관리 상태</div>
-              <ul class="side-list">
-                <li>검토용 데이터 표시</li>
-                <li>기대수익 공식 표시</li>
-                <li>순서형 로드맵 계산 중</li>
-              </ul>
-            </aside>
           </div>
         </div>
       </section>
