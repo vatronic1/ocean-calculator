@@ -1,0 +1,2246 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>해양 스펙업 계산기</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          "Noto Sans KR",
+          "Malgun Gothic",
+          system-ui,
+          sans-serif;
+        background: #f5f7f8;
+        color: #17212b;
+      }
+
+      header {
+        width: 100%;
+        padding: 22px 32px 0;
+        border-bottom: 1px solid #dde5ec;
+        background: #ffffff;
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        max-width: 1120px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1.25;
+      }
+
+      .admin-mark {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 0 10px;
+        border: 1px solid #d5dde5;
+        border-radius: 6px;
+        background: #f8fafb;
+        color: #516171;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 4px;
+        max-width: 1120px;
+        margin: 20px auto 0;
+      }
+
+      .tab-button {
+        appearance: none;
+        min-height: 44px;
+        padding: 0 18px;
+        border: 0;
+        border-bottom: 3px solid transparent;
+        background: transparent;
+        color: #617184;
+        font: inherit;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .tab-button[aria-selected="true"] {
+        border-bottom-color: #167f92;
+        color: #102331;
+      }
+
+      main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 32px;
+      }
+
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      .workspace {
+        min-height: 360px;
+        border: 1px solid #dce5ec;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #e4ebf0;
+      }
+
+      .panel-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .panel-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 9px;
+        border-radius: 6px;
+        background: #edf7f8;
+        color: #176d7c;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .primary-button,
+      .secondary-button {
+        appearance: none;
+        min-height: 36px;
+        padding: 0 14px;
+        border-radius: 6px;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .primary-button {
+        border: 1px solid #0f7385;
+        background: #167f92;
+        color: #ffffff;
+      }
+
+      .secondary-button {
+        border: 1px solid #cbd6df;
+        background: #ffffff;
+        color: #435465;
+      }
+
+      .empty-area {
+        display: grid;
+        min-height: 280px;
+        place-items: center;
+        padding: 32px;
+        color: #7b8895;
+        font-weight: 700;
+      }
+
+      .section-body {
+        padding: 18px;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .metric {
+        border: 1px solid #dfe7ed;
+        border-radius: 8px;
+        padding: 14px;
+        background: #fbfcfd;
+      }
+
+      .metric-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #657586;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .metric-value {
+        color: #17212b;
+        font-size: 20px;
+        font-weight: 800;
+      }
+
+      .form-section {
+        border-top: 1px solid #e6edf2;
+        padding: 18px;
+      }
+
+      .form-section:first-child {
+        border-top: 0;
+      }
+
+      .form-title {
+        margin: 0 0 14px;
+        font-size: 16px;
+        font-weight: 800;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .field label,
+      .field-label {
+        color: #465768;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      input,
+      select {
+        width: 100%;
+        min-height: 40px;
+        border: 1px solid #cfd9e2;
+        border-radius: 6px;
+        padding: 0 10px;
+        background: #ffffff;
+        color: #17212b;
+        font: inherit;
+        font-size: 14px;
+      }
+
+      input.input-error,
+      select.input-error {
+        border-color: #d15151;
+        background: #fff8f8;
+      }
+
+      input[type="checkbox"],
+      input[type="radio"] {
+        width: 16px;
+        min-height: 16px;
+        padding: 0;
+      }
+
+      .choice-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+
+      .choice {
+        display: inline-flex;
+        gap: 7px;
+        align-items: center;
+        color: #465768;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .muted-note {
+        margin: 12px 0 0;
+        color: #718092;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .result-table th,
+      .result-table td {
+        text-align: left;
+      }
+
+      .result-table th:nth-child(n + 6),
+      .result-table td:nth-child(n + 6) {
+        text-align: right;
+      }
+
+      .result-empty {
+        color: #7b8895;
+        text-align: center !important;
+        font-weight: 800;
+      }
+
+      .result-empty.error {
+        color: #b34040;
+      }
+
+      .profit-value {
+        color: #176d7c;
+        font-weight: 800;
+      }
+
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .pagination-info {
+        color: #536372;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .page-button {
+        appearance: none;
+        min-width: 36px;
+        min-height: 32px;
+        border: 1px solid #cbd6df;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #435465;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .page-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      .admin-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 18px;
+        padding: 18px;
+      }
+
+      .info-board,
+      .admin-side {
+        border: 1px solid #e0e7ed;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .board-header,
+      .side-header {
+        padding: 14px 16px;
+        border-bottom: 1px solid #e6edf2;
+        font-weight: 800;
+      }
+
+      .info-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .info-item {
+        display: grid;
+        grid-template-columns: 130px minmax(0, 1fr) 96px;
+        gap: 12px;
+        align-items: center;
+        min-height: 56px;
+        padding: 12px 16px;
+        border-bottom: 1px solid #eef2f5;
+      }
+
+      .info-item:last-child {
+        border-bottom: 0;
+      }
+
+      .info-type {
+        color: #4e5f70;
+        font-weight: 800;
+      }
+
+      .info-name {
+        color: #17212b;
+        font-weight: 700;
+      }
+
+      .info-state {
+        justify-self: end;
+        min-width: 72px;
+        padding: 5px 8px;
+        border-radius: 6px;
+        background: #f2f5f7;
+        color: #647383;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .info-state.saved {
+        background: #eaf7ef;
+        color: #227043;
+      }
+
+      .data-section {
+        border-top: 1px solid #e6edf2;
+        padding: 16px;
+      }
+
+      .data-title {
+        margin: 0 0 12px;
+        font-size: 16px;
+        font-weight: 800;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid #e1e8ee;
+        border-radius: 8px;
+      }
+
+      table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+        background: #ffffff;
+      }
+
+      th,
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #edf2f5;
+        text-align: right;
+        white-space: nowrap;
+        font-size: 13px;
+      }
+
+      th {
+        background: #f7fafb;
+        color: #435465;
+        font-weight: 800;
+      }
+
+      th:first-child,
+      td:first-child {
+        text-align: left;
+        font-weight: 800;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .side-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 14px 16px 16px;
+        list-style: none;
+        color: #536372;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .note-list {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding: 14px 16px 16px;
+        color: #415161;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .note-list dt {
+        color: #17212b;
+        font-weight: 800;
+      }
+
+      .note-list dd {
+        margin: 0;
+      }
+
+      .formula-list {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .formula-list li {
+        display: grid;
+        gap: 6px;
+        padding: 12px 14px;
+        border: 1px solid #e1e8ee;
+        border-radius: 8px;
+        background: #fbfcfd;
+      }
+
+      .formula-name {
+        color: #17212b;
+        font-weight: 800;
+      }
+
+      .formula-code {
+        overflow-x: auto;
+        margin: 0;
+        color: #405162;
+        font-family:
+          Consolas,
+          "SFMono-Regular",
+          monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      @media (max-width: 760px) {
+        header {
+          padding: 20px 18px 0;
+        }
+
+        .header-inner {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+
+        .tabs {
+          overflow-x: auto;
+          margin-top: 16px;
+        }
+
+        main {
+          padding: 20px 18px;
+        }
+
+        .admin-layout {
+          grid-template-columns: 1fr;
+          padding: 14px;
+        }
+
+        .summary-grid,
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .info-item {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+
+        .info-state {
+          justify-self: start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <h1>해양 스펙업 계산기</h1>
+        <span class="admin-mark">DATA STORE</span>
+      </div>
+      <nav class="tabs" aria-label="주요 탭">
+        <button class="tab-button" type="button" aria-selected="true" data-tab="calculator">
+          계산기
+        </button>
+        <button class="tab-button" type="button" aria-selected="false" data-tab="prices">
+          시세 입력
+        </button>
+        <button class="tab-button" type="button" aria-selected="false" data-tab="profile">
+          정보 입력
+        </button>
+        <button class="tab-button" type="button" aria-selected="false" data-tab="admin">
+          관리자 정보
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="tab-panel active" data-panel="calculator">
+        <div class="workspace">
+          <div class="panel-head">
+            <h2 class="panel-title">계산기</h2>
+            <div class="panel-actions">
+              <span class="status-pill">효율 순위</span>
+              <button class="primary-button" type="button" id="calculate-button">효율 계산</button>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="summary-grid" aria-label="계산 기준 요약">
+              <div class="metric">
+                <span class="metric-label">기본 스태미나</span>
+                <span class="metric-value">3000</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">예상 채집 횟수</span>
+                <span class="metric-value">200회</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">기준 채집 방식</span>
+                <span class="metric-value">5종 균등</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">결과 정렬</span>
+                <span class="metric-value">효율순</span>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="result-table" aria-label="스펙업 효율 결과">
+                <thead>
+                  <tr>
+                    <th>순서</th>
+                    <th>분류</th>
+                    <th>세부</th>
+                    <th>항목</th>
+                    <th>현재</th>
+                    <th>변경</th>
+                    <th>기대 수익 증가</th>
+                    <th>기대 비용</th>
+                    <th>효율</th>
+                  </tr>
+                </thead>
+                <tbody id="efficiency-result-body">
+                  <tr>
+                    <td class="result-empty" colspan="9">시세와 현재 스펙을 입력한 뒤 효율 계산을 누르세요.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="pagination" id="result-pagination" hidden>
+              <button class="page-button" type="button" id="prev-result-page">이전</button>
+              <span class="pagination-info" id="result-page-info">1 / 1</span>
+              <button class="page-button" type="button" id="next-result-page">다음</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" data-panel="prices">
+        <div class="workspace">
+          <div class="panel-head">
+            <h2 class="panel-title">시세 입력</h2>
+            <div class="panel-actions">
+              <span class="status-pill">직접 입력</span>
+              <button class="secondary-button" type="button" id="save-prices-button">시세 저장</button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">스펙업 재료</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="price-low-stone">하급 라이프스톤</label>
+                <input id="price-low-stone" data-field="price.lowLifeStone" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-mid-stone">중급 라이프스톤</label>
+                <input id="price-mid-stone" data-field="price.midLifeStone" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-high-stone">상급 라이프스톤</label>
+                <input id="price-high-stone" data-field="price.highLifeStone" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-tide-contract">만조의 영혼 계약서</label>
+                <input id="price-tide-contract" data-field="price.tideSoulContract" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-ability-stone">어빌리티 스톤</label>
+                <input id="price-ability-stone" data-field="price.abilityStone" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-skill-point">스킬 포인트</label>
+                <input id="price-skill-point" data-field="price.skillPoint" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <span class="field-label">스킬 포인트 처리</span>
+                <label class="choice">
+                  <input id="skill-point-bound" data-field="price.skillPointBound" type="checkbox" />
+                  귀속 스킬 포인트 사용
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">각인석 시세</h3>
+            <div class="form-grid" id="engraving-price-fields"></div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">어패류 시세</h3>
+            <div class="choice-row" role="radiogroup" aria-label="어패류 시세 입력 방식">
+              <label class="choice">
+                <input type="radio" name="seafood-price-mode" value="grouped" checked />
+                등급별 통합 입력
+              </label>
+              <label class="choice">
+                <input type="radio" name="seafood-price-mode" value="individual" />
+                종류별 개별 입력
+              </label>
+            </div>
+            <div class="form-grid" id="seafood-grouped-fields">
+              <div class="field">
+                <label for="price-seafood-grade1">1성 어패류 통합 가격</label>
+                <input id="price-seafood-grade1" data-field="price.seafood.grade1" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-seafood-grade2">2성 어패류 통합 가격</label>
+                <input id="price-seafood-grade2" data-field="price.seafood.grade2" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-seafood-grade3">3성 어패류 통합 가격</label>
+                <input id="price-seafood-grade3" data-field="price.seafood.grade3" type="number" min="0" placeholder="골드" />
+              </div>
+            </div>
+            <div class="form-grid hidden" id="seafood-individual-fields"></div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">재활용품 시세</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="price-recycle-metal">금속 재활용품</label>
+                <input id="price-recycle-metal" data-field="price.recycle.metal" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-recycle-alloy">합금 재활용품</label>
+                <input id="price-recycle-alloy" data-field="price.recycle.alloy" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-recycle-resin">합성수지 재활용품</label>
+                <input id="price-recycle-resin" data-field="price.recycle.resin" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-recycle-plastic">플라스틱 재활용품</label>
+                <input id="price-recycle-plastic" data-field="price.recycle.plastic" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-recycle-fiber">섬유 재활용품</label>
+                <input id="price-recycle-fiber" data-field="price.recycle.fiber" type="number" min="0" placeholder="골드" />
+              </div>
+            </div>
+            <p class="muted-note">골드와 루비는 환산 입력 대상에서 제외합니다. 공예품은 최고 판매 가격 기준 데이터를 사용합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" data-panel="profile">
+        <div class="workspace">
+          <div class="panel-head">
+            <h2 class="panel-title">정보 입력</h2>
+            <div class="panel-actions">
+              <span class="status-pill">현재 스펙</span>
+              <button class="secondary-button" type="button" id="save-profile-button">스펙 저장</button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">낚싯대</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="current-rod-level">현재 낚싯대 강화</label>
+                <select id="current-rod-level" data-field="profile.rodLevel"></select>
+              </div>
+              <div class="field">
+                <span class="field-label">계산 기준</span>
+                <label class="choice">
+                  <input type="checkbox" checked disabled />
+                  기본 스태미나 3000
+                </label>
+              </div>
+              <div class="field">
+                <span class="field-label">채집 방식</span>
+                <label class="choice">
+                  <input type="checkbox" checked disabled />
+                  5종 균등 채집
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">각인석</h3>
+            <div class="form-grid" id="engraving-profile-fields"></div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">전문가</h3>
+            <div class="form-grid" id="expert-profile-fields"></div>
+            <p class="muted-note">스킬 포인트가 귀속이면 비용 계산에서 스킬 포인트 시세를 제외합니다.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" data-panel="admin">
+        <div class="workspace">
+          <div class="panel-head">
+            <h2 class="panel-title">관리자 정보</h2>
+            <span class="status-pill">비공개 자료실</span>
+          </div>
+          <div class="admin-layout">
+            <section class="info-board" aria-label="수집된 정보">
+              <div class="board-header">검토용 데이터</div>
+              <ul class="info-list">
+                <li class="info-item">
+                  <span class="info-type">강화 데이터</span>
+                  <span class="info-name">낚싯대 강화 단계별 재료/비용/확률</span>
+                  <span class="info-state saved">저장됨</span>
+                </li>
+                <li class="info-item">
+                  <span class="info-type">계산 공식</span>
+                  <span class="info-name">기대수익, 기대비용, 로드맵 산출 방식</span>
+                  <span class="info-state saved">저장됨</span>
+                </li>
+                <li class="info-item">
+                  <span class="info-type">재화 기준</span>
+                  <span class="info-name">골드 환산 재료와 루비 별도 표시</span>
+                  <span class="info-state saved">저장됨</span>
+                </li>
+                <li class="info-item">
+                  <span class="info-type">각인석 데이터</span>
+                  <span class="info-name">조개 탐색, 어패 행운, 정령 고래, 가오리 인도, 어부 룰렛 기본 규칙</span>
+                  <span class="info-state saved">저장됨</span>
+                </li>
+                <li class="info-item">
+                  <span class="info-type">전문가 데이터</span>
+                  <span class="info-name">심해 채집꾼, 조개 무한리필, 별별별!, 조개 좀 사조개</span>
+                  <span class="info-state saved">저장됨</span>
+                </li>
+                <li class="info-item">
+                  <span class="info-type">공예품 데이터</span>
+                  <span class="info-name">진주별 공예품 매칭과 최고 판매 가격</span>
+                  <span class="info-state saved">저장됨</span>
+                </li>
+              </ul>
+
+              <div class="data-section">
+                <h3 class="data-title">낚싯대 강화 재료</h3>
+                <div class="table-wrap">
+                  <table aria-label="낚싯대 강화 단계별 재료">
+                    <thead>
+                      <tr>
+                        <th>목표 강화</th>
+                        <th>하급</th>
+                        <th>중급</th>
+                        <th>상급</th>
+                        <th>골드</th>
+                        <th>루비</th>
+                        <th>확률</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fishing-rod-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">낚싯대 스펙 분류</h3>
+                <dl class="note-list">
+                  <dt>편의성 관련</dt>
+                  <dd>수중 어획력, 수중 어획 속도, 미니게임 스킵 확률</dd>
+                  <dt>직접 순이익 관련</dt>
+                  <dd>조개 등장 확률, 어패류 드롭 수</dd>
+                </dl>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">낚싯대 강화 스펙</h3>
+                <div class="table-wrap">
+                  <table aria-label="낚싯대 강화 단계별 스펙">
+                    <thead>
+                      <tr>
+                        <th>강화</th>
+                        <th>수중 어획력</th>
+                        <th>수중 어획 속도</th>
+                        <th>조개 등장 확률</th>
+                        <th>미니게임 스킵 확률</th>
+                        <th>어패류 드롭 수</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fishing-rod-stat-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">해양 공통 채집 기준</h3>
+                <dl class="note-list">
+                  <dt>기본 스태미나</dt>
+                  <dd>3000, 추가 스태미나 물약은 현재 계산 기준에서 제외</dd>
+                  <dt>어패류 채집</dt>
+                  <dd>채집 1회당 스태미나 15 소모, 총 200회 채집 가능</dd>
+                  <dt>채집 종류</dt>
+                  <dd>굴, 소라, 미역, 성게, 문어를 균등하게 채집. 각 종류별 40회</dd>
+                  <dt>어패류 등급</dt>
+                  <dd>낚싯대의 어패류 드롭 수만큼 나온 뒤, 각 드롭마다 1성 60%, 2성 30%, 3성 10%로 독립 판정</dd>
+                  <dt>조개 획득</dt>
+                  <dd>최종 조개 등장 확률로 등장 판정 후, 등장한 조개는 50% 확률로 인벤토리에 획득</dd>
+                </dl>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">각인석 효과 데이터</h3>
+                <div class="table-wrap">
+                  <table aria-label="각인석 효과 데이터">
+                    <thead>
+                      <tr>
+                        <th>효과</th>
+                        <th>레벨</th>
+                        <th>최소 강화</th>
+                        <th>수치</th>
+                        <th>계산 반영</th>
+                      </tr>
+                    </thead>
+                    <tbody id="engraving-effect-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">각인 시도 비용 데이터</h3>
+                <div class="table-wrap">
+                  <table aria-label="각인 시도 비용 데이터">
+                    <thead>
+                      <tr>
+                        <th>각인석 등급</th>
+                        <th>성공 확률</th>
+                        <th>필요 골드</th>
+                        <th>필요 루비</th>
+                      </tr>
+                    </thead>
+                    <tbody id="engraving-cost-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">각인 레벨별 계약서</h3>
+                <div class="table-wrap">
+                  <table aria-label="각인 레벨별 계약서">
+                    <thead>
+                      <tr>
+                        <th>각인 레벨</th>
+                        <th>만조의 영혼 계약서</th>
+                      </tr>
+                    </thead>
+                    <tbody id="engraving-contract-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">각인석 계산 메모</h3>
+                <dl class="note-list">
+                  <dt>조개 탐색</dt>
+                  <dd>도구의 조개 등장 확률이 레벨별로 증가. 낚싯대, 각인석, 전문가의 확률 증가분을 합쳐 최종 조개 등장 확률 계산</dd>
+                  <dt>어패 행운</dt>
+                  <dd>수중 어획 시 레벨별 확률로 어패류 1개를 추가 드롭. 추가 드롭된 어패류도 등급 판정을 받는 것으로 우선 해석</dd>
+                  <dt>정령 고래</dt>
+                  <dd>수중 어획 시 레벨별 확률로 등장. 깨진 조개껍데기 또는 공예품을 지급하며, 깨진 조개껍데기는 가치 0으로 계산</dd>
+                  <dt>가오리 인도</dt>
+                  <dd>수중 어획 시 레벨별 확률로 등장. 해양 잔해에서 금속, 합금, 합성수지, 플라스틱, 섬유 재활용품 중 1~5개 획득</dd>
+                  <dt>어부 룰렛</dt>
+                  <dd>수중 어획 시 레벨별 확률로 등장. 6면 주사위, 눈 확률 균등, 등장한 주사위 중 10%는 골드 주사위. 획득 어패류에도 등급 확률 적용</dd>
+                  <dt>시세 직접 입력 예정</dt>
+                  <dd>공예품, 조개 개봉 보상, 재활용품 등 변동 시세 항목은 나중에 사용자가 직접 입력해서 계산</dd>
+                </dl>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">전문가 데이터</h3>
+                <div class="table-wrap">
+                  <table aria-label="전문가 데이터">
+                    <thead>
+                      <tr>
+                        <th>전문가</th>
+                        <th>레벨</th>
+                        <th>효과</th>
+                        <th>스킬 포인트</th>
+                        <th>골드</th>
+                        <th>어빌리티 스톤</th>
+                      </tr>
+                    </thead>
+                    <tbody id="expert-data-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">조개 개봉 및 공예품 데이터</h3>
+                <div class="table-wrap">
+                  <table aria-label="조개 개봉 및 공예품 데이터">
+                    <thead>
+                      <tr>
+                        <th>보상</th>
+                        <th>확률</th>
+                        <th>공예품</th>
+                        <th>최고 판매 가격</th>
+                      </tr>
+                    </thead>
+                    <tbody id="artifact-data-table"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">재활용품 데이터</h3>
+                <dl class="note-list">
+                  <dt>가오리 인도</dt>
+                  <dd>등장 시 재활용품 1~5개 획득, 평균 3개로 계산</dd>
+                  <dt>종류 확률</dt>
+                  <dd>금속, 합금, 합성수지, 플라스틱, 섬유 재활용품을 균등 확률로 계산</dd>
+                </dl>
+              </div>
+
+              <div class="data-section">
+                <h3 class="data-title">수익 계산식</h3>
+                <ul class="formula-list" id="formula-list"></ul>
+              </div>
+            </section>
+
+            <aside class="admin-side" aria-label="관리 상태">
+              <div class="side-header">관리 상태</div>
+              <ul class="side-list">
+                <li>검토용 데이터 표시</li>
+                <li>기대수익 공식 표시</li>
+                <li>순서형 로드맵 계산 중</li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const fishingRodEnhancementData = [
+        { level: 1, lowStone: 1, midStone: 0, highStone: 0, gold: 5000, ruby: 0, successRate: 100 },
+        { level: 2, lowStone: 2, midStone: 0, highStone: 0, gold: 25000, ruby: 0, successRate: 100 },
+        { level: 3, lowStone: 2, midStone: 0, highStone: 0, gold: 50000, ruby: 0, successRate: 80 },
+        { level: 4, lowStone: 3, midStone: 1, highStone: 0, gold: 100000, ruby: 0, successRate: 80 },
+        { level: 5, lowStone: 3, midStone: 1, highStone: 0, gold: 130000, ruby: 0, successRate: 70 },
+        { level: 6, lowStone: 4, midStone: 2, highStone: 1, gold: 150000, ruby: 0, successRate: 50 },
+        { level: 7, lowStone: 4, midStone: 2, highStone: 1, gold: 170000, ruby: 5, successRate: 40 },
+        { level: 8, lowStone: 6, midStone: 3, highStone: 2, gold: 300000, ruby: 5, successRate: 30 },
+        { level: 9, lowStone: 6, midStone: 3, highStone: 2, gold: 350000, ruby: 5, successRate: 20 },
+        { level: 10, lowStone: 8, midStone: 4, highStone: 3, gold: 500000, ruby: 10, successRate: 10 },
+        { level: 11, lowStone: 8, midStone: 4, highStone: 3, gold: 700000, ruby: 10, successRate: 5 },
+        { level: 12, lowStone: 8, midStone: 4, highStone: 3, gold: 1000000, ruby: 10, successRate: 3 },
+        { level: 13, lowStone: 10, midStone: 6, highStone: 4, gold: 1300000, ruby: 30, successRate: 2 },
+        { level: 14, lowStone: 10, midStone: 6, highStone: 4, gold: 1500000, ruby: 30, successRate: 1 },
+        { level: 15, lowStone: 10, midStone: 6, highStone: 5, gold: 2000000, ruby: 30, successRate: 1 },
+      ];
+
+      const fishingRodStatCategories = {
+        convenience: ["수중 어획력", "수중 어획 속도", "미니게임 스킵 확률"],
+        directProfit: ["조개 등장 확률", "어패류 드롭 수"],
+      };
+
+      const fishingRodStatData = [
+        { level: 1, underwaterPower: 17, underwaterSpeed: 1, shellChance: 1, minigameSkipChance: 10, seafoodDrop: 2 },
+        { level: 2, underwaterPower: 20, underwaterSpeed: 1, shellChance: 1, minigameSkipChance: 20, seafoodDrop: 2 },
+        { level: 3, underwaterPower: 22, underwaterSpeed: 1, shellChance: 2, minigameSkipChance: 20, seafoodDrop: 3 },
+        { level: 4, underwaterPower: 25, underwaterSpeed: 1, shellChance: 2, minigameSkipChance: 30, seafoodDrop: 3 },
+        { level: 5, underwaterPower: 30, underwaterSpeed: 1, shellChance: 2, minigameSkipChance: 30, seafoodDrop: 3 },
+        { level: 6, underwaterPower: 35, underwaterSpeed: 1, shellChance: 3, minigameSkipChance: 40, seafoodDrop: 4 },
+        { level: 7, underwaterPower: 45, underwaterSpeed: 1, shellChance: 3, minigameSkipChance: 40, seafoodDrop: 4 },
+        { level: 8, underwaterPower: 50, underwaterSpeed: 1, shellChance: 3, minigameSkipChance: 50, seafoodDrop: 4 },
+        { level: 9, underwaterPower: 57, underwaterSpeed: 1, shellChance: 5, minigameSkipChance: 50, seafoodDrop: 5 },
+        { level: 10, underwaterPower: 65, underwaterSpeed: 0.7, shellChance: 5, minigameSkipChance: 60, seafoodDrop: 5 },
+        { level: 11, underwaterPower: 78, underwaterSpeed: 0.7, shellChance: 7, minigameSkipChance: 60, seafoodDrop: 5 },
+        { level: 12, underwaterPower: 90, underwaterSpeed: 0.7, shellChance: 7, minigameSkipChance: 70, seafoodDrop: 6 },
+        { level: 13, underwaterPower: 100, underwaterSpeed: 0.7, shellChance: 9, minigameSkipChance: 70, seafoodDrop: 6 },
+        { level: 14, underwaterPower: 110, underwaterSpeed: 0.7, shellChance: 9, minigameSkipChance: 80, seafoodDrop: 7 },
+        { level: 15, underwaterPower: 150, underwaterSpeed: 0.5, shellChance: 15, minigameSkipChance: 100, seafoodDrop: 10 },
+      ];
+
+      const oceanGatheringRules = {
+        baseStamina: 3000,
+        staminaCostPerGather: 15,
+        seafoodTypes: ["굴", "소라", "미역", "성게", "문어"],
+        seafoodGradeWeights: {
+          grade1: 60,
+          grade2: 30,
+          grade3: 10,
+        },
+        shellAcquireRateAfterSpawn: 50,
+        staminaPotionIncluded: false,
+      };
+
+      const engravingEffectData = {
+        shellSearch: {
+          name: "조개 탐색",
+          trigger: "상시",
+          effectType: "shellChanceBonus",
+          levels: [
+            { level: 1, minRodLevel: 3, shellChanceBonus: 1 },
+            { level: 2, minRodLevel: 5, shellChanceBonus: 3 },
+            { level: 3, minRodLevel: 7, shellChanceBonus: 5 },
+          ],
+        },
+        seafoodLuck: {
+          name: "어패 행운",
+          trigger: "수중 어획 시",
+          effectType: "extraSeafoodDrop",
+          levels: [
+            { level: 1, minRodLevel: 5, chance: 25, extraSeafoodDrop: 1 },
+            { level: 2, minRodLevel: 7, chance: 50, extraSeafoodDrop: 1 },
+            { level: 3, minRodLevel: 9, chance: 75, extraSeafoodDrop: 1 },
+            { level: 4, minRodLevel: 11, chance: 100, extraSeafoodDrop: 1 },
+          ],
+          seafoodGradeApplies: true,
+        },
+        spiritWhale: {
+          name: "정령 고래",
+          trigger: "수중 어획 시",
+          levels: [
+            { level: 1, minRodLevel: 7, chance: 1 },
+            { level: 2, minRodLevel: 7, chance: 2 },
+            { level: 3, minRodLevel: 9, chance: 3 },
+            { level: 4, minRodLevel: 9, chance: 4 },
+            { level: 5, minRodLevel: 11, chance: 5 },
+          ],
+          rewards: [
+            { name: "깨진 조개껍데기", amount: 1, chance: 29, value: 0 },
+            { name: "깨진 조개껍데기", amount: 2, chance: 15, value: 0 },
+            { name: "깨진 조개껍데기", amount: 3, chance: 10, value: 0 },
+            { name: "깨진 조개껍데기", amount: 4, chance: 5, value: 0 },
+            { name: "조개껍데기 브로치", amount: 1, chance: 15, marketPriceRequired: true },
+            { name: "푸른 향수병", amount: 1, chance: 10, marketPriceRequired: true },
+            { name: "자개 손거울", amount: 1, chance: 7, marketPriceRequired: true },
+            { name: "분홍 헤어핀", amount: 1, chance: 5, marketPriceRequired: true },
+            { name: "자개 부채", amount: 1, chance: 3, marketPriceRequired: true },
+            { name: "흑진주 시계", amount: 1, chance: 1, marketPriceRequired: true },
+          ],
+        },
+        rayGuide: {
+          name: "가오리 인도",
+          trigger: "수중 어획 시",
+          levels: [
+            { level: 1, minRodLevel: 9, chance: 1 },
+            { level: 2, minRodLevel: 9, chance: 2 },
+            { level: 3, minRodLevel: 11, chance: 3 },
+            { level: 4, minRodLevel: 11, chance: 4 },
+            { level: 5, minRodLevel: 13, chance: 5 },
+          ],
+          rewardAmountRange: [1, 5],
+          rewardItems: [
+            "금속 재활용품",
+            "합금 재활용품",
+            "합성수지 재활용품",
+            "플라스틱 재활용품",
+            "섬유 재활용품",
+          ],
+          rewardItemOdds: "uniform",
+          marketPriceRequired: true,
+        },
+        fisherRoulette: {
+          name: "어부 룰렛",
+          trigger: "수중 어획 시",
+          levels: [
+            { level: 1, minRodLevel: 5, chance: 1 },
+            { level: 2, minRodLevel: 5, chance: 2 },
+            { level: 3, minRodLevel: 7, chance: 3 },
+            { level: 4, minRodLevel: 7, chance: 4 },
+            { level: 5, minRodLevel: 9, chance: 5 },
+          ],
+          diceSides: 6,
+          diceOdds: "uniform",
+          normalDiceMultiplier: 5,
+          goldDiceChanceOnTrigger: 10,
+          goldDiceMultiplier: 10,
+          seafoodGradeApplies: true,
+        },
+      };
+
+      const expertSkillData = {
+        deepSeaGatherer: {
+          name: "심해 채집꾼",
+          effectType: "extraSeafoodDropChance",
+          levels: [
+            { level: 1, chance: 5, skillPoint: 1, gold: 10000, abilityStone: 2 },
+            { level: 2, chance: 7, skillPoint: 10, gold: 500000, abilityStone: 20 },
+            { level: 3, chance: 10, skillPoint: 25, gold: 1000000, abilityStone: 50 },
+            { level: 4, chance: 15, skillPoint: 30, gold: 3000000, abilityStone: 60 },
+            { level: 5, chance: 20, skillPoint: 50, gold: 5000000, abilityStone: 100 },
+          ],
+        },
+        shellRefill: {
+          name: "조개 무한리필",
+          effectType: "shellChanceBonus",
+          levels: [
+            { level: 1, shellChanceBonus: 1, skillPoint: 1, gold: 10000, abilityStone: 2 },
+            { level: 2, shellChanceBonus: 2, skillPoint: 3, gold: 30000, abilityStone: 6 },
+            { level: 3, shellChanceBonus: 3, skillPoint: 7, gold: 50000, abilityStone: 14 },
+            { level: 4, shellChanceBonus: 4, skillPoint: 10, gold: 300000, abilityStone: 20 },
+            { level: 5, shellChanceBonus: 5, skillPoint: 20, gold: 700000, abilityStone: 40 },
+            { level: 6, shellChanceBonus: 6, skillPoint: 35, gold: 1000000, abilityStone: 70 },
+            { level: 7, shellChanceBonus: 7, skillPoint: 70, gold: 3000000, abilityStone: 140 },
+            { level: 8, shellChanceBonus: 8, skillPoint: 100, gold: 5000000, abilityStone: 200 },
+            { level: 9, shellChanceBonus: 9, skillPoint: 120, gold: 7000000, abilityStone: 240 },
+            { level: 10, shellChanceBonus: 10, skillPoint: 150, gold: 15000000, abilityStone: 300 },
+          ],
+        },
+        starStarStar: {
+          name: "별별별!",
+          effectType: "grade3WeightBonus",
+          levels: [
+            { level: 1, grade3WeightBonus: 1, skillPoint: 1, gold: 10000, abilityStone: 2 },
+            { level: 2, grade3WeightBonus: 3, skillPoint: 30, gold: 1000000, abilityStone: 60 },
+            { level: 3, grade3WeightBonus: 5, skillPoint: 50, gold: 3000000, abilityStone: 100 },
+            { level: 4, grade3WeightBonus: 7, skillPoint: 70, gold: 5000000, abilityStone: 140 },
+            { level: 5, grade3WeightBonus: 10, skillPoint: 100, gold: 7000000, abilityStone: 200 },
+            { level: 6, grade3WeightBonus: 15, skillPoint: 150, gold: 10000000, abilityStone: 300 },
+          ],
+          probabilityRule: "3성 가중치에 증가값을 더한 뒤 전체 가중치 합으로 확률 계산",
+        },
+        artifactSeller: {
+          name: "조개 좀 사조개",
+          effectType: "artifactValueBonus",
+          levels: [
+            { level: 1, artifactValueBonus: 5, skillPoint: 7, gold: 300000, abilityStone: 14 },
+            { level: 2, artifactValueBonus: 7, skillPoint: 20, gold: 700000, abilityStone: 40 },
+            { level: 3, artifactValueBonus: 10, skillPoint: 30, gold: 1000000, abilityStone: 60 },
+            { level: 4, artifactValueBonus: 15, skillPoint: 50, gold: 3000000, abilityStone: 100 },
+            { level: 5, artifactValueBonus: 20, skillPoint: 70, gold: 5000000, abilityStone: 140 },
+            { level: 6, artifactValueBonus: 30, skillPoint: 100, gold: 7000000, abilityStone: 200 },
+            { level: 7, artifactValueBonus: 40, skillPoint: 120, gold: 10000000, abilityStone: 240 },
+            { level: 8, artifactValueBonus: 50, skillPoint: 150, gold: 15000000, abilityStone: 300 },
+          ],
+        },
+      };
+
+      const artifactData = {
+        pricingRule: "useMaxSellPrice",
+        source: "조개를 열어서 나온 진주로 공예품 제작",
+        shellFragmentValue: 0,
+        shellPearlDropRatesStatus: "saved",
+        shellOpenRewards: [
+          { reward: "흑진주", chance: 1, artifact: "흑진주 시계" },
+          { reward: "보라빛 진주", chance: 2, artifact: "자개 부채" },
+          { reward: "분홍빛 진주", chance: 3, artifact: "분홍 헤어핀" },
+          { reward: "청록빛 진주", chance: 5, artifact: "자개 손거울" },
+          { reward: "푸른빛 진주", chance: 7, artifact: "푸른 향수병" },
+          { reward: "노란빛 진주", chance: 12, artifact: "조개껍데기 브로치" },
+          { reward: "깨진 조개껍데기", chance: 70, value: 0 },
+        ],
+        items: [
+          { pearl: "노란빛 진주", artifact: "조개껍데기 브로치", minSellPrice: 0, maxSellPrice: 50000 },
+          { pearl: "푸른빛 진주", artifact: "푸른 향수병", minSellPrice: 0, maxSellPrice: 150000 },
+          { pearl: "청록빛 진주", artifact: "자개 손거울", minSellPrice: 0, maxSellPrice: 300000 },
+          { pearl: "분홍빛 진주", artifact: "분홍 헤어핀", minSellPrice: 0, maxSellPrice: 500000 },
+          { pearl: "보라빛 진주", artifact: "자개 부채", minSellPrice: 0, maxSellPrice: 700000 },
+          { pearl: "흑진주", artifact: "흑진주 시계", minSellPrice: 0, maxSellPrice: 1000000 },
+        ],
+      };
+
+      const engravingStoneData = {
+        투박한: { successRate: 10, gold: 100000, ruby: 3 },
+        단정한: { successRate: 20, gold: 200000, ruby: 5 },
+        정교한: { successRate: 30, gold: 300000, ruby: 7 },
+      };
+
+      const engravingContractByLevel = {
+        1: 5,
+        2: 10,
+        3: 15,
+        4: 20,
+        5: 25,
+      };
+
+      const getSeafoodGradeRates = (grade3WeightBonus = 0) => {
+        const weights = oceanGatheringRules.seafoodGradeWeights;
+        const grade1 = weights.grade1;
+        const grade2 = weights.grade2;
+        const grade3 = weights.grade3 + grade3WeightBonus;
+        const total = grade1 + grade2 + grade3;
+
+        return {
+          grade1: grade1 / total,
+          grade2: grade2 / total,
+          grade3: grade3 / total,
+        };
+      };
+
+      const getEngravingEffectValueText = (effect, levelData) => {
+        if (effect.effectType === "shellChanceBonus") {
+          return `조개 등장 확률 +${levelData.shellChanceBonus}%`;
+        }
+
+        if (effect.effectType === "extraSeafoodDrop") {
+          return `${levelData.chance}% 확률로 어패류 +${levelData.extraSeafoodDrop}개`;
+        }
+
+        if (effect.name === "정령 고래") {
+          return `${levelData.chance}% 확률로 정령 고래 등장`;
+        }
+
+        if (effect.name === "가오리 인도") {
+          return `${levelData.chance}% 확률로 가오리 등장`;
+        }
+
+        if (effect.name === "어부 룰렛") {
+          return `${levelData.chance}% 확률로 주사위 등장`;
+        }
+
+        return "-";
+      };
+
+      const getEngravingFormulaText = (effect) => {
+        if (effect.effectType === "shellChanceBonus") {
+          return "최종 조개 등장 확률에 합산";
+        }
+
+        if (effect.effectType === "extraSeafoodDrop") {
+          return "채집 1회당 기대 어패류 +확률×1";
+        }
+
+        if (effect.name === "정령 고래") {
+          return "채집 횟수×발동 확률×정령 고래 보상 기대값";
+        }
+
+        if (effect.name === "가오리 인도") {
+          return "채집 횟수×발동 확률×재활용품 평균가×3개";
+        }
+
+        if (effect.name === "어부 룰렛") {
+          return "채집 횟수×발동 확률×19.25개×어패류 기대가";
+        }
+
+        return "-";
+      };
+
+      const getExpertEffectText = (skill, levelData) => {
+        if (skill.effectType === "extraSeafoodDropChance") {
+          return `${levelData.chance}% 확률로 어패류 +1개`;
+        }
+
+        if (skill.effectType === "shellChanceBonus") {
+          return `조개 등장 확률 +${levelData.shellChanceBonus}%`;
+        }
+
+        if (skill.effectType === "grade3WeightBonus") {
+          return `3성 가중치 +${levelData.grade3WeightBonus}`;
+        }
+
+        if (skill.effectType === "artifactValueBonus") {
+          return `공예품 판매가 +${levelData.artifactValueBonus}%`;
+        }
+
+        return "-";
+      };
+
+      const tabButtons = document.querySelectorAll(".tab-button");
+      const tabPanels = document.querySelectorAll(".tab-panel");
+      const fishingRodTable = document.querySelector("#fishing-rod-table");
+      const fishingRodStatTable = document.querySelector("#fishing-rod-stat-table");
+      const engravingEffectTable = document.querySelector("#engraving-effect-table");
+      const engravingCostTable = document.querySelector("#engraving-cost-table");
+      const engravingContractTable = document.querySelector("#engraving-contract-table");
+      const expertDataTable = document.querySelector("#expert-data-table");
+      const artifactDataTable = document.querySelector("#artifact-data-table");
+      const formulaList = document.querySelector("#formula-list");
+      const engravingPriceFields = document.querySelector("#engraving-price-fields");
+      const seafoodIndividualFields = document.querySelector("#seafood-individual-fields");
+      const seafoodGroupedFields = document.querySelector("#seafood-grouped-fields");
+      const currentRodLevel = document.querySelector("#current-rod-level");
+      const engravingProfileFields = document.querySelector("#engraving-profile-fields");
+      const expertProfileFields = document.querySelector("#expert-profile-fields");
+      const efficiencyResultBody = document.querySelector("#efficiency-result-body");
+      const calculateButton = document.querySelector("#calculate-button");
+      const savePricesButton = document.querySelector("#save-prices-button");
+      const saveProfileButton = document.querySelector("#save-profile-button");
+      const resultPagination = document.querySelector("#result-pagination");
+      const prevResultPage = document.querySelector("#prev-result-page");
+      const nextResultPage = document.querySelector("#next-result-page");
+      const resultPageInfo = document.querySelector("#result-page-info");
+
+      const formatNumber = (value) => value.toLocaleString("ko-KR");
+      const storageKey = "ocean-spec-calculator-inputs";
+      const resultRowsPerPage = 10;
+      let efficiencyCandidates = [];
+      let currentResultPage = 1;
+      const defaultPriceValues = {
+        "price.lowLifeStone": 13301,
+        "price.midLifeStone": 44533,
+        "price.highLifeStone": 82200,
+        "price.tideSoulContract": 23862,
+        "price.abilityStone": 18683,
+        "price.skillPoint": 55000,
+        "price.engraving.투박한 조개 탐색 각인석": 62900,
+        "price.engraving.단정한 조개 탐색 각인석": 1195741,
+        "price.engraving.정교한 조개 탐색 각인석": 2443667,
+        "price.engraving.투박한 어패 행운 각인석": 480230,
+        "price.engraving.단정한 어패 행운 각인석": 1285694,
+        "price.engraving.정교한 어패 행운 각인석": 2642296,
+        "price.engraving.투박한 정령 고래 각인석": 1831667,
+        "price.engraving.단정한 정령 고래 각인석": 4360478,
+        "price.engraving.정교한 정령 고래 각인석": 7500603,
+        "price.engraving.투박한 가오리 인도 각인석": 284486,
+        "price.engraving.단정한 가오리 인도 각인석": 832316,
+        "price.engraving.정교한 가오리 인도 각인석": 1611859,
+        "price.engraving.투박한 어부 룰렛 각인석": 340424,
+        "price.engraving.단정한 어부 룰렛 각인석": 1033000,
+        "price.engraving.정교한 어부 룰렛 각인석": 2213000,
+        "price.seafood.grade1": 700,
+        "price.seafood.grade2": 1700,
+        "price.seafood.grade3": 3100,
+        "price.recycle.metal": 6357,
+        "price.recycle.alloy": 23691,
+        "price.recycle.resin": 24385,
+        "price.recycle.plastic": 2967,
+        "price.recycle.fiber": 4456,
+      };
+      const engravingStoneGrades = ["투박한", "단정한", "정교한"];
+      const engravingEffects = [
+        engravingEffectData.shellSearch.name,
+        engravingEffectData.seafoodLuck.name,
+        engravingEffectData.spiritWhale.name,
+        engravingEffectData.rayGuide.name,
+        engravingEffectData.fisherRoulette.name,
+      ];
+      const expertProfileTargets = [
+        expertSkillData.deepSeaGatherer,
+        expertSkillData.shellRefill,
+        expertSkillData.starStarStar,
+        expertSkillData.artifactSeller,
+      ];
+
+      const createSafeId = (value) =>
+        value
+          .replaceAll(" ", "-")
+          .replaceAll("!", "")
+          .toLowerCase();
+
+      const parseNumericInput = (value) => Number(String(value || "").replaceAll(",", ""));
+
+      const formatInputNumber = (value) => {
+        const digits = String(value || "").replace(/[^\d]/g, "");
+        return digits ? Number(digits).toLocaleString("ko-KR") : "";
+      };
+
+      const getSavedInputs = () => JSON.parse(localStorage.getItem(storageKey) || "{}");
+
+      const saveFieldGroup = (prefix) => {
+        const savedInputs = getSavedInputs();
+
+        document.querySelectorAll(`[data-field^="${prefix}."]`).forEach((field) => {
+          savedInputs[field.dataset.field] =
+            field.type === "checkbox" ? field.checked : parseNumericInput(field.value);
+        });
+
+        localStorage.setItem(storageKey, JSON.stringify(savedInputs));
+      };
+
+      const showSavedFeedback = (button, originalText) => {
+        button.textContent = "저장됨";
+        window.setTimeout(() => {
+          button.textContent = originalText;
+        }, 1200);
+      };
+
+      const loadSavedInputs = () => {
+        const savedInputs = getSavedInputs();
+
+        document.querySelectorAll("[data-field]").forEach((field) => {
+          if (
+            Object.prototype.hasOwnProperty.call(savedInputs, field.dataset.field) &&
+            savedInputs[field.dataset.field] !== ""
+          ) {
+            if (field.type === "checkbox") {
+              field.checked = Boolean(savedInputs[field.dataset.field]);
+            } else {
+              field.value = savedInputs[field.dataset.field];
+            }
+          } else if (Object.prototype.hasOwnProperty.call(defaultPriceValues, field.dataset.field)) {
+            field.value = defaultPriceValues[field.dataset.field];
+          }
+        });
+      };
+
+      const formatPriceFields = () => {
+        document.querySelectorAll('[data-field^="price."]').forEach((field) => {
+          if (field.type === "checkbox") {
+            return;
+          }
+
+          field.type = "text";
+          field.inputMode = "numeric";
+          field.value = formatInputNumber(field.value);
+          field.addEventListener("input", () => {
+            field.value = formatInputNumber(field.value);
+          });
+        });
+      };
+
+      currentRodLevel.innerHTML = [
+        ...fishingRodStatData.map((item) => `<option value="${item.level}">${item.level}강</option>`),
+      ].join("");
+
+      engravingPriceFields.innerHTML = engravingEffects
+        .flatMap((effect) =>
+          engravingStoneGrades.map((grade) => {
+            const itemName = `${grade} ${effect} 각인석`;
+            const id = `price-engraving-${createSafeId(`${grade}-${effect}`)}`;
+
+            return `
+              <div class="field">
+                <label for="${id}">${itemName}</label>
+                <input id="${id}" data-field="price.engraving.${itemName}" type="number" min="0" placeholder="골드" />
+              </div>
+            `;
+          }),
+        )
+        .join("");
+
+      seafoodIndividualFields.innerHTML = oceanGatheringRules.seafoodTypes
+        .flatMap((seafood) =>
+          [1, 2, 3].map((grade) => {
+            const id = `price-${createSafeId(seafood)}-grade${grade}`;
+
+            return `
+              <div class="field">
+                <label for="${id}">${seafood} ${grade}성</label>
+                <input id="${id}" data-field="price.seafood.${seafood}.grade${grade}" type="number" min="0" placeholder="골드" />
+              </div>
+            `;
+          }),
+        )
+        .join("");
+
+      engravingProfileFields.innerHTML = Object.values(engravingEffectData)
+        .map((effect) => {
+          const id = `profile-engraving-${createSafeId(effect.name)}`;
+          const maxLevel = effect.levels.length;
+          const options = [
+            '<option value="0">없음</option>',
+            ...effect.levels.map((item) => `<option value="${item.level}">${item.level}레벨</option>`),
+          ].join("");
+
+          return `
+            <div class="field">
+              <label for="${id}">${effect.name}</label>
+              <select id="${id}" data-field="profile.engraving.${effect.name}" data-max-level="${maxLevel}">
+                ${options}
+              </select>
+            </div>
+          `;
+        })
+        .join("");
+
+      expertProfileFields.innerHTML = expertProfileTargets
+        .map((skill) => {
+          const id = `profile-expert-${createSafeId(skill.name)}`;
+          const options = [
+            '<option value="0">0레벨</option>',
+            ...skill.levels.map((item) => `<option value="${item.level}">${item.level}레벨</option>`),
+          ].join("");
+
+          return `
+            <div class="field">
+              <label for="${id}">${skill.name}</label>
+              <select id="${id}" data-field="profile.expert.${skill.name}">
+                ${options}
+              </select>
+            </div>
+          `;
+        })
+        .join("");
+
+      loadSavedInputs();
+      if (!currentRodLevel.value) {
+        currentRodLevel.value = "1";
+      }
+      formatPriceFields();
+
+      fishingRodTable.innerHTML = fishingRodEnhancementData
+        .map(
+          (item) => `
+            <tr>
+              <td>${item.level - 1}강 → ${item.level}강</td>
+              <td>${item.lowStone}개</td>
+              <td>${item.midStone}개</td>
+              <td>${item.highStone}개</td>
+              <td>${formatNumber(item.gold)} G</td>
+              <td>${item.ruby}개</td>
+              <td>${item.successRate}%</td>
+            </tr>
+          `,
+        )
+        .join("");
+
+      fishingRodStatTable.innerHTML = fishingRodStatData
+        .map(
+          (item) => `
+            <tr>
+              <td>${item.level}강</td>
+              <td>${item.underwaterPower}</td>
+              <td>${item.underwaterSpeed}</td>
+              <td>${item.shellChance}%</td>
+              <td>${item.minigameSkipChance}%</td>
+              <td>${item.seafoodDrop}개</td>
+            </tr>
+          `,
+        )
+        .join("");
+
+      engravingEffectTable.innerHTML = Object.values(engravingEffectData)
+        .flatMap((effect) =>
+          effect.levels.map(
+            (levelData) => `
+              <tr>
+                <td>${effect.name}</td>
+                <td>${levelData.level}레벨</td>
+                <td>${levelData.minRodLevel}강</td>
+                <td>${getEngravingEffectValueText(effect, levelData)}</td>
+                <td>${getEngravingFormulaText(effect)}</td>
+              </tr>
+            `,
+          ),
+        )
+        .join("");
+
+      engravingCostTable.innerHTML = Object.entries(engravingStoneData)
+        .map(
+          ([grade, data]) => `
+            <tr>
+              <td>${grade}</td>
+              <td>${data.successRate}%</td>
+              <td>${formatNumber(data.gold)} G</td>
+              <td>${data.ruby} R</td>
+            </tr>
+          `,
+        )
+        .join("");
+
+      engravingContractTable.innerHTML = Object.entries(engravingContractByLevel)
+        .map(
+          ([level, amount]) => `
+            <tr>
+              <td>${level}레벨</td>
+              <td>${amount}장</td>
+            </tr>
+          `,
+        )
+        .join("");
+
+      expertDataTable.innerHTML = expertProfileTargets
+        .flatMap((skill) =>
+          skill.levels.map(
+            (levelData) => `
+              <tr>
+                <td>${skill.name}</td>
+                <td>${levelData.level}레벨</td>
+                <td>${getExpertEffectText(skill, levelData)}</td>
+                <td>${levelData.skillPoint}</td>
+                <td>${formatNumber(levelData.gold)} G</td>
+                <td>${levelData.abilityStone}</td>
+              </tr>
+            `,
+          ),
+        )
+        .join("");
+
+      artifactDataTable.innerHTML = artifactData.shellOpenRewards
+        .map((reward) => {
+          const artifact = reward.artifact || "-";
+          const value =
+            reward.value ??
+            artifactData.items.find((item) => item.artifact === reward.artifact)?.maxSellPrice ??
+            0;
+
+          return `
+            <tr>
+              <td>${reward.reward}</td>
+              <td>${reward.chance}%</td>
+              <td>${artifact}</td>
+              <td>${formatNumber(value)} G</td>
+            </tr>
+          `;
+        })
+        .join("");
+
+      formulaList.innerHTML = [
+        ["채집 횟수", "기본 스태미나 3000 / 채집 1회 스태미나 15 = 200회"],
+        ["어패류 1개 기대가", "1성가격×P(1성) + 2성가격×P(2성) + 3성가격×P(3성)"],
+        ["별별별 등급 확률", "1성=60/(100+보너스), 2성=30/(100+보너스), 3성=(10+보너스)/(100+보너스)"],
+        ["기본 어패류 수익", "채집 횟수 × (낚싯대 드롭수 + 어패 행운 기대드롭 + 심해 채집꾼 기대드롭 + 어부 룰렛 기대드롭) × 어패류 1개 기대가"],
+        ["어부 룰렛 기대드롭", "발동확률 × ((90% × 평균눈 3.5 × 5개) + (10% × 평균눈 3.5 × 10개)) = 발동확률 × 19.25개"],
+        ["조개 기대값", "Σ(조개 보상 확률 × 공예품 최고가 × 조개 좀 사조개 보너스). 깨진 조개껍데기=0G"],
+        ["조개 수익", "채집 횟수 × 최종 조개 등장 확률 × 실제 획득 50% × 조개 기대값"],
+        ["정령 고래 수익", "채집 횟수 × 정령 고래 발동확률 × 정령 고래 보상 기대값"],
+        ["가오리 인도 수익", "채집 횟수 × 가오리 발동확률 × 재활용품 5종 평균가 × 평균 3개"],
+        ["낚싯대 기대비용", "단계별 1회 비용 × (100 / 성공확률). 수익 증가가 없는 강화는 다음 수익 증가 구간까지 묶음"],
+        ["각인 기대비용", "(각인석 시세 + 등급별 골드 + 계약서 수량×계약서 시세) × (100 / 각인석 성공확률), 루비는 별도 표시"],
+        ["전문가 비용", "골드 + 어빌리티스톤×시세 + 스킬포인트×시세. 귀속 체크 시 스킬포인트 비용 제외"],
+        ["효율", "기대수익 증가 / 기대비용. 표시는 100만G당 기대수익 증가로 변환"],
+        ["로드맵", "현재 가능한 후보만 계산 → 가장 효율 좋은 항목 적용 → 변경된 스펙 기준으로 반복"],
+      ]
+        .map(
+          ([name, formula]) => `
+            <li>
+              <span class="formula-name">${name}</span>
+              <pre class="formula-code">${formula}</pre>
+            </li>
+          `,
+        )
+        .join("");
+
+      document.querySelectorAll('input[name="seafood-price-mode"]').forEach((radio) => {
+        radio.addEventListener("change", () => {
+          const useIndividual = radio.value === "individual" && radio.checked;
+          seafoodGroupedFields.classList.toggle("hidden", useIndividual);
+          seafoodIndividualFields.classList.toggle("hidden", !useIndividual);
+        });
+      });
+
+      const activateTab = (tabName) => {
+        tabButtons.forEach((item) => {
+          item.setAttribute("aria-selected", String(item.dataset.tab === tabName));
+        });
+
+        tabPanels.forEach((panel) => {
+          panel.classList.toggle("active", panel.dataset.panel === tabName);
+        });
+      };
+
+      const isInsideHiddenSection = (element) => Boolean(element.closest(".hidden"));
+
+      const getRequiredPriceFields = () =>
+        [...document.querySelectorAll('[data-field^="price."]')].filter(
+          (field) => !isInsideHiddenSection(field),
+        );
+
+      const validatePrices = () => {
+        const missing = [];
+
+        getRequiredPriceFields().forEach((field) => {
+          if (field.type === "checkbox") {
+            return;
+          }
+
+          field.classList.remove("input-error");
+
+          if (field.value === "" || parseNumericInput(field.value) < 0) {
+            const label = document.querySelector(`label[for="${field.id}"]`);
+            missing.push(label ? label.textContent : field.dataset.field);
+            field.classList.add("input-error");
+          }
+        });
+
+        return missing;
+      };
+
+      const getNumberField = (fieldName) => {
+        const field = document.querySelector(`[data-field="${fieldName}"]`);
+        return field && field.value !== "" ? parseNumericInput(field.value) : 0;
+      };
+
+      const getBooleanField = (fieldName) => {
+        const field = document.querySelector(`[data-field="${fieldName}"]`);
+        return Boolean(field?.checked);
+      };
+
+      const getPriceMap = () => {
+        const prices = {};
+
+        getRequiredPriceFields().forEach((field) => {
+          prices[field.dataset.field] =
+            field.type === "checkbox" ? field.checked : parseNumericInput(field.value);
+        });
+
+        return prices;
+      };
+
+      const getCurrentProfile = () => {
+        const profile = {
+          rodLevel: Math.max(1, Number(currentRodLevel.value) || 1),
+          engravings: {},
+          experts: {
+            deepSeaGatherer: 0,
+            shellRefill: 0,
+            starStarStar: 0,
+          },
+        };
+
+        Object.values(engravingEffectData).forEach((effect) => {
+          profile.engravings[effect.name] = getNumberField(`profile.engraving.${effect.name}`);
+        });
+
+        expertProfileTargets.forEach((skill) => {
+          const key = Object.entries(expertSkillData).find(([, value]) => value === skill)[0];
+          profile.experts[key] = getNumberField(`profile.expert.${skill.name}`);
+        });
+
+        return profile;
+      };
+
+      const getLevelData = (data, level) => data.levels.find((item) => item.level === level);
+      const getRodStats = (level) =>
+        fishingRodStatData.find((item) => item.level === level) || {
+          level: 0,
+          shellChance: 0,
+          seafoodDrop: 1,
+        };
+
+      const getArtifactPrice = (artifactName) =>
+        artifactData.items.find((item) => item.artifact === artifactName)?.maxSellPrice || 0;
+
+      const getArtifactMultiplier = (profile) => {
+        const artifactSellerLevel = profile.experts.artifactSeller || 0;
+        const artifactSellerData = getLevelData(expertSkillData.artifactSeller, artifactSellerLevel);
+
+        return 1 + (artifactSellerData?.artifactValueBonus || 0) / 100;
+      };
+
+      const getShellExpectedValue = (profile) => {
+        const artifactMultiplier = getArtifactMultiplier(profile);
+
+        return artifactData.shellOpenRewards.reduce((sum, reward) => {
+          const value = reward.value ?? getArtifactPrice(reward.artifact) * artifactMultiplier;
+          return sum + (reward.chance / 100) * value;
+        }, 0);
+      };
+
+      const getSpiritWhaleExpectedValue = (profile) => {
+        const artifactMultiplier = getArtifactMultiplier(profile);
+
+        return engravingEffectData.spiritWhale.rewards.reduce((sum, reward) => {
+          const value = reward.value ?? getArtifactPrice(reward.name) * artifactMultiplier;
+          return sum + (reward.chance / 100) * reward.amount * value;
+        }, 0);
+      };
+
+      const getLegacyShellExpectedValue = () =>
+        artifactData.shellOpenRewards.reduce((sum, reward) => {
+          const value = reward.value ?? getArtifactPrice(reward.artifact);
+          return sum + (reward.chance / 100) * value;
+        }, 0);
+
+      const getAverageSeafoodPrice = (prices, gradeRates) => {
+        const mode = document.querySelector('input[name="seafood-price-mode"]:checked').value;
+
+        if (mode === "grouped") {
+          return (
+            gradeRates.grade1 * prices["price.seafood.grade1"] +
+            gradeRates.grade2 * prices["price.seafood.grade2"] +
+            gradeRates.grade3 * prices["price.seafood.grade3"]
+          );
+        }
+
+        const gradeAverages = [1, 2, 3].map((grade) => {
+          const total = oceanGatheringRules.seafoodTypes.reduce(
+            (sum, seafood) => sum + prices[`price.seafood.${seafood}.grade${grade}`],
+            0,
+          );
+
+          return total / oceanGatheringRules.seafoodTypes.length;
+        });
+
+        return (
+          gradeRates.grade1 * gradeAverages[0] +
+          gradeRates.grade2 * gradeAverages[1] +
+          gradeRates.grade3 * gradeAverages[2]
+        );
+      };
+
+      const getRecyclingAveragePrice = (prices) =>
+        [
+          prices["price.recycle.metal"],
+          prices["price.recycle.alloy"],
+          prices["price.recycle.resin"],
+          prices["price.recycle.plastic"],
+          prices["price.recycle.fiber"],
+        ].reduce((sum, value) => sum + value, 0) / 5;
+
+      const getExpectedRunProfit = (profile, prices) => {
+        const gatherCount = oceanGatheringRules.baseStamina / oceanGatheringRules.staminaCostPerGather;
+        const rodStats = getRodStats(profile.rodLevel);
+        const shellSearchLevel = profile.engravings[engravingEffectData.shellSearch.name] || 0;
+        const seafoodLuckLevel = profile.engravings[engravingEffectData.seafoodLuck.name] || 0;
+        const spiritWhaleLevel = profile.engravings[engravingEffectData.spiritWhale.name] || 0;
+        const rayGuideLevel = profile.engravings[engravingEffectData.rayGuide.name] || 0;
+        const fisherRouletteLevel = profile.engravings[engravingEffectData.fisherRoulette.name] || 0;
+        const shellRefillLevel = profile.experts.shellRefill || 0;
+        const deepSeaGathererLevel = profile.experts.deepSeaGatherer || 0;
+        const starStarStarLevel = profile.experts.starStarStar || 0;
+        const shellSearchData = getLevelData(engravingEffectData.shellSearch, shellSearchLevel);
+        const seafoodLuckData = getLevelData(engravingEffectData.seafoodLuck, seafoodLuckLevel);
+        const spiritWhaleData = getLevelData(engravingEffectData.spiritWhale, spiritWhaleLevel);
+        const rayGuideData = getLevelData(engravingEffectData.rayGuide, rayGuideLevel);
+        const fisherRouletteData = getLevelData(engravingEffectData.fisherRoulette, fisherRouletteLevel);
+        const shellRefillData = getLevelData(expertSkillData.shellRefill, shellRefillLevel);
+        const deepSeaGathererData = getLevelData(expertSkillData.deepSeaGatherer, deepSeaGathererLevel);
+        const starStarStarData = getLevelData(expertSkillData.starStarStar, starStarStarLevel);
+        const gradeRates = getSeafoodGradeRates(starStarStarData?.grade3WeightBonus || 0);
+        const averageSeafoodPrice = getAverageSeafoodPrice(prices, gradeRates);
+        const shellExpectedValue = getShellExpectedValue(profile);
+        const spiritWhaleExpectedValue = getSpiritWhaleExpectedValue(profile);
+        const recyclingAveragePrice = getRecyclingAveragePrice(prices);
+        const baseSeafoodDrop = rodStats.seafoodDrop || 0;
+        const seafoodLuckDrop = seafoodLuckData ? seafoodLuckData.chance / 100 : 0;
+        const deepSeaDrop = deepSeaGathererData ? deepSeaGathererData.chance / 100 : 0;
+        const rouletteDrop = fisherRouletteData
+          ? (fisherRouletteData.chance / 100) *
+            (((1 - engravingEffectData.fisherRoulette.goldDiceChanceOnTrigger / 100) *
+              ((engravingEffectData.fisherRoulette.diceSides + 1) / 2) *
+              engravingEffectData.fisherRoulette.normalDiceMultiplier) +
+              (engravingEffectData.fisherRoulette.goldDiceChanceOnTrigger / 100) *
+                ((engravingEffectData.fisherRoulette.diceSides + 1) / 2) *
+                engravingEffectData.fisherRoulette.goldDiceMultiplier)
+          : 0;
+        const seafoodProfit =
+          gatherCount *
+          (baseSeafoodDrop + seafoodLuckDrop + deepSeaDrop + rouletteDrop) *
+          averageSeafoodPrice;
+        const shellChance =
+          (rodStats.shellChance || 0) +
+          (shellSearchData?.shellChanceBonus || 0) +
+          (shellRefillData?.shellChanceBonus || 0);
+        const shellProfit =
+          gatherCount *
+          (shellChance / 100) *
+          (oceanGatheringRules.shellAcquireRateAfterSpawn / 100) *
+          shellExpectedValue;
+        const spiritWhaleProfit =
+          gatherCount * ((spiritWhaleData?.chance || 0) / 100) * spiritWhaleExpectedValue;
+        const rayGuideProfit =
+          gatherCount *
+          ((rayGuideData?.chance || 0) / 100) *
+          3 *
+          recyclingAveragePrice;
+
+        return seafoodProfit + shellProfit + spiritWhaleProfit + rayGuideProfit;
+      };
+
+      const cloneProfile = (profile) => JSON.parse(JSON.stringify(profile));
+
+      const getRodUpgradeCost = (targetLevel, prices) => {
+        const data = fishingRodEnhancementData.find((item) => item.level === targetLevel);
+        const attemptCost =
+          data.gold +
+          data.lowStone * prices["price.lowLifeStone"] +
+          data.midStone * prices["price.midLifeStone"] +
+          data.highStone * prices["price.highLifeStone"];
+        const expectedAttempts = 100 / data.successRate;
+
+        return {
+          goldCost: attemptCost * expectedAttempts,
+          ruby: data.ruby * expectedAttempts,
+        };
+      };
+
+      const getRodUpgradeRangeCost = (startLevel, targetLevel, prices) => {
+        let goldCost = 0;
+        let ruby = 0;
+
+        for (let level = startLevel + 1; level <= targetLevel; level += 1) {
+          const cost = getRodUpgradeCost(level, prices);
+          goldCost += cost.goldCost;
+          ruby += cost.ruby;
+        }
+
+        return { goldCost, ruby };
+      };
+
+      const getExpertUpgradeCost = (levelData, prices) => ({
+        goldCost:
+          levelData.gold +
+          levelData.abilityStone * prices["price.abilityStone"] +
+          levelData.skillPoint * (prices["price.skillPointBound"] ? 0 : prices["price.skillPoint"]),
+        ruby: 0,
+      });
+
+      const getEngravingUpgradeCost = (effect, nextLevel, grade, prices) => {
+        const stone = engravingStoneData[grade];
+        const itemName = `${grade} ${effect.name} 각인석`;
+        const attemptCost =
+          stone.gold +
+          prices[`price.engraving.${itemName}`] +
+          engravingContractByLevel[nextLevel] * prices["price.tideSoulContract"];
+        const expectedAttempts = 100 / stone.successRate;
+
+        return {
+          goldCost: attemptCost * expectedAttempts,
+          ruby: stone.ruby * expectedAttempts,
+        };
+      };
+
+      const getNextRodCandidate = (profile, prices) => {
+        if (profile.rodLevel >= 15) {
+          return null;
+        }
+
+        const previousProfile = cloneProfile(profile);
+        const previousProfit = getExpectedRunProfit(previousProfile, prices);
+
+        for (let targetLevel = profile.rodLevel + 1; targetLevel <= 15; targetLevel += 1) {
+          const nextProfile = cloneProfile(profile);
+          nextProfile.rodLevel = targetLevel;
+          const profitGain = getExpectedRunProfit(nextProfile, prices) - previousProfit;
+
+          if (profitGain > 0 || targetLevel === 15) {
+            const cost = getRodUpgradeRangeCost(profile.rodLevel, targetLevel, prices);
+            const isBundled = targetLevel - profile.rodLevel > 1;
+
+            return {
+              category: "낚싯대",
+              detail: isBundled ? "강화 묶음" : "강화",
+              item: "세이지 낚싯대",
+              current: `${profile.rodLevel}강`,
+              target: `${targetLevel}강`,
+              apply: { type: "rod", level: targetLevel },
+              profitGain,
+              ...cost,
+            };
+          }
+        }
+
+        return null;
+      };
+
+      const getImmediateCandidates = (profile, prices) => {
+        const candidates = [];
+        const rodCandidate = getNextRodCandidate(profile, prices);
+
+        if (rodCandidate) {
+          candidates.push(rodCandidate);
+        }
+
+        Object.values(engravingEffectData).forEach((effect) => {
+          const currentLevel = profile.engravings[effect.name] || 0;
+          const nextLevel = currentLevel + 1;
+          const nextLevelData = effect.levels[nextLevel - 1];
+
+          if (!nextLevelData || nextLevelData.minRodLevel > profile.rodLevel) {
+            return;
+          }
+
+          engravingStoneGrades.forEach((grade) => {
+            const nextProfile = cloneProfile(profile);
+            nextProfile.engravings[effect.name] = nextLevel;
+            const cost = getEngravingUpgradeCost(effect, nextLevel, grade, prices);
+            const profitGain = getExpectedRunProfit(nextProfile, prices) - getExpectedRunProfit(profile, prices);
+
+            candidates.push({
+              category: "각인석",
+              detail: `${grade} 각인`,
+              item: effect.name,
+              current: `${currentLevel}레벨`,
+              target: `${nextLevel}레벨`,
+              apply: { type: "engraving", name: effect.name, level: nextLevel },
+              profitGain,
+              ...cost,
+            });
+          });
+        });
+
+        expertProfileTargets.forEach((skill) => {
+          const skillKey = Object.entries(expertSkillData).find(([, value]) => value === skill)[0];
+          const currentLevel = profile.experts[skillKey] || 0;
+          const nextLevel = currentLevel + 1;
+          const nextLevelData = skill.levels[nextLevel - 1];
+
+          if (!nextLevelData) {
+            return;
+          }
+
+          const nextProfile = cloneProfile(profile);
+          nextProfile.experts[skillKey] = nextLevel;
+          const cost = getExpertUpgradeCost(nextLevelData, prices);
+          const profitGain = getExpectedRunProfit(nextProfile, prices) - getExpectedRunProfit(profile, prices);
+
+          candidates.push({
+            category: "전문가",
+            detail: "스킬 레벨",
+            item: skill.name,
+            current: `${currentLevel}레벨`,
+            target: `${nextLevel}레벨`,
+            apply: { type: "expert", key: skillKey, level: nextLevel },
+            profitGain,
+            ...cost,
+          });
+        });
+
+        return candidates
+          .map((candidate) => ({
+            ...candidate,
+            efficiency: candidate.goldCost > 0 ? candidate.profitGain / candidate.goldCost : 0,
+          }))
+          .filter((candidate) => candidate.goldCost > 0)
+          .sort((a, b) => b.efficiency - a.efficiency);
+      };
+
+      const applyUpgradeToProfile = (profile, candidate) => {
+        if (candidate.apply.type === "rod") {
+          profile.rodLevel = candidate.apply.level;
+        }
+
+        if (candidate.apply.type === "engraving") {
+          profile.engravings[candidate.apply.name] = candidate.apply.level;
+        }
+
+        if (candidate.apply.type === "expert") {
+          profile.experts[candidate.apply.key] = candidate.apply.level;
+        }
+      };
+
+      const buildEfficiencyRoadmap = (profile, prices) => {
+        const workingProfile = cloneProfile(profile);
+        const roadmap = [];
+        const maxSteps = 120;
+
+        for (let step = 1; step <= maxSteps; step += 1) {
+          const candidates = getImmediateCandidates(workingProfile, prices).filter(
+            (candidate) => candidate.profitGain > 0,
+          );
+
+          if (!candidates.length) {
+            break;
+          }
+
+          const selected = candidates[0];
+          roadmap.push({ ...selected, order: step });
+          applyUpgradeToProfile(workingProfile, selected);
+        }
+
+        return roadmap;
+      };
+
+      const renderEfficiencyResults = (candidates, page = 1) => {
+        if (!candidates.length) {
+          resultPagination.hidden = true;
+          efficiencyResultBody.innerHTML = `
+            <tr>
+              <td class="result-empty" colspan="9">현재 입력값 기준으로 표시할 수 있는 다음 스펙업 후보가 없습니다.</td>
+            </tr>
+          `;
+          return;
+        }
+
+        const pageCount = Math.ceil(candidates.length / resultRowsPerPage);
+        currentResultPage = Math.min(Math.max(page, 1), pageCount);
+        const startIndex = (currentResultPage - 1) * resultRowsPerPage;
+        const pageCandidates = candidates.slice(startIndex, startIndex + resultRowsPerPage);
+
+        efficiencyResultBody.innerHTML = pageCandidates
+          .map((candidate) => {
+            const costText =
+              candidate.ruby > 0
+                ? `${formatNumber(Math.round(candidate.goldCost))} G / ${candidate.ruby.toFixed(1)} R`
+                : `${formatNumber(Math.round(candidate.goldCost))} G`;
+
+            return `
+              <tr>
+                <td>${candidate.order}</td>
+                <td>${candidate.category}</td>
+                <td>${candidate.detail}</td>
+                <td>${candidate.item}</td>
+                <td>${candidate.current}</td>
+                <td>${candidate.target}</td>
+                <td class="profit-value">+${formatNumber(Math.round(candidate.profitGain))} G</td>
+                <td>${costText}</td>
+                <td>${(candidate.efficiency * 1000000).toFixed(2)} / 100만G</td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        resultPagination.hidden = pageCount <= 1;
+        resultPageInfo.textContent = `${currentResultPage} / ${pageCount}`;
+        prevResultPage.disabled = currentResultPage <= 1;
+        nextResultPage.disabled = currentResultPage >= pageCount;
+      };
+
+      calculateButton.addEventListener("click", () => {
+        const missingPrices = validatePrices();
+
+        if (missingPrices.length > 0) {
+          resultPagination.hidden = true;
+          efficiencyResultBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="9">
+                시세 입력이 비어 있어 계산할 수 없습니다. 누락: ${missingPrices.slice(0, 8).join(", ")}${missingPrices.length > 8 ? " 외" : ""}
+              </td>
+            </tr>
+          `;
+          activateTab("prices");
+          return;
+        }
+
+        const prices = getPriceMap();
+        const profile = getCurrentProfile();
+        efficiencyCandidates = buildEfficiencyRoadmap(profile, prices);
+        renderEfficiencyResults(efficiencyCandidates, 1);
+        activateTab("calculator");
+      });
+
+      prevResultPage.addEventListener("click", () => {
+        renderEfficiencyResults(efficiencyCandidates, currentResultPage - 1);
+      });
+
+      nextResultPage.addEventListener("click", () => {
+        renderEfficiencyResults(efficiencyCandidates, currentResultPage + 1);
+      });
+
+      savePricesButton.addEventListener("click", () => {
+        saveFieldGroup("price");
+        showSavedFeedback(savePricesButton, "시세 저장");
+      });
+
+      saveProfileButton.addEventListener("click", () => {
+        saveFieldGroup("profile");
+        showSavedFeedback(saveProfileButton, "스펙 저장");
+      });
+
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          activateTab(button.dataset.tab);
+        });
+      });
+    </script>
+  </body>
+</html>
