@@ -96,6 +96,7 @@
 
       .tab-panel.active {
         display: block;
+        animation: soft-rise 180ms ease-out;
       }
 
       .workspace {
@@ -250,6 +251,14 @@
         font-size: 14px;
       }
 
+      .inline-select {
+        width: auto;
+        min-width: 150px;
+        min-height: 32px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
       input.input-error,
       select.input-error {
         border-color: #d15151;
@@ -301,6 +310,10 @@
         text-align: right;
       }
 
+      .result-table tbody tr.row-changed {
+        animation: row-highlight 900ms ease-out;
+      }
+
       .result-empty {
         color: #7b8895;
         text-align: center !important;
@@ -314,6 +327,35 @@
       .profit-value {
         color: #176d7c;
         font-weight: 800;
+      }
+
+      @keyframes soft-rise {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes row-highlight {
+        from {
+          background: #fff4cf;
+        }
+
+        to {
+          background: transparent;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .tab-panel.active,
+        .result-table tbody tr.row-changed {
+          animation: none;
+        }
       }
 
       .pagination {
@@ -1271,6 +1313,9 @@
       const resultRowsPerPage = 10;
       let efficiencyCandidates = [];
       let currentResultPage = 1;
+      let engravingGradeOverrides = {};
+      let lastCalculationPrices = null;
+      let lastCalculationProfile = null;
       const defaultPriceValues = {
         "price.lowLifeStone": 13301,
         "price.midLifeStone": 44533,
@@ -1877,6 +1922,8 @@
         };
       };
 
+      const getEngravingOverrideKey = (effectName, nextLevel) => `${effectName}::${nextLevel}`;
+
       const getNextRodCandidate = (profile, prices) => {
         if (profile.rodLevel >= 15) {
           return null;
@@ -1927,7 +1974,30 @@
             return;
           }
 
-          engravingStoneGrades.forEach((grade) => {
+          const overrideKey = getEngravingOverrideKey(effect.name, nextLevel);
+          const gradeOptions = engravingStoneGrades
+            .map((grade) => {
+              const cost = getEngravingUpgradeCost(effect, nextLevel, grade, prices);
+              const nextProfile = cloneProfile(profile);
+              nextProfile.engravings[effect.name] = nextLevel;
+              const profitGain =
+                getExpectedRunProfit(nextProfile, prices) - getExpectedRunProfit(profile, prices);
+              const efficiency = cost.goldCost > 0 ? profitGain / cost.goldCost : 0;
+
+              return {
+                grade,
+                profitGain,
+                efficiency,
+                ...cost,
+              };
+            })
+            .sort((a, b) => b.efficiency - a.efficiency);
+          const bestGrade = gradeOptions[0]?.grade;
+          const selectedGrades = engravingGradeOverrides[overrideKey]
+            ? [engravingGradeOverrides[overrideKey]]
+            : engravingStoneGrades;
+
+          selectedGrades.forEach((grade) => {
             const nextProfile = cloneProfile(profile);
             nextProfile.engravings[effect.name] = nextLevel;
             const cost = getEngravingUpgradeCost(effect, nextLevel, grade, prices);
@@ -1940,6 +2010,10 @@
               current: `${currentLevel}레벨`,
               target: `${nextLevel}레벨`,
               apply: { type: "engraving", name: effect.name, level: nextLevel },
+              grade,
+              bestGrade,
+              overrideKey,
+              gradeOptions,
               profitGain,
               ...cost,
             });
@@ -2018,7 +2092,78 @@
         return roadmap;
       };
 
+      const getCandidateRowKey = (candidate) =>
+        [
+          candidate.category,
+          candidate.item,
+          candidate.current,
+          candidate.target,
+        ].join("|");
+
+      const getVisibleRowPositions = () => {
+        const positions = new Map();
+
+        efficiencyResultBody.querySelectorAll("tr[data-row-key]").forEach((row) => {
+          positions.set(row.dataset.rowKey, row.getBoundingClientRect());
+        });
+
+        return positions;
+      };
+
+      const animateRowMovement = (previousPositions) => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          return;
+        }
+
+        const transitionRow = (row, fromTransform, fromOpacity = "1") => {
+          row.style.transition = "none";
+          row.style.transform = fromTransform;
+          row.style.opacity = fromOpacity;
+
+          window.requestAnimationFrame(() => {
+            row.style.transition =
+              "transform 260ms cubic-bezier(0.2, 0, 0, 1), opacity 180ms ease-out";
+            row.style.transform = "translateY(0)";
+            row.style.opacity = "1";
+          });
+
+          window.setTimeout(() => {
+            row.style.transition = "";
+            row.style.transform = "";
+            row.style.opacity = "";
+          }, 280);
+        };
+
+        efficiencyResultBody.querySelectorAll("tr[data-row-key]").forEach((row) => {
+          const previousPosition = previousPositions.get(row.dataset.rowKey);
+
+          if (!previousPosition) {
+            row.classList.add("row-changed");
+            transitionRow(row, "translateY(8px)", "0");
+            return;
+          }
+
+          const currentPosition = row.getBoundingClientRect();
+          const deltaY = previousPosition.top - currentPosition.top;
+
+          if (Math.abs(deltaY) < 1) {
+            return;
+          }
+
+          row.classList.add("row-changed");
+          transitionRow(row, `translateY(${deltaY}px)`);
+        });
+
+        window.setTimeout(() => {
+          efficiencyResultBody
+            .querySelectorAll("tr.row-changed")
+            .forEach((row) => row.classList.remove("row-changed"));
+        }, 920);
+      };
+
       const renderEfficiencyResults = (candidates, page = 1) => {
+        const previousPositions = getVisibleRowPositions();
+
         if (!candidates.length) {
           resultPagination.hidden = true;
           efficiencyResultBody.innerHTML = `
@@ -2034,18 +2179,43 @@
         const startIndex = (currentResultPage - 1) * resultRowsPerPage;
         const pageCandidates = candidates.slice(startIndex, startIndex + resultRowsPerPage);
 
+        const renderDetailCell = (candidate) => {
+          if (candidate.category !== "각인석") {
+            return candidate.detail;
+          }
+
+          const options = candidate.gradeOptions
+            .map((option) => {
+              const selected = option.grade === candidate.grade ? "selected" : "";
+              const label =
+                option.grade === candidate.bestGrade
+                  ? `${option.grade} 각인 (효율 제일 좋음)`
+                  : `${option.grade} 각인`;
+
+              return `<option value="${option.grade}" ${selected}>${label}</option>`;
+            })
+            .join("");
+
+          return `
+            <select class="inline-select" data-engraving-override="${candidate.overrideKey}" aria-label="${candidate.item} 각인석 등급 선택">
+              ${options}
+            </select>
+          `;
+        };
+
         efficiencyResultBody.innerHTML = pageCandidates
           .map((candidate) => {
+            const rowKey = getCandidateRowKey(candidate);
             const costText =
               candidate.ruby > 0
                 ? `${formatNumber(Math.round(candidate.goldCost))} G / ${candidate.ruby.toFixed(1)} R`
                 : `${formatNumber(Math.round(candidate.goldCost))} G`;
 
             return `
-              <tr>
+              <tr data-row-key="${rowKey}">
                 <td>${candidate.order}</td>
                 <td>${candidate.category}</td>
-                <td>${candidate.detail}</td>
+                <td>${renderDetailCell(candidate)}</td>
                 <td>${candidate.item}</td>
                 <td>${candidate.current}</td>
                 <td>${candidate.target}</td>
@@ -2061,6 +2231,7 @@
         resultPageInfo.textContent = `${currentResultPage} / ${pageCount}`;
         prevResultPage.disabled = currentResultPage <= 1;
         nextResultPage.disabled = currentResultPage >= pageCount;
+        animateRowMovement(previousPositions);
       };
 
       calculateButton.addEventListener("click", () => {
@@ -2079,11 +2250,23 @@
           return;
         }
 
-        const prices = getPriceMap();
-        const profile = getCurrentProfile();
-        efficiencyCandidates = buildEfficiencyRoadmap(profile, prices);
+        lastCalculationPrices = getPriceMap();
+        lastCalculationProfile = getCurrentProfile();
+        efficiencyCandidates = buildEfficiencyRoadmap(lastCalculationProfile, lastCalculationPrices);
         renderEfficiencyResults(efficiencyCandidates, 1);
         activateTab("calculator");
+      });
+
+      efficiencyResultBody.addEventListener("change", (event) => {
+        const selector = event.target.closest("[data-engraving-override]");
+
+        if (!selector || !lastCalculationPrices || !lastCalculationProfile) {
+          return;
+        }
+
+        engravingGradeOverrides[selector.dataset.engravingOverride] = selector.value;
+        efficiencyCandidates = buildEfficiencyRoadmap(lastCalculationProfile, lastCalculationPrices);
+        renderEfficiencyResults(efficiencyCandidates, currentResultPage);
       });
 
       prevResultPage.addEventListener("click", () => {
