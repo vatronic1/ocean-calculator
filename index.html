@@ -296,6 +296,63 @@
         font-weight: 700;
       }
 
+      .calculator-control {
+        display: grid;
+        grid-template-columns: minmax(180px, 1fr) minmax(260px, 2fr);
+        gap: 16px;
+        align-items: center;
+        border: 1px solid #e1e9ef;
+        border-radius: 8px;
+        padding: 14px;
+        margin: 16px 0;
+        background: #f8fbfd;
+      }
+
+      .control-title {
+        display: block;
+        color: #17212b;
+        font-size: 14px;
+        font-weight: 900;
+      }
+
+      .control-subtitle {
+        display: block;
+        margin-top: 4px;
+        color: #667789;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .range-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+
+      input[type="range"] {
+        min-height: 24px;
+        padding: 0;
+        accent-color: #176d7c;
+      }
+
+      .range-value {
+        min-width: 52px;
+        color: #176d7c;
+        font-size: 18px;
+        font-weight: 900;
+        text-align: right;
+      }
+
+      .range-ticks {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        color: #718092;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
       .hidden {
         display: none;
       }
@@ -538,7 +595,8 @@
         }
 
         .summary-grid,
-        .form-grid {
+        .form-grid,
+        .calculator-control {
           grid-template-columns: 1fr;
         }
 
@@ -554,6 +612,9 @@
       <nav class="tabs" aria-label="주요 탭">
         <button class="tab-button" type="button" aria-selected="true" data-tab="calculator">
           계산기
+        </button>
+        <button class="tab-button" type="button" aria-selected="false" data-tab="engraving-efficiency">
+          각인석 효율
         </button>
         <button class="tab-button" type="button" aria-selected="false" data-tab="prices">
           시세 입력
@@ -597,6 +658,32 @@
               </div>
             </div>
 
+            <div class="calculator-control" aria-label="연금품 판매율 설정">
+              <div>
+                <span class="control-title">연금품 판매율</span>
+                <span class="control-subtitle">최고가 대비 판매 비율</span>
+              </div>
+              <div>
+                <div class="range-row">
+                  <input id="artifact-sale-rate" type="range" min="90" max="100" step="1" value="100" />
+                  <output class="range-value" id="artifact-sale-rate-value" for="artifact-sale-rate">100%</output>
+                </div>
+                <div class="range-ticks" aria-hidden="true">
+                  <span>90</span>
+                  <span>91</span>
+                  <span>92</span>
+                  <span>93</span>
+                  <span>94</span>
+                  <span>95</span>
+                  <span>96</span>
+                  <span>97</span>
+                  <span>98</span>
+                  <span>99</span>
+                  <span>100</span>
+                </div>
+              </div>
+            </div>
+
             <div class="table-wrap">
               <table class="result-table" aria-label="스펙업 효율 결과">
                 <thead>
@@ -623,6 +710,77 @@
               <button class="page-button" type="button" id="prev-result-page">이전</button>
               <span class="pagination-info" id="result-page-info">1 / 1</span>
               <button class="page-button" type="button" id="next-result-page">다음</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" data-panel="engraving-efficiency">
+        <div class="workspace">
+          <div class="panel-head">
+            <h2 class="panel-title">각인석 효율</h2>
+            <div class="panel-actions">
+              <span class="status-pill">각인석 비교</span>
+              <button class="secondary-button" type="button" id="engraving-efficiency-button">다시 계산</button>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="summary-grid" aria-label="각인석 효율 기준 요약">
+              <div class="metric">
+                <span class="metric-label">비교 기준</span>
+                <span class="metric-value">기대 성공비용</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">투박 성공확률</span>
+                <span class="metric-value">10%</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">단정 성공확률</span>
+                <span class="metric-value">20%</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">정교 성공확률</span>
+                <span class="metric-value">30%</span>
+              </div>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">손익분기 공식</h3>
+              <p class="muted-note">x는 같은 효과의 투박한 각인석 시세, C는 해당 각인 레벨의 계약서 비용입니다. 루비는 골드 환산하지 않고 별도 표시합니다.</p>
+              <div class="table-wrap">
+                <table aria-label="각인석 손익분기 공식">
+                  <thead>
+                    <tr>
+                      <th>목표 레벨</th>
+                      <th>계약서 비용 C</th>
+                      <th>투박한 기준</th>
+                      <th>단정한 기준가</th>
+                      <th>정교한 기준가</th>
+                    </tr>
+                  </thead>
+                  <tbody id="engraving-break-even-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">현재 시세 기준 비교</h3>
+              <div class="table-wrap">
+                <table class="result-table" aria-label="각인석 현재 시세 효율 비교">
+                  <thead>
+                    <tr>
+                      <th>효과</th>
+                      <th>목표 레벨</th>
+                      <th>투박한 기대비용</th>
+                      <th>단정한 기대비용</th>
+                      <th>정교한 기대비용</th>
+                      <th>추천</th>
+                      <th>단정/정교 기준가</th>
+                    </tr>
+                  </thead>
+                  <tbody id="engraving-efficiency-body"></tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -851,9 +1009,9 @@
                   <dt>어패류 채집</dt>
                   <dd>채집 1회당 스태미나 15 소모, 총 200회 채집 가능</dd>
                   <dt>채집 종류</dt>
-                  <dd>굴, 소라, 미역, 성게, 문어를 균등하게 채집. 각 종류별 40회</dd>
+                  <dd>굴, 소라, 미역, 성게, 문어를 균등 기준으로 계산. 개별 시세 모드에서는 5종 평균 가격 사용</dd>
                   <dt>어패류 등급</dt>
-                  <dd>낚싯대의 어패류 드롭 수만큼 나온 뒤, 각 드롭마다 1성 60%, 2성 30%, 3성 10%로 독립 판정</dd>
+                  <dd>낚싯대, 어패 행운, 심해 채집꾼, 어부 룰렛으로 얻는 어패류 각각에 등급 확률 적용</dd>
                   <dt>조개 획득</dt>
                   <dd>최종 조개 등장 확률로 등장 판정 후, 등장한 조개는 50% 확률로 인벤토리에 획득</dd>
                 </dl>
@@ -937,6 +1095,7 @@
                         <th>보상</th>
                         <th>확률</th>
                         <th>공예품</th>
+                        <th>제작 재료</th>
                         <th>최고 판매 가격</th>
                       </tr>
                     </thead>
@@ -1178,12 +1337,64 @@
           { reward: "깨진 조개껍데기", chance: 70, value: 0 },
         ],
         items: [
-          { pearl: "노란빛 진주", artifact: "조개껍데기 브로치", minSellPrice: 0, maxSellPrice: 50000 },
-          { pearl: "푸른빛 진주", artifact: "푸른 향수병", minSellPrice: 0, maxSellPrice: 150000 },
-          { pearl: "청록빛 진주", artifact: "자개 손거울", minSellPrice: 0, maxSellPrice: 300000 },
-          { pearl: "분홍빛 진주", artifact: "분홍 헤어핀", minSellPrice: 0, maxSellPrice: 500000 },
-          { pearl: "보라빛 진주", artifact: "자개 부채", minSellPrice: 0, maxSellPrice: 700000 },
-          { pearl: "흑진주", artifact: "흑진주 시계", minSellPrice: 0, maxSellPrice: 1000000 },
+          {
+            pearl: "노란빛 진주",
+            artifact: "조개껍데기 브로치",
+            minSellPrice: 0,
+            maxSellPrice: 50000,
+            craftMaterials: [{ key: "metal", name: "금속 재활용품", amount: 1 }],
+          },
+          {
+            pearl: "푸른빛 진주",
+            artifact: "푸른 향수병",
+            minSellPrice: 0,
+            maxSellPrice: 150000,
+            craftMaterials: [
+              { key: "resin", name: "합성수지 재활용품", amount: 1 },
+              { key: "plastic", name: "플라스틱 재활용품", amount: 1 },
+            ],
+          },
+          {
+            pearl: "청록빛 진주",
+            artifact: "자개 손거울",
+            minSellPrice: 0,
+            maxSellPrice: 300000,
+            craftMaterials: [
+              { key: "alloy", name: "합금 재활용품", amount: 2 },
+              { key: "plastic", name: "플라스틱 재활용품", amount: 2 },
+            ],
+          },
+          {
+            pearl: "분홍빛 진주",
+            artifact: "분홍 헤어핀",
+            minSellPrice: 0,
+            maxSellPrice: 500000,
+            craftMaterials: [
+              { key: "resin", name: "합성수지 재활용품", amount: 3 },
+              { key: "fiber", name: "섬유 재활용품", amount: 3 },
+            ],
+          },
+          {
+            pearl: "보라빛 진주",
+            artifact: "자개 부채",
+            minSellPrice: 0,
+            maxSellPrice: 700000,
+            craftMaterials: [
+              { key: "alloy", name: "합금 재활용품", amount: 5 },
+              { key: "resin", name: "합성수지 재활용품", amount: 5 },
+            ],
+          },
+          {
+            pearl: "흑진주",
+            artifact: "흑진주 시계",
+            minSellPrice: 0,
+            maxSellPrice: 1000000,
+            craftMaterials: [
+              { key: "alloy", name: "합금 재활용품", amount: 7 },
+              { key: "metal", name: "금속 재활용품", amount: 7 },
+              { key: "fiber", name: "섬유 재활용품", amount: 7 },
+            ],
+          },
         ],
       };
 
@@ -1245,19 +1456,19 @@
         }
 
         if (effect.effectType === "extraSeafoodDrop") {
-          return "채집 1회당 기대 어패류 +확률×1";
+          return "채집 횟수×(발동확률/100)×1개×어패류 1개 기대가";
         }
 
         if (effect.name === "정령 고래") {
-          return "채집 횟수×발동 확률×정령 고래 보상 기대값";
+          return "채집 횟수×발동확률×정령 고래 보상 기대값";
         }
 
         if (effect.name === "가오리 인도") {
-          return "채집 횟수×발동 확률×재활용품 평균가×3개";
+          return "채집 횟수×발동확률×재활용품 5종 평균가×평균 3개";
         }
 
         if (effect.name === "어부 룰렛") {
-          return "채집 횟수×발동 확률×19.25개×어패류 기대가";
+          return "채집 횟수×발동확률×19.25개×어패류 1개 기대가";
         }
 
         return "-";
@@ -1307,8 +1518,23 @@
       const prevResultPage = document.querySelector("#prev-result-page");
       const nextResultPage = document.querySelector("#next-result-page");
       const resultPageInfo = document.querySelector("#result-page-info");
+      const artifactSaleRateInput = document.querySelector("#artifact-sale-rate");
+      const artifactSaleRateValue = document.querySelector("#artifact-sale-rate-value");
+      const engravingEfficiencyButton = document.querySelector("#engraving-efficiency-button");
+      const engravingBreakEvenBody = document.querySelector("#engraving-break-even-body");
+      const engravingEfficiencyBody = document.querySelector("#engraving-efficiency-body");
 
       const formatNumber = (value) => value.toLocaleString("ko-KR");
+      const getArtifactItem = (artifactName) =>
+        artifactData.items.find((item) => item.artifact === artifactName);
+      const getCraftMaterialText = (artifactName) => {
+        const item = getArtifactItem(artifactName);
+        if (!item?.craftMaterials?.length) {
+          return "-";
+        }
+
+        return item.craftMaterials.map((material) => `${material.name} ${material.amount}개`).join(", ");
+      };
       const storageKey = "ocean-spec-calculator-inputs";
       const resultRowsPerPage = 10;
       let efficiencyCandidates = [];
@@ -1376,6 +1602,12 @@
       };
 
       const getSavedInputs = () => JSON.parse(localStorage.getItem(storageKey) || "{}");
+
+      const updateArtifactSaleRateLabel = () => {
+        artifactSaleRateValue.textContent = `${artifactSaleRateInput.value}%`;
+      };
+
+      const getArtifactSaleRateMultiplier = () => Number(artifactSaleRateInput.value || 100) / 100;
 
       const saveFieldGroup = (prefix) => {
         const savedInputs = getSavedInputs();
@@ -1504,6 +1736,8 @@
         .join("");
 
       loadSavedInputs();
+      artifactSaleRateInput.value = getSavedInputs()["setting.artifactSaleRate"] || "100";
+      updateArtifactSaleRateLabel();
       if (!currentRodLevel.value) {
         currentRodLevel.value = "1";
       }
@@ -1604,12 +1838,14 @@
             reward.value ??
             artifactData.items.find((item) => item.artifact === reward.artifact)?.maxSellPrice ??
             0;
+          const materials = reward.artifact ? getCraftMaterialText(reward.artifact) : "-";
 
           return `
             <tr>
               <td>${reward.reward}</td>
               <td>${reward.chance}%</td>
               <td>${artifact}</td>
+              <td>${materials}</td>
               <td>${formatNumber(value)} G</td>
             </tr>
           `;
@@ -1618,19 +1854,20 @@
 
       formulaList.innerHTML = [
         ["채집 횟수", "기본 스태미나 3000 / 채집 1회 스태미나 15 = 200회"],
-        ["어패류 1개 기대가", "1성가격×P(1성) + 2성가격×P(2성) + 3성가격×P(3성)"],
-        ["별별별 등급 확률", "1성=60/(100+보너스), 2성=30/(100+보너스), 3성=(10+보너스)/(100+보너스)"],
-        ["기본 어패류 수익", "채집 횟수 × (낚싯대 드롭수 + 어패 행운 기대드롭 + 심해 채집꾼 기대드롭 + 어부 룰렛 기대드롭) × 어패류 1개 기대가"],
-        ["어부 룰렛 기대드롭", "발동확률 × ((90% × 평균눈 3.5 × 5개) + (10% × 평균눈 3.5 × 10개)) = 발동확률 × 19.25개"],
-        ["조개 기대값", "Σ(조개 보상 확률 × 공예품 최고가 × 조개 좀 사조개 보너스). 깨진 조개껍데기=0G"],
+        ["어패류 1개 기대가", "1성가격×P(1성) + 2성가격×P(2성) + 3성가격×P(3성). 개별 시세 모드는 각 등급의 5종 평균 가격 사용"],
+        ["별별별 등급 확률", "3성 직접 확률 추가가 아니라 가중치 추가. 1성=60/(100+보너스), 2성=30/(100+보너스), 3성=(10+보너스)/(100+보너스)"],
+        ["어패류 수익", "채집 횟수 × (낚싯대 드롭수 + 어패 행운 기대드롭 + 심해 채집꾼 기대드롭 + 어부 룰렛 기대드롭) × 어패류 1개 기대가"],
+        ["어부 룰렛 기대드롭", "발동확률 × ((일반 주사위 90% × 평균눈 3.5 × 5개) + (골드 주사위 10% × 평균눈 3.5 × 10개)) = 발동확률 × 19.25개"],
+        ["연금품 판매가", "공예품 최고가 × 최고가 대비 판매율 × (1 + 조개 좀 사조개 증가율)"],
+        ["조개 기대값", "Σ(조개 보상 확률 × (연금품 판매가 - 제작 재활용품 재료비)). 깨진 조개껍데기=0G"],
         ["조개 수익", "채집 횟수 × 최종 조개 등장 확률 × 실제 획득 50% × 조개 기대값"],
-        ["정령 고래 수익", "채집 횟수 × 정령 고래 발동확률 × 정령 고래 보상 기대값"],
+        ["정령 고래 수익", "채집 횟수 × 정령 고래 발동확률 × 정령 고래 보상 기대값. 최고가 대비 판매율과 공예품 판매가 증가율은 반영, 완제품 보상이므로 제작 재료비는 차감하지 않음"],
         ["가오리 인도 수익", "채집 횟수 × 가오리 발동확률 × 재활용품 5종 평균가 × 평균 3개"],
-        ["낚싯대 기대비용", "단계별 1회 비용 × (100 / 성공확률). 수익 증가가 없는 강화는 다음 수익 증가 구간까지 묶음"],
-        ["각인 기대비용", "(각인석 시세 + 등급별 골드 + 계약서 수량×계약서 시세) × (100 / 각인석 성공확률), 루비는 별도 표시"],
+        ["낚싯대 기대비용", "묶인 구간의 단계별 1회 비용 합산. 각 단계 비용 = 1회 비용 × (100 / 성공확률), 실패 패널티 제외"],
+        ["각인 기대비용", "(선택한 각인석 시세 + 등급별 골드 + 계약서 수량×계약서 시세) × (100 / 각인석 성공확률), 루비는 별도 표시"],
         ["전문가 비용", "골드 + 어빌리티스톤×시세 + 스킬포인트×시세. 귀속 체크 시 스킬포인트 비용 제외"],
         ["효율", "기대수익 증가 / 기대비용. 표시는 100만G당 기대수익 증가로 변환"],
-        ["로드맵", "현재 가능한 후보만 계산 → 가장 효율 좋은 항목 적용 → 변경된 스펙 기준으로 반복"],
+        ["로드맵", "현재 스펙에서 게임상 가능한 후보만 계산 → 가장 효율 좋은 항목 적용 → 변경된 스펙 기준으로 반복"],
       ]
         .map(
           ([name, formula]) => `
@@ -1739,8 +1976,19 @@
           seafoodDrop: 1,
         };
 
-      const getArtifactPrice = (artifactName) =>
-        artifactData.items.find((item) => item.artifact === artifactName)?.maxSellPrice || 0;
+      const getArtifactPrice = (artifactName) => getArtifactItem(artifactName)?.maxSellPrice || 0;
+
+      const getCraftMaterialCost = (artifactName, prices) => {
+        const item = getArtifactItem(artifactName);
+        if (!item?.craftMaterials?.length) {
+          return 0;
+        }
+
+        return item.craftMaterials.reduce(
+          (sum, material) => sum + material.amount * (prices[`price.recycle.${material.key}`] || 0),
+          0,
+        );
+      };
 
       const getArtifactMultiplier = (profile) => {
         const artifactSellerLevel = profile.experts.artifactSeller || 0;
@@ -1749,29 +1997,28 @@
         return 1 + (artifactSellerData?.artifactValueBonus || 0) / 100;
       };
 
-      const getShellExpectedValue = (profile) => {
+      const getShellExpectedValue = (profile, prices) => {
         const artifactMultiplier = getArtifactMultiplier(profile);
+        const saleRateMultiplier = getArtifactSaleRateMultiplier();
 
         return artifactData.shellOpenRewards.reduce((sum, reward) => {
-          const value = reward.value ?? getArtifactPrice(reward.artifact) * artifactMultiplier;
+          const value =
+            reward.value ??
+            getArtifactPrice(reward.artifact) * saleRateMultiplier * artifactMultiplier -
+              getCraftMaterialCost(reward.artifact, prices);
           return sum + (reward.chance / 100) * value;
         }, 0);
       };
 
       const getSpiritWhaleExpectedValue = (profile) => {
         const artifactMultiplier = getArtifactMultiplier(profile);
+        const saleRateMultiplier = getArtifactSaleRateMultiplier();
 
         return engravingEffectData.spiritWhale.rewards.reduce((sum, reward) => {
-          const value = reward.value ?? getArtifactPrice(reward.name) * artifactMultiplier;
+          const value = reward.value ?? getArtifactPrice(reward.name) * saleRateMultiplier * artifactMultiplier;
           return sum + (reward.chance / 100) * reward.amount * value;
         }, 0);
       };
-
-      const getLegacyShellExpectedValue = () =>
-        artifactData.shellOpenRewards.reduce((sum, reward) => {
-          const value = reward.value ?? getArtifactPrice(reward.artifact);
-          return sum + (reward.chance / 100) * value;
-        }, 0);
 
       const getAverageSeafoodPrice = (prices, gradeRates) => {
         const mode = document.querySelector('input[name="seafood-price-mode"]:checked').value;
@@ -1830,7 +2077,7 @@
         const starStarStarData = getLevelData(expertSkillData.starStarStar, starStarStarLevel);
         const gradeRates = getSeafoodGradeRates(starStarStarData?.grade3WeightBonus || 0);
         const averageSeafoodPrice = getAverageSeafoodPrice(prices, gradeRates);
-        const shellExpectedValue = getShellExpectedValue(profile);
+        const shellExpectedValue = getShellExpectedValue(profile, prices);
         const spiritWhaleExpectedValue = getSpiritWhaleExpectedValue(profile);
         const recyclingAveragePrice = getRecyclingAveragePrice(prices);
         const baseSeafoodDrop = rodStats.seafoodDrop || 0;
@@ -1921,6 +2168,68 @@
           ruby: stone.ruby * expectedAttempts,
         };
       };
+
+      const getEngravingContractCost = (level, prices) =>
+        engravingContractByLevel[level] * (prices["price.tideSoulContract"] || 0);
+
+      const formatFormulaWithOffset = (baseText, offset) =>
+        offset > 0 ? `${baseText} + ${formatNumber(Math.round(offset))}` : baseText;
+
+      const renderEngravingStoneEfficiency = () => {
+        const prices = getPriceMap();
+
+        engravingBreakEvenBody.innerHTML = Object.entries(engravingContractByLevel)
+          .map(([level, contractAmount]) => {
+            const contractCost = contractAmount * (prices["price.tideSoulContract"] || 0);
+
+            return `
+              <tr>
+                <td>${level}레벨</td>
+                <td>${formatNumber(Math.round(contractCost))} G</td>
+                <td>x</td>
+                <td>${formatFormulaWithOffset("2x", contractCost)}</td>
+                <td>${formatFormulaWithOffset("3x", contractCost * 2)}</td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        const rows = Object.values(engravingEffectData).flatMap((effect) =>
+          effect.levels.map((levelData) => {
+            const level = levelData.level;
+            const roughPrice = prices[`price.engraving.투박한 ${effect.name} 각인석`] || 0;
+            const neatLimit = 2 * roughPrice + getEngravingContractCost(level, prices);
+            const preciseLimit = 3 * roughPrice + getEngravingContractCost(level, prices) * 2;
+            const gradeCosts = engravingStoneGrades.map((grade) => ({
+              grade,
+              ...getEngravingUpgradeCost(effect, level, grade, prices),
+            }));
+            const best = [...gradeCosts].sort((a, b) => a.goldCost - b.goldCost)[0];
+            const costCell = (grade) => {
+              const cost = gradeCosts.find((item) => item.grade === grade);
+              const className = cost.grade === best.grade ? ' class="profit-value"' : "";
+
+              return `<td${className}>${formatNumber(Math.round(cost.goldCost))} G / ${cost.ruby.toFixed(1)} R</td>`;
+            };
+
+            return `
+              <tr>
+                <td>${effect.name}</td>
+                <td>${level}레벨</td>
+                ${costCell("투박한")}
+                ${costCell("단정한")}
+                ${costCell("정교한")}
+                <td class="profit-value">${best.grade}</td>
+                <td>단정 ≤ ${formatNumber(Math.round(neatLimit))} G / 정교 ≤ ${formatNumber(Math.round(preciseLimit))} G</td>
+              </tr>
+            `;
+          }),
+        );
+
+        engravingEfficiencyBody.innerHTML = rows.join("");
+      };
+
+      renderEngravingStoneEfficiency();
 
       const getEngravingOverrideKey = (effectName, nextLevel) => `${effectName}::${nextLevel}`;
 
@@ -2184,7 +2493,10 @@
             return candidate.detail;
           }
 
-          const options = candidate.gradeOptions
+          const gradeOptionMap = new Map(candidate.gradeOptions.map((option) => [option.grade, option]));
+          const options = engravingStoneGrades
+            .map((grade) => gradeOptionMap.get(grade))
+            .filter(Boolean)
             .map((option) => {
               const selected = option.grade === candidate.grade ? "selected" : "";
               const label =
@@ -2257,6 +2569,20 @@
         activateTab("calculator");
       });
 
+      artifactSaleRateInput.addEventListener("input", () => {
+        const savedInputs = getSavedInputs();
+        savedInputs["setting.artifactSaleRate"] = artifactSaleRateInput.value;
+        localStorage.setItem(storageKey, JSON.stringify(savedInputs));
+        updateArtifactSaleRateLabel();
+
+        if (!lastCalculationPrices || !lastCalculationProfile) {
+          return;
+        }
+
+        efficiencyCandidates = buildEfficiencyRoadmap(lastCalculationProfile, lastCalculationPrices);
+        renderEfficiencyResults(efficiencyCandidates, currentResultPage);
+      });
+
       efficiencyResultBody.addEventListener("change", (event) => {
         const selector = event.target.closest("[data-engraving-override]");
 
@@ -2277,8 +2603,21 @@
         renderEfficiencyResults(efficiencyCandidates, currentResultPage + 1);
       });
 
+      engravingEfficiencyButton.addEventListener("click", () => {
+        renderEngravingStoneEfficiency();
+        engravingEfficiencyButton.textContent = "계산됨";
+        window.setTimeout(() => {
+          engravingEfficiencyButton.textContent = "다시 계산";
+        }, 1200);
+      });
+
+      document.querySelectorAll('[data-field^="price."]').forEach((field) => {
+        field.addEventListener("input", renderEngravingStoneEfficiency);
+      });
+
       savePricesButton.addEventListener("click", () => {
         saveFieldGroup("price");
+        renderEngravingStoneEfficiency();
         showSavedFeedback(savePricesButton, "시세 저장");
       });
 
