@@ -1638,6 +1638,7 @@
         return item.craftMaterials.map((material) => `${material.name} ${material.amount}개`).join(", ");
       };
       const storageKey = "ocean-spec-calculator-inputs";
+      const defaultPriceVersion = "2026-06-05-market-update-v1";
       const resultRowsPerPage = 10;
       let efficiencyCandidates = [];
       let currentResultPage = 1;
@@ -1708,6 +1709,27 @@
 
       const getSavedInputs = () => JSON.parse(localStorage.getItem(storageKey) || "{}");
 
+      const applyLatestDefaultPrices = () => {
+        const savedInputs = getSavedInputs();
+
+        if (savedInputs["system.defaultPriceVersion"] === defaultPriceVersion) {
+          return savedInputs;
+        }
+
+        Object.keys(savedInputs).forEach((key) => {
+          if (key.startsWith("price.")) {
+            delete savedInputs[key];
+          }
+        });
+
+        Object.assign(savedInputs, defaultPriceValues, {
+          "system.defaultPriceVersion": defaultPriceVersion,
+        });
+        localStorage.setItem(storageKey, JSON.stringify(savedInputs));
+
+        return savedInputs;
+      };
+
       const updateArtifactSaleRateLabel = () => {
         artifactSaleRateValue.textContent = `${artifactSaleRateInput.value}%`;
       };
@@ -1733,7 +1755,7 @@
       };
 
       const loadSavedInputs = () => {
-        const savedInputs = getSavedInputs();
+        const savedInputs = applyLatestDefaultPrices();
 
         document.querySelectorAll("[data-field]").forEach((field) => {
           if (
