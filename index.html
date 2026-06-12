@@ -371,6 +371,27 @@
         animation: row-highlight 900ms ease-out;
       }
 
+      .result-table tbody tr[data-row-key] {
+        cursor: pointer;
+      }
+
+      .result-table tbody tr[data-row-key]:hover td {
+        background: #f4f9fa;
+      }
+
+      .result-table tbody tr[data-row-key]:focus-visible {
+        outline: 2px solid #176d7c;
+        outline-offset: -2px;
+      }
+
+      .result-table tbody tr.selected-result td {
+        background: #edf7f8;
+      }
+
+      .result-table tbody tr.selected-result td:first-child {
+        box-shadow: inset 3px 0 #176d7c;
+      }
+
       .result-empty {
         color: #7b8895;
         text-align: center !important;
@@ -446,6 +467,150 @@
       .page-button:disabled {
         cursor: not-allowed;
         opacity: 0.45;
+      }
+
+      .efficiency-detail {
+        margin: 0 0 12px;
+        border: 1px solid #dbe5eb;
+        border-radius: 8px;
+        background: #ffffff;
+        animation: soft-rise 180ms ease-out;
+      }
+
+      .efficiency-detail[hidden] {
+        display: none;
+      }
+
+      .inline-evidence-row > td {
+        padding: 0 12px;
+        border-bottom: 1px solid #dbe5eb;
+        background: #f7fafb;
+      }
+
+      .inline-evidence-row:hover > td {
+        background: #f7fafb;
+      }
+
+      .efficiency-detail-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #e4ebf0;
+        background: #f7fafb;
+      }
+
+      .efficiency-detail-kicker {
+        display: inline-block;
+        margin-bottom: 5px;
+        color: #176d7c;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .efficiency-detail-title {
+        margin: 0;
+        color: #17212b;
+        font-size: 19px;
+        letter-spacing: 0;
+      }
+
+      .efficiency-detail-subtitle {
+        margin: 6px 0 0;
+        color: #637486;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .detail-close-button {
+        flex: 0 0 34px;
+        width: 34px;
+        min-height: 34px;
+        border: 1px solid #ccd7df;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #526373;
+        font: inherit;
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .efficiency-detail-body {
+        padding: 18px 20px 20px;
+      }
+
+      .evidence-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        overflow: hidden;
+        border: 1px solid #dde6ec;
+        border-radius: 7px;
+        background: #dde6ec;
+      }
+
+      .evidence-metric {
+        display: grid;
+        gap: 5px;
+        min-height: 82px;
+        padding: 14px;
+        background: #fbfcfd;
+      }
+
+      .evidence-metric-label {
+        color: #6b7a89;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .evidence-metric-value {
+        align-self: end;
+        color: #17212b;
+        font-size: 17px;
+        font-weight: 900;
+      }
+
+      .evidence-metric-value.positive {
+        color: #176d7c;
+      }
+
+      .evidence-section {
+        margin-top: 20px;
+      }
+
+      .evidence-section-title {
+        margin: 0 0 9px;
+        color: #263746;
+        font-size: 14px;
+        letter-spacing: 0;
+      }
+
+      .evidence-table th,
+      .evidence-table td {
+        text-align: right;
+      }
+
+      .evidence-table th:first-child,
+      .evidence-table td:first-child {
+        text-align: left;
+      }
+
+      .evidence-delta {
+        color: #176d7c;
+        font-weight: 900;
+      }
+
+      .evidence-note {
+        margin: 14px 0 0;
+        padding: 11px 13px;
+        border-left: 3px solid #8ab6bd;
+        background: #f5f9fa;
+        color: #526474;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.55;
       }
 
       .admin-layout {
@@ -600,6 +765,16 @@
           grid-template-columns: 1fr;
         }
 
+        .efficiency-detail-head,
+        .efficiency-detail-body {
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+
+        .evidence-summary {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
       }
     </style>
   </head>
@@ -713,6 +888,51 @@
               <button class="page-button" type="button" id="prev-result-page">이전</button>
               <span class="pagination-info" id="result-page-info">1 / 1</span>
               <button class="page-button" type="button" id="next-result-page">다음</button>
+            </div>
+            <div id="efficiency-detail-home">
+              <section class="efficiency-detail" id="efficiency-detail" aria-live="polite" hidden>
+                <div class="efficiency-detail-head">
+                  <div>
+                    <span class="efficiency-detail-kicker" id="efficiency-detail-kicker">스펙업 근거</span>
+                    <h3 class="efficiency-detail-title" id="efficiency-detail-title"></h3>
+                    <p class="efficiency-detail-subtitle" id="efficiency-detail-subtitle"></p>
+                  </div>
+                  <button
+                    class="detail-close-button"
+                    type="button"
+                    id="efficiency-detail-close"
+                    aria-label="스펙업 근거 닫기"
+                    title="닫기"
+                  >×</button>
+                </div>
+                <div class="efficiency-detail-body">
+                  <div class="evidence-summary" id="efficiency-evidence-summary"></div>
+
+                  <div class="evidence-section">
+                    <h4 class="evidence-section-title">기대 수익 증가 근거</h4>
+                    <div class="table-wrap">
+                      <table class="evidence-table" aria-label="기대 수익 증가 근거">
+                        <thead>
+                          <tr>
+                            <th>수익원</th>
+                            <th>적용 전</th>
+                            <th>적용 후</th>
+                            <th>증가분</th>
+                          </tr>
+                        </thead>
+                        <tbody id="efficiency-profit-evidence"></tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="evidence-section">
+                    <h4 class="evidence-section-title">기대 비용 계산 근거</h4>
+                    <div id="efficiency-cost-evidence"></div>
+                  </div>
+
+                  <p class="evidence-note" id="efficiency-detail-note"></p>
+                </div>
+              </section>
             </div>
           </div>
         </div>
@@ -1613,6 +1833,16 @@
       const prevResultPage = document.querySelector("#prev-result-page");
       const nextResultPage = document.querySelector("#next-result-page");
       const resultPageInfo = document.querySelector("#result-page-info");
+      const efficiencyDetailHome = document.querySelector("#efficiency-detail-home");
+      const efficiencyDetail = document.querySelector("#efficiency-detail");
+      const efficiencyDetailKicker = document.querySelector("#efficiency-detail-kicker");
+      const efficiencyDetailTitle = document.querySelector("#efficiency-detail-title");
+      const efficiencyDetailSubtitle = document.querySelector("#efficiency-detail-subtitle");
+      const efficiencyDetailClose = document.querySelector("#efficiency-detail-close");
+      const efficiencyEvidenceSummary = document.querySelector("#efficiency-evidence-summary");
+      const efficiencyProfitEvidence = document.querySelector("#efficiency-profit-evidence");
+      const efficiencyCostEvidence = document.querySelector("#efficiency-cost-evidence");
+      const efficiencyDetailNote = document.querySelector("#efficiency-detail-note");
       const artifactSaleRateInput = document.querySelector("#artifact-sale-rate");
       const artifactSaleRateValue = document.querySelector("#artifact-sale-rate-value");
       const engravingEfficiencyButton = document.querySelector("#engraving-efficiency-button");
@@ -1645,6 +1875,7 @@
       let engravingGradeOverrides = {};
       let lastCalculationPrices = null;
       let lastCalculationProfile = null;
+      let selectedEfficiencyRowKey = null;
       let lastIncomePrices = null;
       let lastIncomeProfile = null;
       const defaultPriceValues = {
@@ -2742,8 +2973,10 @@
           }
 
           const selected = candidates[0];
-          roadmap.push({ ...selected, order: step });
+          const beforeProfile = cloneProfile(workingProfile);
           applyUpgradeToProfile(workingProfile, selected);
+          const afterProfile = cloneProfile(workingProfile);
+          roadmap.push({ ...selected, order: step, beforeProfile, afterProfile });
         }
 
         return roadmap;
@@ -2756,6 +2989,277 @@
           candidate.current,
           candidate.target,
         ].join("|");
+
+      const resetEfficiencyDetailPlacement = () => {
+        const inlineRow = efficiencyResultBody.querySelector(".inline-evidence-row");
+
+        if (efficiencyDetail.parentElement !== efficiencyDetailHome) {
+          efficiencyDetailHome.append(efficiencyDetail);
+        }
+
+        inlineRow?.remove();
+      };
+
+      const closeEfficiencyDetail = () => {
+        selectedEfficiencyRowKey = null;
+        efficiencyDetail.hidden = true;
+        resetEfficiencyDetailPlacement();
+        efficiencyResultBody
+          .querySelectorAll("tr.selected-result")
+          .forEach((row) => {
+            row.classList.remove("selected-result");
+            row.setAttribute("aria-selected", "false");
+          });
+      };
+
+      const renderEvidenceTable = (headers, rows, label) => `
+        <div class="table-wrap">
+          <table class="evidence-table" aria-label="${label}">
+            <thead>
+              <tr>${headers.map((header) => `<th>${header}</th>`).join("")}</tr>
+            </thead>
+            <tbody>
+              ${rows
+                .map(
+                  (row) => `
+                    <tr>
+                      ${row.map((cell, index) => `<td${index === row.length - 1 ? ' class="evidence-delta"' : ""}>${cell}</td>`).join("")}
+                    </tr>
+                  `,
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      const renderRodCostEvidence = (candidate, prices) => {
+        const startLevel = candidate.beforeProfile.rodLevel;
+        const targetLevel = candidate.afterProfile.rodLevel;
+        const rows = [];
+
+        for (let level = startLevel + 1; level <= targetLevel; level += 1) {
+          const data = fishingRodEnhancementData.find((item) => item.level === level);
+          const materials = [
+            data.lowStone ? `하급 ${data.lowStone}개` : "",
+            data.midStone ? `중급 ${data.midStone}개` : "",
+            data.highStone ? `상급 ${data.highStone}개` : "",
+          ]
+            .filter(Boolean)
+            .join(", ");
+          const attemptCost =
+            data.gold +
+            data.lowStone * prices["price.lowLifeStone"] +
+            data.midStone * prices["price.midLifeStone"] +
+            data.highStone * prices["price.highLifeStone"];
+          const expectedAttempts = 100 / data.successRate;
+          const expectedCost = attemptCost * expectedAttempts;
+
+          rows.push([
+            `${level - 1}강 → ${level}강`,
+            materials || "-",
+            formatGold(attemptCost),
+            `${data.successRate}%`,
+            `${expectedAttempts.toFixed(2)}회`,
+            `${formatGold(expectedCost)}${data.ruby ? ` / ${(data.ruby * expectedAttempts).toFixed(1)} R` : ""}`,
+          ]);
+        }
+
+        return renderEvidenceTable(
+          ["단계", "1회 재료", "1회 비용", "성공률", "기대 시도", "단계 기대비용"],
+          rows,
+          "낚싯대 강화 기대비용",
+        );
+      };
+
+      const renderEngravingCostEvidence = (candidate, prices) => {
+        const effect = Object.values(engravingEffectData).find(
+          (item) => item.name === candidate.apply.name,
+        );
+        const stone = engravingStoneData[candidate.grade];
+        const level = candidate.apply.level;
+        const itemName = `${candidate.grade} ${effect.name} 각인석`;
+        const stonePrice = prices[`price.engraving.${itemName}`];
+        const attemptGold = engravingAttemptGoldByRarity[effect.rarity][candidate.grade];
+        const contractAmount = engravingContractByLevel[level];
+        const contractCost = contractAmount * prices["price.tideSoulContract"];
+        const attemptTotal = stonePrice + attemptGold + contractCost;
+        const expectedAttempts = 100 / stone.successRate;
+
+        return renderEvidenceTable(
+          ["비용 항목", "수량·기준", "단가", "1회 금액"],
+          [
+            [`${candidate.grade} 각인석`, "1개", formatGold(stonePrice), formatGold(stonePrice)],
+            ["각인 시도 골드", `${effect.rarity} 등급`, "-", formatGold(attemptGold)],
+            [
+              "만조의 영혼 계약서",
+              `${contractAmount}장`,
+              formatGold(prices["price.tideSoulContract"]),
+              formatGold(contractCost),
+            ],
+            ["1회 시도 합계", "-", "-", formatGold(attemptTotal)],
+            [
+              "성공까지 기대비용",
+              `${stone.successRate}% · ${expectedAttempts.toFixed(2)}회`,
+              "-",
+              `${formatGold(candidate.goldCost)} / ${candidate.ruby.toFixed(1)} R`,
+            ],
+          ],
+          "각인석 기대비용",
+        );
+      };
+
+      const renderExpertCostEvidence = (candidate, prices) => {
+        const skill = expertSkillData[candidate.apply.key];
+        const levelData = skill.levels[candidate.apply.level - 1];
+        const skillPointBound = Boolean(prices["price.skillPointBound"]);
+        const skillPointCost = skillPointBound
+          ? 0
+          : levelData.skillPoint * prices["price.skillPoint"];
+        const abilityStoneCost = levelData.abilityStone * prices["price.abilityStone"];
+
+        return renderEvidenceTable(
+          ["비용 항목", "수량", "단가", "금액"],
+          [
+            ["기본 골드", "-", "-", formatGold(levelData.gold)],
+            [
+              "어빌리티 스톤",
+              `${levelData.abilityStone}개`,
+              formatGold(prices["price.abilityStone"]),
+              formatGold(abilityStoneCost),
+            ],
+            [
+              `스킬 포인트${skillPointBound ? " (귀속)" : ""}`,
+              `${levelData.skillPoint} Point`,
+              skillPointBound ? "0 G" : formatGold(prices["price.skillPoint"]),
+              formatGold(skillPointCost),
+            ],
+            ["합계", "-", "-", formatGold(candidate.goldCost)],
+          ],
+          "전문가 기대비용",
+        );
+      };
+
+      const renderEfficiencyEvidence = (candidate) => {
+        if (!candidate?.beforeProfile || !candidate?.afterProfile || !lastCalculationPrices) {
+          return;
+        }
+
+        selectedEfficiencyRowKey = getCandidateRowKey(candidate);
+        const before = getIncomeBreakdown(candidate.beforeProfile, lastCalculationPrices);
+        const after = getIncomeBreakdown(candidate.afterProfile, lastCalculationPrices);
+        const profitRows = [
+          ["어패류", before.seafoodProfit, after.seafoodProfit],
+          ["조개 공예품", before.shellProfit, after.shellProfit],
+          ["정령 고래 완제품", before.spiritWhaleProfit, after.spiritWhaleProfit],
+          ["가오리 인도 재활용품", before.rayGuideProfit, after.rayGuideProfit],
+          ["총 기대 수익", before.totalProfit, after.totalProfit],
+        ];
+
+        efficiencyDetailKicker.textContent = `${candidate.order}순위 · ${candidate.category}`;
+        efficiencyDetailTitle.textContent = `${candidate.item} ${candidate.current} → ${candidate.target}`;
+        efficiencyDetailSubtitle.textContent =
+          "이 단계 직전의 스펙을 기준으로 3000 스태미나 사용 시 변화를 계산했습니다.";
+        efficiencyEvidenceSummary.innerHTML = [
+          ["기대 수익 증가", `+${formatGold(candidate.profitGain)}`, "positive"],
+          ["기대 비용", formatGold(candidate.goldCost), ""],
+          ["효율", `${(candidate.efficiency * 1000000).toFixed(2)} / 100만G`, "positive"],
+          ["기대 루비", candidate.ruby > 0 ? `${candidate.ruby.toFixed(1)} R` : "없음", ""],
+        ]
+          .map(
+            ([label, value, className]) => `
+              <div class="evidence-metric">
+                <span class="evidence-metric-label">${label}</span>
+                <strong class="evidence-metric-value ${className}">${value}</strong>
+              </div>
+            `,
+          )
+          .join("");
+        efficiencyProfitEvidence.innerHTML = profitRows
+          .map(([label, beforeValue, afterValue]) => {
+            const delta = afterValue - beforeValue;
+
+            return `
+              <tr>
+                <td>${label}</td>
+                <td>${formatGold(beforeValue)}</td>
+                <td>${formatGold(afterValue)}</td>
+                <td class="evidence-delta">${delta > 0 ? "+" : ""}${formatGold(delta)}</td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        if (candidate.apply.type === "rod") {
+          efficiencyCostEvidence.innerHTML = renderRodCostEvidence(candidate, lastCalculationPrices);
+          efficiencyDetailNote.textContent =
+            "낚싯대는 순서대로 강화합니다. 수익이 오르지 않는 중간 강화가 있으면, 다음 수익 증가 구간까지의 모든 단계 기대비용을 합산합니다. 실패 패널티는 없으며 각 단계의 성공률로 기대 시도 횟수를 계산합니다.";
+        }
+
+        if (candidate.apply.type === "engraving") {
+          efficiencyCostEvidence.innerHTML = renderEngravingCostEvidence(
+            candidate,
+            lastCalculationPrices,
+          );
+          efficiencyDetailNote.textContent =
+            "각인석 시세, 효과 등급별 시도 골드, 목표 레벨의 계약서 비용을 1회 비용에 포함한 뒤 선택한 각인석의 성공률로 기대비용을 계산합니다. 실패 패널티는 없습니다.";
+        }
+
+        if (candidate.apply.type === "expert") {
+          efficiencyCostEvidence.innerHTML = renderExpertCostEvidence(
+            candidate,
+            lastCalculationPrices,
+          );
+          efficiencyDetailNote.textContent = lastCalculationPrices["price.skillPointBound"]
+            ? "스킬 포인트가 귀속으로 설정되어 있어 스킬 포인트의 골드 가치는 0 G로 계산했습니다."
+            : "전문가 비용은 기본 골드, 어빌리티 스톤 시세, 스킬 포인트 시세를 합산합니다.";
+        }
+
+        efficiencyResultBody.querySelectorAll("tr[data-row-key]").forEach((row) => {
+          const selected = row.dataset.rowKey === selectedEfficiencyRowKey;
+          row.classList.toggle("selected-result", selected);
+          row.setAttribute("aria-selected", String(selected));
+        });
+
+        const selectedRow = efficiencyResultBody.querySelector(
+          `tr[data-row-key="${CSS.escape(selectedEfficiencyRowKey)}"]`,
+        );
+
+        if (!selectedRow) {
+          closeEfficiencyDetail();
+          return;
+        }
+
+        resetEfficiencyDetailPlacement();
+        const detailRow = document.createElement("tr");
+        const detailCell = document.createElement("td");
+        detailRow.className = "inline-evidence-row";
+        detailCell.colSpan = 9;
+        detailCell.append(efficiencyDetail);
+        detailRow.append(detailCell);
+        selectedRow.after(detailRow);
+        efficiencyDetail.hidden = false;
+      };
+
+      const refreshSelectedEfficiencyEvidence = () => {
+        if (!selectedEfficiencyRowKey) {
+          return;
+        }
+
+        const candidate = efficiencyCandidates.find(
+          (item) => getCandidateRowKey(item) === selectedEfficiencyRowKey,
+        );
+
+        const visibleRow = efficiencyResultBody.querySelector(
+          `tr[data-row-key="${CSS.escape(selectedEfficiencyRowKey)}"]`,
+        );
+
+        if (candidate && visibleRow) {
+          renderEfficiencyEvidence(candidate);
+        } else {
+          closeEfficiencyDetail();
+        }
+      };
 
       const getVisibleRowPositions = () => {
         const positions = new Map();
@@ -2820,6 +3324,7 @@
 
       const renderEfficiencyResults = (candidates, page = 1) => {
         const previousPositions = getVisibleRowPositions();
+        resetEfficiencyDetailPlacement();
 
         if (!candidates.length) {
           resultPagination.hidden = true;
@@ -2828,6 +3333,7 @@
               <td class="result-empty" colspan="9">현재 입력값 기준으로 표시할 수 있는 다음 스펙업 후보가 없습니다.</td>
             </tr>
           `;
+          closeEfficiencyDetail();
           return;
         }
 
@@ -2872,7 +3378,14 @@
                 : `${formatNumber(Math.round(candidate.goldCost))} G`;
 
             return `
-              <tr data-row-key="${rowKey}">
+              <tr
+                data-row-key="${rowKey}"
+                tabindex="0"
+                role="button"
+                aria-label="${candidate.item} ${candidate.current}에서 ${candidate.target} 상세 근거 보기"
+                aria-selected="${rowKey === selectedEfficiencyRowKey}"
+                class="${rowKey === selectedEfficiencyRowKey ? "selected-result" : ""}"
+              >
                 <td>${candidate.order}</td>
                 <td>${candidate.category}</td>
                 <td>${renderDetailCell(candidate)}</td>
@@ -2892,12 +3405,14 @@
         prevResultPage.disabled = currentResultPage <= 1;
         nextResultPage.disabled = currentResultPage >= pageCount;
         animateRowMovement(previousPositions);
+        refreshSelectedEfficiencyEvidence();
       };
 
       calculateButton.addEventListener("click", () => {
         const missingPrices = validatePrices();
 
         if (missingPrices.length > 0) {
+          closeEfficiencyDetail();
           resultPagination.hidden = true;
           efficiencyResultBody.innerHTML = `
             <tr>
@@ -2912,6 +3427,7 @@
 
         lastCalculationPrices = getPriceMap();
         lastCalculationProfile = getCurrentProfile();
+        closeEfficiencyDetail();
         efficiencyCandidates = buildEfficiencyRoadmap(lastCalculationProfile, lastCalculationPrices);
         renderEfficiencyResults(efficiencyCandidates, 1);
         activateTab("calculator");
@@ -2949,11 +3465,49 @@
         renderEfficiencyResults(efficiencyCandidates, currentResultPage);
       });
 
+      const openEvidenceFromRow = (row) => {
+        const candidate = efficiencyCandidates.find(
+          (item) => getCandidateRowKey(item) === row.dataset.rowKey,
+        );
+
+        if (candidate) {
+          renderEfficiencyEvidence(candidate);
+          efficiencyDetail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      };
+
+      efficiencyResultBody.addEventListener("click", (event) => {
+        if (event.target.closest("select, button, input, a")) {
+          return;
+        }
+
+        const row = event.target.closest("tr[data-row-key]");
+        if (row) {
+          openEvidenceFromRow(row);
+        }
+      });
+
+      efficiencyResultBody.addEventListener("keydown", (event) => {
+        if (!["Enter", " "].includes(event.key) || event.target.closest("select, button, input, a")) {
+          return;
+        }
+
+        const row = event.target.closest("tr[data-row-key]");
+        if (row) {
+          event.preventDefault();
+          openEvidenceFromRow(row);
+        }
+      });
+
+      efficiencyDetailClose.addEventListener("click", closeEfficiencyDetail);
+
       prevResultPage.addEventListener("click", () => {
+        closeEfficiencyDetail();
         renderEfficiencyResults(efficiencyCandidates, currentResultPage - 1);
       });
 
       nextResultPage.addEventListener("click", () => {
+        closeEfficiencyDetail();
         renderEfficiencyResults(efficiencyCandidates, currentResultPage + 1);
       });
 
