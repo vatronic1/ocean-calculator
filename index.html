@@ -407,6 +407,39 @@
         font-weight: 800;
       }
 
+      .comparison-verdict {
+        margin-bottom: 18px;
+        padding: 16px 18px;
+        border: 1px solid #b9d8dd;
+        border-left: 4px solid #167f92;
+        border-radius: 7px;
+        background: #f2f9fa;
+      }
+
+      .comparison-verdict strong {
+        display: block;
+        color: #143b43;
+        font-size: 17px;
+      }
+
+      .comparison-verdict p {
+        margin: 7px 0 0;
+        color: #526474;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.55;
+      }
+
+      .compact-price-input {
+        min-width: 110px;
+        text-align: right;
+      }
+
+      .comparison-best-row td {
+        background: #edf7f8;
+        font-weight: 800;
+      }
+
       @keyframes soft-rise {
         from {
           opacity: 0;
@@ -791,6 +824,9 @@
         <button class="tab-button" type="button" aria-selected="false" data-tab="income">
           수익 계산
         </button>
+        <button class="tab-button" type="button" aria-selected="false" data-tab="seafood-trade">
+          어패류 판매 비교
+        </button>
         <button class="tab-button" type="button" aria-selected="false" data-tab="engraving-efficiency">
           각인석 효율
         </button>
@@ -1010,6 +1046,116 @@
                 </table>
               </div>
               <p class="muted-note">정령 고래와 가오리 인도는 이벤트성 수익이지만 현재 입력한 각인 레벨 기준 기대값에 포함합니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" data-panel="seafood-trade">
+        <div class="workspace">
+          <div class="panel-head">
+            <h2 class="panel-title">어패류 판매 비교</h2>
+            <div class="panel-actions">
+              <span class="status-pill">3000 스태미나</span>
+              <button class="secondary-button" type="button" id="save-trade-prices-button">가격 저장</button>
+              <button class="primary-button" type="button" id="seafood-trade-calculate-button">비교 계산</button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">고정거래 가격</h3>
+            <p class="muted-note">5종을 골고루 채집했을 때 적용하며, 입력값은 등급별 어패류 1개 가격이고 판매 수수료가 없습니다.</p>
+            <div class="form-grid">
+              <div class="field">
+                <label for="trade-fixed-grade1">1성 고정거래 가격</label>
+                <input id="trade-fixed-grade1" data-field="trade.fixed.grade1" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="trade-fixed-grade2">2성 고정거래 가격</label>
+                <input id="trade-fixed-grade2" data-field="trade.fixed.grade2" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="trade-fixed-grade3">3성 고정거래 가격</label>
+                <input id="trade-fixed-grade3" data-field="trade.fixed.grade3" type="number" min="0" placeholder="골드" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">종류별 개별판매 가격</h3>
+            <p class="muted-note">개별판매는 입력 가격에서 판매 수수료 5%를 차감하여 계산합니다.</p>
+            <div class="table-wrap">
+              <table aria-label="어패류 종류별 개별판매 가격">
+                <thead>
+                  <tr>
+                    <th>어패류</th>
+                    <th>1성 가격</th>
+                    <th>2성 가격</th>
+                    <th>3성 가격</th>
+                  </tr>
+                </thead>
+                <tbody id="trade-market-price-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="section-body" id="seafood-trade-results" hidden>
+            <div class="comparison-verdict" id="seafood-trade-verdict"></div>
+
+            <div class="summary-grid" aria-label="어패류 판매 비교 요약">
+              <div class="metric">
+                <span class="metric-label">총 기대 어패류</span>
+                <span class="metric-value" id="trade-total-count">-</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">5종 고정거래</span>
+                <span class="metric-value" id="trade-fixed-profit">-</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">5종 개별판매</span>
+                <span class="metric-value" id="trade-balanced-profit">-</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">최고 집중 채집</span>
+                <span class="metric-value" id="trade-best-profit">-</span>
+              </div>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">판매 방식별 비교</h3>
+              <div class="table-wrap">
+                <table class="result-table" aria-label="어패류 판매 방식별 수익 비교">
+                  <thead>
+                    <tr>
+                      <th>판매 방식</th>
+                      <th>채집 구성</th>
+                      <th>판매 총액</th>
+                      <th>수수료</th>
+                      <th>최종 수익</th>
+                      <th>고정거래 대비</th>
+                    </tr>
+                  </thead>
+                  <tbody id="seafood-trade-result-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">등급별 기대 개수</h3>
+              <div class="table-wrap">
+                <table aria-label="판매 비교 등급별 기대 개수">
+                  <thead>
+                    <tr>
+                      <th>등급</th>
+                      <th>적용 확률</th>
+                      <th>전체 기대 개수</th>
+                      <th>5종 균등 시 종류당</th>
+                    </tr>
+                  </thead>
+                  <tbody id="seafood-trade-grade-body"></tbody>
+                </table>
+              </div>
+              <p class="muted-note">현재 정보 입력 탭의 낚싯대, 어패 행운, 심해 채집꾼, 별별별!, 어부 룰렛 레벨을 반영합니다.</p>
             </div>
           </div>
         </div>
@@ -1855,6 +2001,17 @@
       const incomeRecycle = document.querySelector("#income-recycle");
       const incomeBreakdownBody = document.querySelector("#income-breakdown-body");
       const incomeGradeBody = document.querySelector("#income-grade-body");
+      const tradeMarketPriceBody = document.querySelector("#trade-market-price-body");
+      const saveTradePricesButton = document.querySelector("#save-trade-prices-button");
+      const seafoodTradeCalculateButton = document.querySelector("#seafood-trade-calculate-button");
+      const seafoodTradeResults = document.querySelector("#seafood-trade-results");
+      const seafoodTradeVerdict = document.querySelector("#seafood-trade-verdict");
+      const tradeTotalCount = document.querySelector("#trade-total-count");
+      const tradeFixedProfit = document.querySelector("#trade-fixed-profit");
+      const tradeBalancedProfit = document.querySelector("#trade-balanced-profit");
+      const tradeBestProfit = document.querySelector("#trade-best-profit");
+      const seafoodTradeResultBody = document.querySelector("#seafood-trade-result-body");
+      const seafoodTradeGradeBody = document.querySelector("#seafood-trade-grade-body");
 
       const formatNumber = (value) => value.toLocaleString("ko-KR");
       const getArtifactItem = (artifactName) =>
@@ -2005,7 +2162,9 @@
       };
 
       const formatPriceFields = () => {
-        document.querySelectorAll('[data-field^="price."]').forEach((field) => {
+        document
+          .querySelectorAll('[data-field^="price."], [data-field^="trade."]')
+          .forEach((field) => {
           if (field.type === "checkbox") {
             return;
           }
@@ -2051,6 +2210,36 @@
               </div>
             `;
           }),
+        )
+        .join("");
+
+      tradeMarketPriceBody.innerHTML = oceanGatheringRules.seafoodTypes
+        .map(
+          (seafood) => `
+            <tr>
+              <td>${seafood}</td>
+              ${[1, 2, 3]
+                .map((grade) => {
+                  const id = `trade-${createSafeId(seafood)}-grade${grade}`;
+
+                  return `
+                    <td>
+                      <label class="hidden" for="${id}">${seafood} ${grade}성 개별판매 가격</label>
+                      <input
+                        class="compact-price-input"
+                        id="${id}"
+                        data-field="trade.market.${seafood}.grade${grade}"
+                        type="number"
+                        min="0"
+                        placeholder="골드"
+                        aria-label="${seafood} ${grade}성 개별판매 가격"
+                      />
+                    </td>
+                  `;
+                })
+                .join("")}
+            </tr>
+          `,
         )
         .join("");
 
@@ -2335,6 +2524,57 @@
           seafoodDrop: 1,
         };
 
+      const getExpectedSeafoodProduction = (profile) => {
+        const gatherCount = oceanGatheringRules.baseStamina / oceanGatheringRules.staminaCostPerGather;
+        const rodStats = getRodStats(profile.rodLevel);
+        const seafoodLuckLevel = profile.engravings[engravingEffectData.seafoodLuck.name] || 0;
+        const fisherRouletteLevel =
+          profile.engravings[engravingEffectData.fisherRoulette.name] || 0;
+        const deepSeaGathererLevel = profile.experts.deepSeaGatherer || 0;
+        const starStarStarLevel = profile.experts.starStarStar || 0;
+        const seafoodLuckData = getLevelData(
+          engravingEffectData.seafoodLuck,
+          seafoodLuckLevel,
+        );
+        const fisherRouletteData = getLevelData(
+          engravingEffectData.fisherRoulette,
+          fisherRouletteLevel,
+        );
+        const deepSeaGathererData = getLevelData(
+          expertSkillData.deepSeaGatherer,
+          deepSeaGathererLevel,
+        );
+        const starStarStarData = getLevelData(expertSkillData.starStarStar, starStarStarLevel);
+        const rouletteDrop = fisherRouletteData
+          ? (fisherRouletteData.chance / 100) *
+            (((1 - engravingEffectData.fisherRoulette.goldDiceChanceOnTrigger / 100) *
+              ((engravingEffectData.fisherRoulette.diceSides + 1) / 2) *
+              engravingEffectData.fisherRoulette.normalDiceMultiplier) +
+              (engravingEffectData.fisherRoulette.goldDiceChanceOnTrigger / 100) *
+                ((engravingEffectData.fisherRoulette.diceSides + 1) / 2) *
+                engravingEffectData.fisherRoulette.goldDiceMultiplier)
+          : 0;
+        const expectedPerGather =
+          (rodStats.seafoodDrop || 0) +
+          (seafoodLuckData?.chance || 0) / 100 +
+          (deepSeaGathererData?.chance || 0) / 100 +
+          rouletteDrop;
+        const totalCount = gatherCount * expectedPerGather;
+        const gradeRates = getSeafoodGradeRates(starStarStarData?.grade3WeightBonus || 0);
+
+        return {
+          gatherCount,
+          expectedPerGather,
+          totalCount,
+          gradeRates,
+          gradeCounts: {
+            grade1: totalCount * gradeRates.grade1,
+            grade2: totalCount * gradeRates.grade2,
+            grade3: totalCount * gradeRates.grade3,
+          },
+        };
+      };
+
       const getArtifactPrice = (artifactName) => getArtifactItem(artifactName)?.maxSellPrice || 0;
 
       const getCraftMaterialCost = (artifactName, prices) => {
@@ -2591,6 +2831,164 @@
 
       const formatGold = (value) => `${formatNumber(Math.round(value))} G`;
       const formatCount = (value, unit = "개") => `${formatNumber(Number(value.toFixed(2)))}${unit}`;
+
+      const validateTradePrices = () => {
+        const missing = [];
+
+        document.querySelectorAll('[data-field^="trade."]').forEach((field) => {
+          field.classList.remove("input-error");
+
+          if (field.value === "" || parseNumericInput(field.value) < 0) {
+            missing.push(field.getAttribute("aria-label") || field.dataset.field);
+            field.classList.add("input-error");
+          }
+        });
+
+        return missing;
+      };
+
+      const renderSeafoodTradeComparison = () => {
+        const missing = validateTradePrices();
+
+        if (missing.length > 0) {
+          seafoodTradeResults.hidden = false;
+          seafoodTradeVerdict.innerHTML = `
+            <strong>가격 입력을 모두 채워주세요.</strong>
+            <p>누락된 값: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? " 외" : ""}</p>
+          `;
+          seafoodTradeResultBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="6">고정거래 3개와 종류별 개별판매 15개 가격이 모두 필요합니다.</td>
+            </tr>
+          `;
+          seafoodTradeGradeBody.innerHTML = "";
+          [tradeTotalCount, tradeFixedProfit, tradeBalancedProfit, tradeBestProfit].forEach(
+            (item) => {
+              item.textContent = "-";
+            },
+          );
+          return;
+        }
+
+        const production = getExpectedSeafoodProduction(getCurrentProfile());
+        const marketFeeRate = 0.05;
+        const fixedGross = [1, 2, 3].reduce(
+          (sum, grade) =>
+            sum +
+            production.gradeCounts[`grade${grade}`] *
+              getNumberField(`trade.fixed.grade${grade}`),
+          0,
+        );
+        const balancedGross = oceanGatheringRules.seafoodTypes.reduce(
+          (total, seafood) =>
+            total +
+            [1, 2, 3].reduce(
+              (sum, grade) =>
+                sum +
+                (production.gradeCounts[`grade${grade}`] /
+                  oceanGatheringRules.seafoodTypes.length) *
+                  getNumberField(`trade.market.${seafood}.grade${grade}`),
+              0,
+            ),
+          0,
+        );
+        const strategies = [
+          {
+            name: "고정거래",
+            composition: "굴·소라·미역·성게·문어 균등",
+            gross: fixedGross,
+            fee: 0,
+            net: fixedGross,
+          },
+          {
+            name: "개별판매",
+            composition: "5종 균등",
+            gross: balancedGross,
+            fee: balancedGross * marketFeeRate,
+            net: balancedGross * (1 - marketFeeRate),
+          },
+          ...oceanGatheringRules.seafoodTypes.map((seafood) => {
+            const gross = [1, 2, 3].reduce(
+              (sum, grade) =>
+                sum +
+                production.gradeCounts[`grade${grade}`] *
+                  getNumberField(`trade.market.${seafood}.grade${grade}`),
+              0,
+            );
+
+            return {
+              name: "집중 채집 후 개별판매",
+              composition: `${seafood}만 채집`,
+              seafood,
+              gross,
+              fee: gross * marketFeeRate,
+              net: gross * (1 - marketFeeRate),
+            };
+          }),
+        ];
+        const fixedStrategy = strategies[0];
+        const balancedStrategy = strategies[1];
+        const focusStrategies = strategies.slice(2);
+        const bestFocus = [...focusStrategies].sort((a, b) => b.net - a.net)[0];
+        const recommendedStrategy =
+          fixedStrategy.net >= bestFocus.net ? fixedStrategy : bestFocus;
+        const balancedDifference = balancedStrategy.net - fixedStrategy.net;
+        const overallDifference = recommendedStrategy.net - fixedStrategy.net;
+        const formatSignedGold = (value) =>
+          `${value > 0 ? "+" : ""}${formatGold(value)}`;
+
+        const balancedVerdict =
+          balancedDifference > 0
+            ? `5종을 골고루 캘 경우 개별판매가 고정거래보다 ${formatGold(balancedDifference)} 더 이득입니다.`
+            : balancedDifference < 0
+              ? `5종을 골고루 캘 경우 고정거래가 개별판매보다 ${formatGold(-balancedDifference)} 더 이득입니다.`
+              : "5종을 골고루 캘 경우 두 판매 방식의 기대 수익이 같습니다.";
+        const overallVerdict =
+          recommendedStrategy === fixedStrategy
+            ? "전체 전략 중에서도 5종 고정거래가 가장 높은 기대 수익입니다."
+            : `${bestFocus.seafood}만 3000 스태미나 동안 채집해 개별판매하는 전략이 고정거래보다 ${formatGold(overallDifference)} 더 이득입니다.`;
+
+        seafoodTradeVerdict.innerHTML = `
+          <strong>${recommendedStrategy === fixedStrategy ? "고정거래 추천" : `${bestFocus.seafood} 집중 채집 추천`}</strong>
+          <p>${balancedVerdict}<br />${overallVerdict}</p>
+        `;
+        tradeTotalCount.textContent = formatCount(production.totalCount);
+        tradeFixedProfit.textContent = formatGold(fixedStrategy.net);
+        tradeBalancedProfit.textContent = formatGold(balancedStrategy.net);
+        tradeBestProfit.textContent = `${bestFocus.seafood} ${formatGold(bestFocus.net)}`;
+
+        seafoodTradeResultBody.innerHTML = strategies
+          .map(
+            (strategy) => `
+              <tr class="${strategy === recommendedStrategy ? "comparison-best-row" : ""}">
+                <td>${strategy.name}${strategy === recommendedStrategy ? " · 추천" : ""}</td>
+                <td>${strategy.composition}</td>
+                <td>${formatGold(strategy.gross)}</td>
+                <td>${strategy.fee > 0 ? `-${formatGold(strategy.fee)}` : "없음"}</td>
+                <td class="profit-value">${formatGold(strategy.net)}</td>
+                <td class="${strategy.net >= fixedStrategy.net ? "profit-value" : ""}">${formatSignedGold(strategy.net - fixedStrategy.net)}</td>
+              </tr>
+            `,
+          )
+          .join("");
+
+        seafoodTradeGradeBody.innerHTML = [1, 2, 3]
+          .map((grade) => {
+            const rate = production.gradeRates[`grade${grade}`];
+            const count = production.gradeCounts[`grade${grade}`];
+
+            return `
+              <tr>
+                <td>${grade}성</td>
+                <td>${(rate * 100).toFixed(2)}%</td>
+                <td>${formatCount(count)}</td>
+                <td>${formatCount(count / oceanGatheringRules.seafoodTypes.length)}</td>
+              </tr>
+            `;
+          })
+          .join("");
+        seafoodTradeResults.hidden = false;
+      };
 
       const renderIncomeEstimate = (shouldActivate = true) => {
         const missingPrices = validatePrices();
@@ -3546,6 +3944,13 @@
         saveFieldGroup("profile");
         showSavedFeedback(saveProfileButton, "스펙 저장");
       });
+
+      saveTradePricesButton.addEventListener("click", () => {
+        saveFieldGroup("trade");
+        showSavedFeedback(saveTradePricesButton, "가격 저장");
+      });
+
+      seafoodTradeCalculateButton.addEventListener("click", renderSeafoodTradeComparison);
 
       tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
