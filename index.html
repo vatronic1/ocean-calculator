@@ -164,6 +164,23 @@
         color: #435465;
       }
 
+      .icon-button {
+        appearance: none;
+        display: inline-grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border: 1px solid #cbd6df;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #526373;
+        font: inherit;
+        font-size: 20px;
+        font-weight: 800;
+        line-height: 1;
+        cursor: pointer;
+      }
+
       .empty-area {
         display: grid;
         min-height: 280px;
@@ -433,6 +450,477 @@
       .compact-price-input {
         min-width: 110px;
         text-align: right;
+      }
+
+      .quantity-cell {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(86px, 1fr));
+        gap: 8px;
+        min-width: 300px;
+      }
+
+      .quantity-mini {
+        display: grid;
+        gap: 4px;
+      }
+
+      .quantity-mini span {
+        color: #657586;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .quantity-mini input {
+        min-height: 34px;
+        text-align: right;
+      }
+
+      .alchemy-stock-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .alchemy-stock-group {
+        border: 1px solid #dce6ee;
+        border-radius: 8px;
+        background: #fbfcfd;
+        overflow: hidden;
+      }
+
+      .alchemy-stock-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 12px;
+        border-bottom: 1px solid #e3ebf1;
+        background: #ffffff;
+      }
+
+      .alchemy-seafood-name {
+        color: #17212b;
+        font-size: 15px;
+        font-weight: 900;
+      }
+
+      .alchemy-seafood-total {
+        color: #667789;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .alchemy-grade-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .alchemy-grade-card {
+        border: 1px solid #cfe0ed;
+        border-radius: 7px;
+        background: #f3f8fc;
+      }
+
+      .alchemy-grade-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 10px;
+        border-bottom: 1px solid #d9e7f0;
+      }
+
+      .alchemy-grade-label {
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .alchemy-grade-label.grade-1 {
+        color: #526fc1;
+      }
+
+      .alchemy-grade-label.grade-2 {
+        color: #7a56c5;
+      }
+
+      .alchemy-grade-label.grade-3 {
+        color: #17825c;
+      }
+
+      .alchemy-grade-total {
+        color: #526373;
+        font-size: 12px;
+        font-weight: 900;
+        text-align: right;
+      }
+
+      .alchemy-unit-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1px;
+        background: #d9e7f0;
+      }
+
+      .alchemy-unit {
+        display: grid;
+        gap: 4px;
+        padding: 7px;
+        background: #eef5fb;
+      }
+
+      .alchemy-unit span {
+        color: #5f7181;
+        font-size: 11px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .alchemy-unit input {
+        min-height: 34px;
+        padding: 0 6px;
+        border-color: #bfd2e3;
+        background: #ffffff;
+        text-align: center;
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        z-index: 30;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: rgba(15, 23, 42, 0.42);
+      }
+
+      .modal-backdrop[hidden] {
+        display: none;
+      }
+
+      .modal-panel {
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        width: min(1080px, 100%);
+        max-height: min(780px, calc(100vh - 48px));
+        overflow: hidden;
+        border: 1px solid #d7e2ea;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.24);
+      }
+
+      .modal-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 18px;
+        border-bottom: 1px solid #e4ecf2;
+        background: #f8fbfd;
+      }
+
+      .modal-head h3 {
+        margin: 0;
+        color: #17212b;
+        font-size: 17px;
+      }
+
+      .modal-head p {
+        margin: 4px 0 0;
+        color: #667789;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .modal-body {
+        overflow: auto;
+        padding: 14px;
+        background: #fbfcfd;
+      }
+
+      .modal-actions,
+      .optimization-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding-top: 12px;
+      }
+
+      .modal-actions {
+        padding: 14px 18px;
+        border-top: 1px solid #e4ecf2;
+        background: #ffffff;
+      }
+
+      .leftover-amount {
+        display: grid;
+        gap: 2px;
+        color: #17212b;
+        font-weight: 800;
+      }
+
+      .leftover-total {
+        color: #718092;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .alchemy-stage-board {
+        display: grid;
+        gap: 14px;
+      }
+
+      .alchemy-stage-card {
+        overflow: hidden;
+        border: 1px solid #dce6ee;
+        border-left-width: 4px;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .alchemy-stage-card.grade-1 {
+        border-left-color: #526fc1;
+      }
+
+      .alchemy-stage-card.grade-2 {
+        border-left-color: #7a56c5;
+      }
+
+      .alchemy-stage-card.grade-3 {
+        border-left-color: #17825c;
+      }
+
+      .alchemy-stage-card.zero {
+        border-left-color: #64748b;
+      }
+
+      .alchemy-stage-card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid #e5edf3;
+        background: #f8fbfd;
+      }
+
+      .alchemy-stage-heading {
+        display: grid;
+        gap: 3px;
+      }
+
+      .alchemy-stage-grade {
+        font-size: 15px;
+        font-weight: 900;
+      }
+
+      .alchemy-stage-grade.grade-1 {
+        color: #526fc1;
+      }
+
+      .alchemy-stage-grade.grade-2 {
+        color: #7a56c5;
+      }
+
+      .alchemy-stage-grade.grade-3 {
+        color: #17825c;
+      }
+
+      .alchemy-stage-grade.zero {
+        color: #64748b;
+      }
+
+      .alchemy-stage-route {
+        color: #5f7080;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .alchemy-stage-final-total {
+        color: #17212b;
+        font-size: 13px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .alchemy-stage-columns {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        padding: 12px;
+        background: #fbfcfd;
+      }
+
+      .alchemy-stage-column {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 10px;
+        min-width: 0;
+        padding: 10px;
+        border: 1px solid #e0e8ef;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+
+      .alchemy-stage-column-head {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed #d8e3ec;
+      }
+
+      .alchemy-stage-column-title {
+        display: grid;
+        gap: 2px;
+      }
+
+      .alchemy-stage-column-title span {
+        color: #6a7a89;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .alchemy-stage-column-title strong {
+        color: #17212b;
+        font-size: 14px;
+      }
+
+      .alchemy-stage-column-total {
+        color: #526373;
+        font-size: 12px;
+        font-weight: 900;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .alchemy-stage-items {
+        display: grid;
+        align-content: start;
+        gap: 8px;
+      }
+
+      .alchemy-stage-item {
+        display: grid;
+        gap: 5px;
+        min-width: 0;
+        padding: 8px 9px;
+        border: 1px solid #e2eaf1;
+        border-left: 3px solid #94a3b8;
+        border-radius: 7px;
+        background: #fbfdfe;
+      }
+
+      .alchemy-stage-card.grade-1 .alchemy-stage-item {
+        border-left-color: #526fc1;
+      }
+
+      .alchemy-stage-card.grade-2 .alchemy-stage-item {
+        border-left-color: #7a56c5;
+      }
+
+      .alchemy-stage-card.grade-3 .alchemy-stage-item {
+        border-left-color: #17825c;
+      }
+
+      .alchemy-stage-card.zero .alchemy-stage-item {
+        border-left-color: #64748b;
+      }
+
+      .alchemy-stage-item-name {
+        overflow-wrap: anywhere;
+        color: #17212b;
+        font-size: 13px;
+        font-weight: 900;
+        line-height: 1.35;
+      }
+
+      .alchemy-stage-item .leftover-amount {
+        color: #344456;
+        font-size: 12px;
+      }
+
+      .alchemy-stage-zero-note {
+        color: #0f766e;
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .alchemy-stage-ingredients {
+        display: grid;
+        gap: 5px;
+        margin-top: 2px;
+        padding-top: 6px;
+        border-top: 1px dashed #d8e3ec;
+      }
+
+      .alchemy-stage-ingredients-label {
+        color: #6d7a87;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .alchemy-stage-ingredient-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+      .alchemy-stage-ingredient {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        max-width: 100%;
+        padding: 4px 6px;
+        border: 1px solid #d8e5ef;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #39495a;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.35;
+      }
+
+      .alchemy-stage-ingredient-name {
+        overflow-wrap: anywhere;
+      }
+
+      .alchemy-stage-ingredient-count {
+        color: #0f766e;
+        white-space: nowrap;
+      }
+
+      .alchemy-stage-ingredient-zero {
+        color: #64748b;
+        white-space: nowrap;
+      }
+
+      .alchemy-stage-empty {
+        display: grid;
+        min-height: 58px;
+        place-items: center;
+        border: 1px dashed #d8e3ec;
+        border-radius: 7px;
+        color: #7b8794;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .alchemy-list-item {
+        display: grid;
+        gap: 2px;
+        margin-bottom: 8px;
+      }
+
+      .alchemy-list-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .alchemy-list-name {
+        color: #17212b;
+        font-weight: 800;
       }
 
       .comparison-best-row td {
@@ -808,6 +1296,32 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        .alchemy-grade-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .alchemy-stage-card-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .alchemy-stage-columns {
+          grid-template-columns: 1fr;
+        }
+
+        .modal-backdrop {
+          padding: 12px;
+        }
+
+        .modal-panel {
+          max-height: calc(100vh - 24px);
+        }
+
+        .modal-actions,
+        .optimization-actions {
+          flex-direction: column;
+        }
+
       }
     </style>
   </head>
@@ -826,6 +1340,9 @@
         </button>
         <button class="tab-button" type="button" aria-selected="false" data-tab="seafood-trade">
           어패류 판매 비교
+        </button>
+        <button class="tab-button" type="button" aria-selected="false" data-tab="alchemy">
+          어패류 계산기
         </button>
         <button class="tab-button" type="button" aria-selected="false" data-tab="engraving-efficiency">
           각인석 효율
@@ -1156,6 +1673,175 @@
                 </table>
               </div>
               <p class="muted-note">현재 정보 입력 탭의 낚싯대, 어패 행운, 심해 채집꾼, 별별별!, 어부 룰렛 레벨을 반영합니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" data-panel="alchemy">
+        <div class="workspace">
+          <div class="panel-head">
+            <h2 class="panel-title">어패류 계산기</h2>
+            <div class="panel-actions">
+              <span class="status-pill">연금품 +30%</span>
+              <button class="secondary-button" type="button" id="open-alchemy-add-button">재료 추가</button>
+              <button class="secondary-button" type="button" id="alchemy-optimize-button">남은 재료 최적화</button>
+              <button class="secondary-button" type="button" id="save-alchemy-stock-button">재고 저장</button>
+              <button class="primary-button" type="button" id="alchemy-calculate-button">연금 계산</button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">어패류 재고 입력</h3>
+            <p class="muted-note">1상자 = 54세트, 1세트 = 64개입니다. 1성·2성 어패류는 1티어 제작 시 짝수 개수만 제작 가능합니다.</p>
+            <div class="alchemy-stock-grid" id="alchemy-stock-body" aria-label="어패류 연금 재고 입력"></div>
+          </div>
+
+          <div class="modal-backdrop" id="alchemy-add-modal" hidden>
+            <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="alchemy-add-title">
+              <div class="modal-head">
+                <div>
+                  <h3 id="alchemy-add-title">재료 추가</h3>
+                  <p>입력한 수량만큼 현재 어패류 재고에 더합니다.</p>
+                </div>
+                <button class="icon-button" type="button" id="close-alchemy-add-button" aria-label="재료 추가 닫기">×</button>
+              </div>
+              <div class="modal-body">
+                <div class="alchemy-stock-grid" id="alchemy-add-stock-body" aria-label="추가할 어패류 입력"></div>
+              </div>
+              <div class="modal-actions">
+                <button class="secondary-button" type="button" id="clear-alchemy-add-button">입력 초기화</button>
+                <button class="primary-button" type="button" id="apply-alchemy-add-button">재고에 추가</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <label class="choice">
+              <input id="alchemy-include-diluted" data-field="alchemy.includeDiluted" type="checkbox" checked />
+              희석된 추출액 제작 포함
+            </label>
+            <p class="muted-note">침식 방어의 핵 3개, 방어 오염의 결정 2개, 타락 침식의 영약 1개를 조합하는 0성 제작식을 계산에 포함합니다.</p>
+          </div>
+
+          <div class="section-body" id="alchemy-results" hidden>
+            <div class="comparison-verdict" id="alchemy-verdict"></div>
+
+            <div class="summary-grid" aria-label="어패류 연금 계산 요약">
+              <div class="metric">
+                <span class="metric-label">총 판매가</span>
+                <span class="metric-value" id="alchemy-total-value">-</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">완제품 수량</span>
+                <span class="metric-value" id="alchemy-total-products">-</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">희석된 추출액</span>
+                <span class="metric-value" id="alchemy-diluted-count">-</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">남은 어패류</span>
+                <span class="metric-value" id="alchemy-leftover-count">-</span>
+              </div>
+            </div>
+
+            <div class="data-section" id="alchemy-optimization-results" hidden>
+              <h3 class="data-title">남은 재료 최적화</h3>
+              <div class="comparison-verdict" id="alchemy-optimization-verdict"></div>
+              <div class="summary-grid" aria-label="어패류 연금 최적화 요약">
+                <div class="metric">
+                  <span class="metric-label">추가 필요량</span>
+                  <span class="metric-value" id="alchemy-optimization-add-total">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">예상 판매가 증가</span>
+                  <span class="metric-value" id="alchemy-optimization-profit">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">추가 후 총 판매가</span>
+                  <span class="metric-value" id="alchemy-optimization-new-total">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">추가 후 남은 어패류</span>
+                  <span class="metric-value" id="alchemy-optimization-leftover">-</span>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table aria-label="남은 재료 최적화 추천 추가 재료">
+                  <thead>
+                    <tr>
+                      <th>어패류</th>
+                      <th>1성 추가</th>
+                      <th>2성 추가</th>
+                      <th>3성 추가</th>
+                    </tr>
+                  </thead>
+                  <tbody id="alchemy-optimization-body"></tbody>
+                </table>
+              </div>
+              <div class="optimization-actions">
+                <button class="secondary-button" type="button" id="apply-alchemy-recommendation-button">추천 재료 재고에 추가</button>
+              </div>
+              <p class="muted-note">현재 계산 결과의 남은 어패류를 추가 완제품 제작에 최대한 소진하는 추천입니다. 추천 재료의 구매 비용은 차감하지 않습니다.</p>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">완제품 결과</h3>
+              <div class="table-wrap">
+                <table class="result-table" aria-label="어패류 연금 완제품 결과">
+                  <thead>
+                    <tr>
+                      <th>등급</th>
+                      <th>완제품</th>
+                      <th>제작 개수</th>
+                      <th>적용 판매가</th>
+                      <th>판매 합계</th>
+                    </tr>
+                  </thead>
+                  <tbody id="alchemy-product-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">등급별 제작 단계</h3>
+              <p class="muted-note">괄호 안의 0성 재료 수량은 희석된 추출액 제작에 사용할 몫입니다.</p>
+              <div class="alchemy-stage-board" id="alchemy-stage-body" aria-label="어패류 연금 등급별 제작 단계"></div>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">남은 어패류</h3>
+              <div class="table-wrap">
+                <table aria-label="어패류 연금 남은 어패류">
+                  <thead>
+                    <tr>
+                      <th>어패류</th>
+                      <th>1성</th>
+                      <th>2성</th>
+                      <th>3성</th>
+                    </tr>
+                  </thead>
+                  <tbody id="alchemy-leftover-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">남은 중간 재료</h3>
+              <div class="table-wrap">
+                <table aria-label="어패류 연금 남은 중간 재료">
+                  <thead>
+                    <tr>
+                      <th>등급</th>
+                      <th>남은 1티어</th>
+                      <th>남은 2티어</th>
+                    </tr>
+                  </thead>
+                  <tbody id="alchemy-intermediate-body"></tbody>
+                </table>
+              </div>
+              <p class="muted-note">1성·2성의 짝수 제작 제한 때문에 필요한 수량보다 1티어가 1개 더 만들어질 수 있습니다.</p>
             </div>
           </div>
         </div>
@@ -1851,6 +2537,112 @@
         ],
       };
 
+      const alchemyData = {
+        boxToSets: 54,
+        setToPieces: 64,
+        saleMultiplier: 1.3,
+        seafoodTypes: [
+          { key: "oyster", name: "굴" },
+          { key: "conch", name: "소라" },
+          { key: "octopus", name: "문어" },
+          { key: "seaweed", name: "미역" },
+          { key: "urchin", name: "성게" },
+        ],
+        grades: [
+          {
+            grade: 1,
+            label: "1성",
+            tier1Name: "정수",
+            tier2Name: "핵",
+            finalLabel: "★",
+            evenTier1Batch: true,
+            tier1: [
+              { key: "guard", seafood: "oyster", name: "수호의 정수" },
+              { key: "wave", seafood: "conch", name: "파동의 정수" },
+              { key: "chaos", seafood: "octopus", name: "혼란의 정수" },
+              { key: "life", seafood: "seaweed", name: "생명의 정수" },
+              { key: "corrosion", seafood: "urchin", name: "부식의 정수" },
+            ],
+            tier2: [
+              { key: "waveGuard", name: "물결 수호의 핵", inputs: ["guard", "wave"] },
+              { key: "wavePollution", name: "파동 오염의 핵", inputs: ["wave", "chaos"] },
+              { key: "orderBreak", name: "질서 파괴의 핵", inputs: ["chaos", "life"] },
+              { key: "vitalCollapse", name: "활력 붕괴의 핵", inputs: ["life", "corrosion"] },
+              { key: "erosionDefense", name: "침식 방어의 핵", inputs: ["corrosion", "guard"] },
+            ],
+            finals: [
+              { key: "aquatis", name: "영생의 아쿠티스 ★", price: 5159, inputs: ["waveGuard", "orderBreak", "vitalCollapse"] },
+              { key: "kraken", name: "크라켄의 광란체 ★", price: 5234, inputs: ["orderBreak", "vitalCollapse", "wavePollution"] },
+              { key: "leviathanFeather", name: "리바이던의 깃털 ★", price: 5393, inputs: ["erosionDefense", "wavePollution", "waveGuard"] },
+            ],
+            zeroTier2Key: "erosionDefense",
+            zeroTier2Count: 3,
+          },
+          {
+            grade: 2,
+            label: "2성",
+            tier1Name: "에센스",
+            tier2Name: "결정",
+            finalLabel: "★★",
+            evenTier1Batch: true,
+            tier1: [
+              { key: "guard", seafood: "oyster", name: "수호 에센스" },
+              { key: "wave", seafood: "conch", name: "파동 에센스" },
+              { key: "chaos", seafood: "octopus", name: "혼란 에센스" },
+              { key: "life", seafood: "seaweed", name: "생명 에센스" },
+              { key: "corrosion", seafood: "urchin", name: "부식 에센스" },
+            ],
+            tier2: [
+              { key: "vigorPreserve", name: "활기 보존의 결정", inputs: ["guard", "life"] },
+              { key: "waveErosion", name: "파도 침식의 결정", inputs: ["wave", "corrosion"] },
+              { key: "defensePollution", name: "방어 오염의 결정", inputs: ["chaos", "guard"] },
+              { key: "torrentRegen", name: "격류 재생의 결정", inputs: ["life", "wave"] },
+              { key: "toxicChaos", name: "맹독 혼란의 결정", inputs: ["corrosion", "chaos"] },
+            ],
+            finals: [
+              { key: "trenchCore", name: "해구의 파동 코어 ★★", price: 11131, inputs: ["vigorPreserve", "waveErosion", "torrentRegen"] },
+              { key: "silentPotion", name: "침묵의 심해 비약 ★★", price: 11242, inputs: ["waveErosion", "torrentRegen", "toxicChaos"] },
+              { key: "blueDragonWing", name: "청해룡의 날개 ★★", price: 11399, inputs: ["defensePollution", "toxicChaos", "vigorPreserve"] },
+            ],
+            zeroTier2Key: "defensePollution",
+            zeroTier2Count: 2,
+          },
+          {
+            grade: 3,
+            label: "3성",
+            tier1Name: "엘릭서",
+            tier2Name: "영약",
+            finalLabel: "★★★",
+            evenTier1Batch: false,
+            tier1: [
+              { key: "guard", seafood: "oyster", name: "수호의 엘릭서" },
+              { key: "wave", seafood: "conch", name: "파동의 엘릭서" },
+              { key: "chaos", seafood: "octopus", name: "혼란의 엘릭서" },
+              { key: "life", seafood: "seaweed", name: "생명의 엘릭서" },
+              { key: "corrosion", seafood: "urchin", name: "부식의 엘릭서" },
+            ],
+            tier2: [
+              { key: "immortalRegen", name: "불멸 재생의 영약", inputs: ["guard", "life"] },
+              { key: "waveBarrier", name: "파동 장벽의 영약", inputs: ["wave", "guard"] },
+              { key: "fallenErosion", name: "타락 침식의 영약", inputs: ["chaos", "corrosion"] },
+              { key: "lifeFrenzy", name: "생명 광란의 영약", inputs: ["life", "chaos"] },
+              { key: "toxicWave", name: "맹독 파동의 영약", inputs: ["corrosion", "wave"] },
+            ],
+            finals: [
+              { key: "aquaPulse", name: "아쿠아 펄스 파편 ★★★", price: 21833, inputs: ["immortalRegen", "waveBarrier", "toxicWave"] },
+              { key: "nautilusHand", name: "나우틸러스의 손 ★★★", price: 22088, inputs: ["waveBarrier", "lifeFrenzy", "immortalRegen"] },
+              { key: "abyssSpine", name: "무저의 척추 ★★★", price: 22227, inputs: ["fallenErosion", "toxicWave", "lifeFrenzy"] },
+            ],
+            zeroTier2Key: "fallenErosion",
+            zeroTier2Count: 1,
+          },
+        ],
+        zeroProduct: {
+          name: "희석된 추출액",
+          price: 18444,
+        },
+      };
+
       const engravingStoneData = {
         투박한: { successRate: 10, ruby: 3 },
         단정한: { successRate: 20, ruby: 5 },
@@ -2012,6 +2804,35 @@
       const tradeBestProfit = document.querySelector("#trade-best-profit");
       const seafoodTradeResultBody = document.querySelector("#seafood-trade-result-body");
       const seafoodTradeGradeBody = document.querySelector("#seafood-trade-grade-body");
+      const alchemyStockBody = document.querySelector("#alchemy-stock-body");
+      const openAlchemyAddButton = document.querySelector("#open-alchemy-add-button");
+      const alchemyOptimizeButton = document.querySelector("#alchemy-optimize-button");
+      const alchemyAddModal = document.querySelector("#alchemy-add-modal");
+      const closeAlchemyAddButton = document.querySelector("#close-alchemy-add-button");
+      const clearAlchemyAddButton = document.querySelector("#clear-alchemy-add-button");
+      const applyAlchemyAddButton = document.querySelector("#apply-alchemy-add-button");
+      const alchemyAddStockBody = document.querySelector("#alchemy-add-stock-body");
+      const saveAlchemyStockButton = document.querySelector("#save-alchemy-stock-button");
+      const alchemyCalculateButton = document.querySelector("#alchemy-calculate-button");
+      const alchemyIncludeDiluted = document.querySelector("#alchemy-include-diluted");
+      const alchemyResults = document.querySelector("#alchemy-results");
+      const alchemyVerdict = document.querySelector("#alchemy-verdict");
+      const alchemyTotalValue = document.querySelector("#alchemy-total-value");
+      const alchemyTotalProducts = document.querySelector("#alchemy-total-products");
+      const alchemyDilutedCount = document.querySelector("#alchemy-diluted-count");
+      const alchemyLeftoverCount = document.querySelector("#alchemy-leftover-count");
+      const alchemyProductBody = document.querySelector("#alchemy-product-body");
+      const alchemyStageBody = document.querySelector("#alchemy-stage-body");
+      const alchemyLeftoverBody = document.querySelector("#alchemy-leftover-body");
+      const alchemyIntermediateBody = document.querySelector("#alchemy-intermediate-body");
+      const alchemyOptimizationResults = document.querySelector("#alchemy-optimization-results");
+      const alchemyOptimizationVerdict = document.querySelector("#alchemy-optimization-verdict");
+      const alchemyOptimizationAddTotal = document.querySelector("#alchemy-optimization-add-total");
+      const alchemyOptimizationProfit = document.querySelector("#alchemy-optimization-profit");
+      const alchemyOptimizationNewTotal = document.querySelector("#alchemy-optimization-new-total");
+      const alchemyOptimizationLeftover = document.querySelector("#alchemy-optimization-leftover");
+      const alchemyOptimizationBody = document.querySelector("#alchemy-optimization-body");
+      const applyAlchemyRecommendationButton = document.querySelector("#apply-alchemy-recommendation-button");
 
       const formatNumber = (value) => value.toLocaleString("ko-KR");
       const getArtifactItem = (artifactName) =>
@@ -2035,6 +2856,9 @@
       let selectedEfficiencyRowKey = null;
       let lastIncomePrices = null;
       let lastIncomeProfile = null;
+      let lastAlchemyPlan = null;
+      let lastAlchemyStock = null;
+      let lastAlchemyRecommendation = null;
       const defaultPriceValues = {
         "price.lowLifeStone": 14000,
         "price.midLifeStone": 41000,
@@ -2163,7 +2987,7 @@
 
       const formatPriceFields = () => {
         document
-          .querySelectorAll('[data-field^="price."], [data-field^="trade."]')
+          .querySelectorAll('[data-field^="price."], [data-field^="trade."], [data-field^="alchemy."]')
           .forEach((field) => {
           if (field.type === "checkbox") {
             return;
@@ -2239,6 +3063,114 @@
                 })
                 .join("")}
             </tr>
+          `,
+        )
+        .join("");
+
+      alchemyStockBody.innerHTML = alchemyData.seafoodTypes
+        .map(
+          (seafood) => `
+            <section class="alchemy-stock-group">
+              <div class="alchemy-stock-title">
+                <span class="alchemy-seafood-name">${seafood.name}</span>
+                <span class="alchemy-seafood-total" data-alchemy-seafood-total="${seafood.key}">총 0개</span>
+              </div>
+              <div class="alchemy-grade-grid">
+                ${[1, 2, 3]
+                  .map((grade) => {
+                    const baseField = `alchemy.stock.${seafood.key}.grade${grade}`;
+
+                    return `
+                      <div class="alchemy-grade-card" aria-label="${seafood.name} ${grade}성 재고">
+                        <div class="alchemy-grade-head">
+                          <span class="alchemy-grade-label grade-${grade}">${"★".repeat(grade)} ${grade}성</span>
+                          <span class="alchemy-grade-total" data-alchemy-grade-total="${baseField}">총 0개</span>
+                        </div>
+                        <div class="alchemy-unit-row">
+                          ${[
+                            ["box", "상자"],
+                            ["set", "세트"],
+                            ["piece", "개"],
+                          ]
+                            .map(([unit, label]) => {
+                              const id = `${baseField}.${unit}`.replaceAll(".", "-");
+
+                              return `
+                                <label class="alchemy-unit" for="${id}">
+                                  <span>${label}</span>
+                                  <input
+                                    id="${id}"
+                                    data-field="${baseField}.${unit}"
+                                    type="number"
+                                    min="0"
+                                    placeholder="0"
+                                    aria-label="${seafood.name} ${grade}성 ${label}"
+                                  />
+                                </label>
+                              `;
+                            })
+                            .join("")}
+                        </div>
+                      </div>
+                    `;
+                  })
+                  .join("")}
+              </div>
+            </section>
+          `,
+        )
+        .join("");
+
+      alchemyAddStockBody.innerHTML = alchemyData.seafoodTypes
+        .map(
+          (seafood) => `
+            <section class="alchemy-stock-group">
+              <div class="alchemy-stock-title">
+                <span class="alchemy-seafood-name">${seafood.name}</span>
+                <span class="alchemy-seafood-total" data-alchemy-add-seafood-total="${seafood.key}">추가 0개</span>
+              </div>
+              <div class="alchemy-grade-grid">
+                ${[1, 2, 3]
+                  .map((grade) => {
+                    const baseField = `alchemy.add.${seafood.key}.grade${grade}`;
+
+                    return `
+                      <div class="alchemy-grade-card" aria-label="${seafood.name} ${grade}성 추가 재료">
+                        <div class="alchemy-grade-head">
+                          <span class="alchemy-grade-label grade-${grade}">${"★".repeat(grade)} ${grade}성</span>
+                          <span class="alchemy-grade-total" data-alchemy-add-grade-total="${baseField}">추가 0개</span>
+                        </div>
+                        <div class="alchemy-unit-row">
+                          ${[
+                            ["box", "상자"],
+                            ["set", "세트"],
+                            ["piece", "개"],
+                          ]
+                            .map(([unit, label]) => {
+                              const id = `${baseField}.${unit}`.replaceAll(".", "-");
+
+                              return `
+                                <label class="alchemy-unit" for="${id}">
+                                  <span>${label}</span>
+                                  <input
+                                    id="${id}"
+                                    data-add-field="${baseField}.${unit}"
+                                    type="text"
+                                    inputmode="numeric"
+                                    placeholder="0"
+                                    aria-label="${seafood.name} ${grade}성 추가 ${label}"
+                                  />
+                                </label>
+                              `;
+                            })
+                            .join("")}
+                        </div>
+                      </div>
+                    `;
+                  })
+                  .join("")}
+              </div>
+            </section>
           `,
         )
         .join("");
@@ -2475,6 +3407,143 @@
       const getNumberField = (fieldName) => {
         const field = document.querySelector(`[data-field="${fieldName}"]`);
         return field && field.value !== "" ? parseNumericInput(field.value) : 0;
+      };
+
+      const getAddNumberField = (fieldName) => {
+        const field = document.querySelector(`[data-add-field="${fieldName}"]`);
+        return field && field.value !== "" ? parseNumericInput(field.value) : 0;
+      };
+
+      const getAlchemyUnitAmount = (baseField, getter) =>
+        getter(`${baseField}.box`) * alchemyData.boxToSets * alchemyData.setToPieces +
+        getter(`${baseField}.set`) * alchemyData.setToPieces +
+        getter(`${baseField}.piece`);
+
+      const getAlchemyStockAmount = (seafoodKey, grade) => {
+        const baseField = `alchemy.stock.${seafoodKey}.grade${grade}`;
+
+        return getAlchemyUnitAmount(baseField, getNumberField);
+      };
+
+      const getAlchemyAddAmount = (seafoodKey, grade) => {
+        const baseField = `alchemy.add.${seafoodKey}.grade${grade}`;
+
+        return getAlchemyUnitAmount(baseField, getAddNumberField);
+      };
+
+      const getBoxSetPiece = (amount) => {
+        const boxSize = alchemyData.boxToSets * alchemyData.setToPieces;
+        const box = Math.floor(amount / boxSize);
+        const afterBox = amount % boxSize;
+        const set = Math.floor(afterBox / alchemyData.setToPieces);
+        const piece = afterBox % alchemyData.setToPieces;
+
+        return { box, set, piece };
+      };
+
+      const setAlchemyStockAmount = (seafoodKey, grade, amount) => {
+        const baseField = `alchemy.stock.${seafoodKey}.grade${grade}`;
+        const parts = getBoxSetPiece(amount);
+
+        Object.entries(parts).forEach(([unit, value]) => {
+          const field = document.querySelector(`[data-field="${baseField}.${unit}"]`);
+          if (field) {
+            field.value = formatInputNumber(value);
+          }
+        });
+      };
+
+      const clearAlchemyAddFields = () => {
+        document.querySelectorAll("[data-add-field]").forEach((field) => {
+          field.value = "";
+        });
+      };
+
+      const updateAlchemyStockTotals = () => {
+        alchemyData.seafoodTypes.forEach((seafood) => {
+          let seafoodTotal = 0;
+
+          alchemyData.grades.forEach((gradeData) => {
+            const baseField = `alchemy.stock.${seafood.key}.grade${gradeData.grade}`;
+            const amount = getAlchemyStockAmount(seafood.key, gradeData.grade);
+            const gradeTotal = document.querySelector(`[data-alchemy-grade-total="${baseField}"]`);
+
+            if (gradeTotal) {
+              gradeTotal.textContent = `총 ${formatNumber(amount)}개`;
+            }
+
+            seafoodTotal += amount;
+          });
+
+          const seafoodTotalElement = document.querySelector(
+            `[data-alchemy-seafood-total="${seafood.key}"]`,
+          );
+
+          if (seafoodTotalElement) {
+            seafoodTotalElement.textContent = `총 ${formatNumber(seafoodTotal)}개`;
+          }
+        });
+      };
+
+      const updateAlchemyAddTotals = () => {
+        alchemyData.seafoodTypes.forEach((seafood) => {
+          let seafoodTotal = 0;
+
+          alchemyData.grades.forEach((gradeData) => {
+            const baseField = `alchemy.add.${seafood.key}.grade${gradeData.grade}`;
+            const amount = getAlchemyAddAmount(seafood.key, gradeData.grade);
+            const gradeTotal = document.querySelector(`[data-alchemy-add-grade-total="${baseField}"]`);
+
+            if (gradeTotal) {
+              gradeTotal.textContent = `추가 ${formatNumber(amount)}개`;
+            }
+
+            seafoodTotal += amount;
+          });
+
+          const seafoodTotalElement = document.querySelector(
+            `[data-alchemy-add-seafood-total="${seafood.key}"]`,
+          );
+
+          if (seafoodTotalElement) {
+            seafoodTotalElement.textContent = `추가 ${formatNumber(seafoodTotal)}개`;
+          }
+        });
+      };
+
+      const getAlchemyAdditionsFromModal = () => {
+        const additions = {};
+
+        alchemyData.grades.forEach((gradeData) => {
+          additions[gradeData.grade] = alchemyData.seafoodTypes.map((seafood) =>
+            getAlchemyAddAmount(seafood.key, gradeData.grade),
+          );
+        });
+
+        return additions;
+      };
+
+      const getTotalFromAdditionMap = (additions) =>
+        Object.values(additions).reduce(
+          (sum, gradeAmounts) => sum + gradeAmounts.reduce((gradeSum, value) => gradeSum + value, 0),
+          0,
+        );
+
+      const addAlchemyAmountsToStock = (additions) => {
+        alchemyData.grades.forEach((gradeData) => {
+          alchemyData.seafoodTypes.forEach((seafood, seafoodIndex) => {
+            const addition = additions[gradeData.grade]?.[seafoodIndex] || 0;
+            if (addition <= 0) {
+              return;
+            }
+
+            const currentAmount = getAlchemyStockAmount(seafood.key, gradeData.grade);
+            setAlchemyStockAmount(seafood.key, gradeData.grade, currentAmount + addition);
+          });
+        });
+
+        updateAlchemyStockTotals();
+        saveFieldGroup("alchemy");
       };
 
       const getBooleanField = (fieldName) => {
@@ -2831,6 +3900,857 @@
 
       const formatGold = (value) => `${formatNumber(Math.round(value))} G`;
       const formatCount = (value, unit = "개") => `${formatNumber(Number(value.toFixed(2)))}${unit}`;
+      const getSetPieceParts = (value) => {
+        const amount = Math.max(0, Math.round(value));
+        const sets = Math.floor(amount / alchemyData.setToPieces);
+        const pieces = amount % alchemyData.setToPieces;
+
+        return { amount, sets, pieces };
+      };
+      const formatSetPieceText = (value) => {
+        const { sets, pieces } = getSetPieceParts(value);
+        return `${formatNumber(sets)}세트 ${formatNumber(pieces)}개`;
+      };
+      const formatSetPieceAmount = (value) => {
+        const { amount } = getSetPieceParts(value);
+
+        return `
+          <span>${formatSetPieceText(value)}</span>
+          <span class="leftover-total">총 ${formatNumber(amount)}개</span>
+        `;
+      };
+
+      const getAlchemySalePrice = (price) => price * alchemyData.saleMultiplier;
+
+      const getAlchemyGradeMatrix = (gradeData) => {
+        if (gradeData.matrix) {
+          return gradeData.matrix;
+        }
+
+        const seafoodKeys = alchemyData.seafoodTypes.map((item) => item.key);
+        const seafoodIndex = Object.fromEntries(seafoodKeys.map((key, index) => [key, index]));
+        const tier1ByKey = Object.fromEntries(gradeData.tier1.map((item) => [item.key, item]));
+        const tier2ByKey = Object.fromEntries(gradeData.tier2.map((item) => [item.key, item]));
+        const tier2Index = Object.fromEntries(gradeData.tier2.map((item, index) => [item.key, index]));
+        const createVector = (size = seafoodKeys.length) => Array.from({ length: size }, () => 0);
+        const tier2Demand = gradeData.tier2.map((recipe) => {
+          const demand = createVector();
+          recipe.inputs.forEach((tier1Key) => {
+            demand[seafoodIndex[tier1ByKey[tier1Key].seafood]] += 1;
+          });
+          return demand;
+        });
+        const finalDemand = gradeData.finals.map((final) => {
+          const demand = createVector();
+          final.inputs.forEach((tier2Key) => {
+            tier2Demand[tier2Index[tier2Key]].forEach((amount, index) => {
+              demand[index] += amount;
+            });
+          });
+          return demand;
+        });
+        const finalTier2Counts = gradeData.finals.map((final) => {
+          const counts = createVector(gradeData.tier2.length);
+          final.inputs.forEach((tier2Key) => {
+            counts[tier2Index[tier2Key]] += 1;
+          });
+          return counts;
+        });
+        const zeroTier2Counts = createVector(gradeData.tier2.length);
+        const zeroTier2Count = gradeData.zeroTier2Count ?? 1;
+        zeroTier2Counts[tier2Index[gradeData.zeroTier2Key]] = zeroTier2Count;
+
+        gradeData.matrix = {
+          finalDemand,
+          finalTier2Counts,
+          tier2Demand,
+          zeroDemand: tier2Demand[tier2Index[gradeData.zeroTier2Key]].map(
+            (amount) => amount * zeroTier2Count,
+          ),
+          zeroTier2Counts,
+        };
+
+        return gradeData.matrix;
+      };
+
+      const solveLinearSystem = (matrix, rhs) => {
+        const size = rhs.length;
+        const rows = matrix.map((row, index) => [...row, rhs[index]]);
+
+        for (let pivot = 0; pivot < size; pivot += 1) {
+          let bestRow = pivot;
+
+          for (let row = pivot + 1; row < size; row += 1) {
+            if (Math.abs(rows[row][pivot]) > Math.abs(rows[bestRow][pivot])) {
+              bestRow = row;
+            }
+          }
+
+          if (Math.abs(rows[bestRow][pivot]) < 1e-9) {
+            return null;
+          }
+
+          [rows[pivot], rows[bestRow]] = [rows[bestRow], rows[pivot]];
+          const divisor = rows[pivot][pivot];
+
+          for (let column = pivot; column <= size; column += 1) {
+            rows[pivot][column] /= divisor;
+          }
+
+          for (let row = 0; row < size; row += 1) {
+            if (row === pivot) {
+              continue;
+            }
+
+            const factor = rows[row][pivot];
+            for (let column = pivot; column <= size; column += 1) {
+              rows[row][column] -= factor * rows[pivot][column];
+            }
+          }
+        }
+
+        return rows.map((row) => row[size]);
+      };
+
+      const getCombinations = (length, size) => {
+        const result = [];
+        const walk = (start, picked) => {
+          if (picked.length === size) {
+            result.push([...picked]);
+            return;
+          }
+
+          for (let index = start; index <= length - (size - picked.length); index += 1) {
+            picked.push(index);
+            walk(index + 1, picked);
+            picked.pop();
+          }
+        };
+
+        walk(0, []);
+        return result;
+      };
+
+      const isFeasibleLinearPoint = (point, constraints) =>
+        constraints.every(
+          (constraint) =>
+            constraint.coeff.reduce((sum, value, index) => sum + value * point[index], 0) <=
+            constraint.limit + 1e-6,
+        );
+
+      const solveLpRelaxation = (objective, constraints) => {
+        const variableCount = objective.length;
+        let best = null;
+
+        getCombinations(constraints.length, variableCount).forEach((combination) => {
+          const matrix = combination.map((index) => constraints[index].coeff);
+          const rhs = combination.map((index) => constraints[index].limit);
+          const point = solveLinearSystem(matrix, rhs);
+
+          if (!point || point.some((value) => !Number.isFinite(value))) {
+            return;
+          }
+
+          if (!isFeasibleLinearPoint(point, constraints)) {
+            return;
+          }
+
+          const value = objective.reduce((sum, amount, index) => sum + amount * point[index], 0);
+          if (!best || value > best.value) {
+            best = { value, point };
+          }
+        });
+
+        return best;
+      };
+
+      const optimizeIntegerProducts = (objective, resourceConstraints) => {
+        const variableCount = objective.length;
+        const nonNegativeConstraints = objective.map((_, index) => ({
+          coeff: objective.map((__, target) => (target === index ? -1 : 0)),
+          limit: 0,
+        }));
+        let best = { value: 0, vars: Array.from({ length: variableCount }, () => 0) };
+        let visitedNodes = 0;
+        const nodeLimit = 5000;
+
+        const tryCandidate = (candidate) => {
+          const vars = candidate.map((value) => Math.max(0, Math.round(value)));
+          const constraints = [...resourceConstraints, ...nonNegativeConstraints];
+
+          if (!isFeasibleLinearPoint(vars, constraints)) {
+            return;
+          }
+
+          const value = objective.reduce((sum, amount, index) => sum + amount * vars[index], 0);
+          if (value > best.value) {
+            best = { value, vars };
+          }
+        };
+
+        const branch = (constraints, depth = 0) => {
+          visitedNodes += 1;
+          if (visitedNodes > nodeLimit || depth > 80) {
+            return;
+          }
+
+          const relaxed = solveLpRelaxation(objective, constraints);
+          if (!relaxed || relaxed.value <= best.value + 1e-6) {
+            return;
+          }
+
+          tryCandidate(relaxed.point);
+
+          const fractionalIndex = relaxed.point.findIndex(
+            (value) => Math.abs(value - Math.round(value)) > 1e-6,
+          );
+
+          if (fractionalIndex === -1) {
+            tryCandidate(relaxed.point);
+            return;
+          }
+
+          const floorValue = Math.floor(relaxed.point[fractionalIndex]);
+          const ceilValue = Math.ceil(relaxed.point[fractionalIndex]);
+          const upperConstraint = {
+            coeff: objective.map((_, index) => (index === fractionalIndex ? 1 : 0)),
+            limit: floorValue,
+          };
+          const lowerConstraint = {
+            coeff: objective.map((_, index) => (index === fractionalIndex ? -1 : 0)),
+            limit: -ceilValue,
+          };
+
+          branch([...constraints, upperConstraint], depth + 1);
+          branch([...constraints, lowerConstraint], depth + 1);
+        };
+
+        branch([...resourceConstraints, ...nonNegativeConstraints]);
+        return best;
+      };
+
+      const getAlchemyStock = () => {
+        const stock = {};
+
+        alchemyData.grades.forEach((gradeData) => {
+          stock[gradeData.grade] = alchemyData.seafoodTypes.map((seafood) => {
+            return getAlchemyStockAmount(seafood.key, gradeData.grade);
+          });
+        });
+
+        return stock;
+      };
+
+      const getAlchemyGradePlan = (gradeData, stock, zeroCount) => {
+        const matrix = getAlchemyGradeMatrix(gradeData);
+        const capacity = stock.map((amount) =>
+          gradeData.evenTier1Batch ? Math.floor(amount / 2) * 2 : amount,
+        );
+        const constraints = capacity.map((limit, index) => ({
+          coeff: matrix.finalDemand.map((demand) => demand[index]),
+          limit: limit - matrix.zeroDemand[index] * zeroCount,
+        }));
+
+        if (constraints.some((constraint) => constraint.limit < -1e-6)) {
+          return null;
+        }
+
+        const objective = gradeData.finals.map((final) => getAlchemySalePrice(final.price));
+        const solution = optimizeIntegerProducts(objective, constraints);
+        const finalCounts = solution.vars;
+        const zeroTier1Demand = matrix.zeroDemand.map((amount) => amount * zeroCount);
+        const zeroTier2Counts = matrix.zeroTier2Counts.map((amount) => amount * zeroCount);
+        const tier1Demand = alchemyData.seafoodTypes.map((_, seafoodIndex) =>
+          matrix.finalDemand.reduce(
+            (sum, demand, finalIndex) => sum + demand[seafoodIndex] * finalCounts[finalIndex],
+            zeroTier1Demand[seafoodIndex],
+          ),
+        );
+        const tier1Crafted = tier1Demand.map((amount) =>
+          gradeData.evenTier1Batch && amount % 2 === 1 ? amount + 1 : amount,
+        );
+
+        if (tier1Crafted.some((amount, index) => amount > stock[index])) {
+          return null;
+        }
+
+        const tier2Counts = gradeData.tier2.map((_, tier2Index) =>
+          matrix.finalTier2Counts.reduce(
+            (sum, counts, finalIndex) => sum + counts[tier2Index] * finalCounts[finalIndex],
+            zeroTier2Counts[tier2Index],
+          ),
+        );
+
+        return {
+          gradeData,
+          finalCounts,
+          zeroTier1Demand,
+          zeroTier2Counts,
+          tier1Demand,
+          tier1Crafted,
+          tier1Leftover: tier1Crafted.map((amount, index) => amount - tier1Demand[index]),
+          tier2Counts,
+          seafoodLeftover: stock.map((amount, index) => amount - tier1Crafted[index]),
+          value: solution.value,
+        };
+      };
+
+      const getMaxDilutedCount = (stock) => {
+        const possibleCounts = alchemyData.grades.flatMap((gradeData) => {
+          const matrix = getAlchemyGradeMatrix(gradeData);
+          const capacity = stock[gradeData.grade].map((amount) =>
+            gradeData.evenTier1Batch ? Math.floor(amount / 2) * 2 : amount,
+          );
+
+          return matrix.zeroDemand
+            .map((amount, index) => (amount > 0 ? Math.floor(capacity[index] / amount) : Infinity))
+            .filter((value) => value !== Infinity);
+        });
+
+        return possibleCounts.length ? Math.min(...possibleCounts) : 0;
+      };
+
+      const getBestAlchemyPlan = (stock, includeDiluted) => {
+        const zeroPrice = getAlchemySalePrice(alchemyData.zeroProduct.price);
+        const maxZero = includeDiluted ? getMaxDilutedCount(stock) : 0;
+        const exactLimit = 10000;
+        const evaluated = new Map();
+
+        const evaluate = (zeroCount) => {
+          if (evaluated.has(zeroCount)) {
+            return evaluated.get(zeroCount);
+          }
+
+          const gradePlans = alchemyData.grades.map((gradeData) =>
+            getAlchemyGradePlan(gradeData, stock[gradeData.grade], zeroCount),
+          );
+
+          if (gradePlans.some((plan) => !plan)) {
+            evaluated.set(zeroCount, null);
+            return null;
+          }
+
+          const plan = {
+            zeroCount,
+            gradePlans,
+            totalValue:
+              gradePlans.reduce((sum, gradePlan) => sum + gradePlan.value, 0) +
+              zeroCount * zeroPrice,
+          };
+          evaluated.set(zeroCount, plan);
+          return plan;
+        };
+
+        const candidates = new Set();
+        if (maxZero <= exactLimit) {
+          for (let zeroCount = 0; zeroCount <= maxZero; zeroCount += 1) {
+            candidates.add(zeroCount);
+          }
+        } else {
+          const step = Math.ceil(maxZero / exactLimit);
+          for (let zeroCount = 0; zeroCount <= maxZero; zeroCount += step) {
+            candidates.add(zeroCount);
+          }
+          candidates.add(maxZero);
+        }
+
+        let best = null;
+        candidates.forEach((zeroCount) => {
+          const plan = evaluate(zeroCount);
+          if (plan && (!best || plan.totalValue > best.totalValue)) {
+            best = plan;
+          }
+        });
+
+        if (maxZero > exactLimit && best) {
+          const step = Math.ceil(maxZero / exactLimit);
+          const start = Math.max(0, best.zeroCount - step * 3);
+          const end = Math.min(maxZero, best.zeroCount + step * 3);
+          for (let zeroCount = start; zeroCount <= end; zeroCount += 1) {
+            const plan = evaluate(zeroCount);
+            if (plan && plan.totalValue > best.totalValue) {
+              best = plan;
+            }
+          }
+        }
+
+        return best || evaluate(0);
+      };
+
+      const getEmptyAlchemyAdditionMap = () => {
+        const additions = {};
+
+        alchemyData.grades.forEach((gradeData) => {
+          additions[gradeData.grade] = alchemyData.seafoodTypes.map(() => 0);
+        });
+
+        return additions;
+      };
+
+      const getStockWithAdditions = (stock, additions) => {
+        const nextStock = {};
+
+        alchemyData.grades.forEach((gradeData) => {
+          nextStock[gradeData.grade] = stock[gradeData.grade].map(
+            (amount, index) => amount + (additions[gradeData.grade]?.[index] || 0),
+          );
+        });
+
+        return nextStock;
+      };
+
+      const mergeAlchemyAdditions = (target, source) => {
+        alchemyData.grades.forEach((gradeData) => {
+          alchemyData.seafoodTypes.forEach((_, seafoodIndex) => {
+            target[gradeData.grade][seafoodIndex] += source[gradeData.grade]?.[seafoodIndex] || 0;
+          });
+        });
+
+        return target;
+      };
+
+      const getAlchemyPlanLeftoverTotal = (plan) =>
+        plan.gradePlans.reduce(
+          (sum, gradePlan) => sum + gradePlan.seafoodLeftover.reduce((gradeSum, value) => gradeSum + value, 0),
+          0,
+        );
+
+      const applyAlchemyEvenBatchRule = (gradeData, demand) =>
+        gradeData.evenTier1Batch
+          ? demand.map((amount) => (amount % 2 === 1 ? amount + 1 : amount))
+          : demand;
+
+      const getGreedyGradeCompletion = (gradePlan) => {
+        const leftover = [...gradePlan.seafoodLeftover];
+        const totalLeftover = leftover.reduce((sum, value) => sum + value, 0);
+        const counts = gradePlan.gradeData.finals.map(() => 0);
+
+        if (totalLeftover <= 0) {
+          return { additions: leftover.map(() => 0), value: 0, counts };
+        }
+
+        const matrix = getAlchemyGradeMatrix(gradePlan.gradeData);
+        const values = gradePlan.gradeData.finals.map((final) => getAlchemySalePrice(final.price));
+        const remaining = [...leftover];
+        let guard = 0;
+
+        while (remaining.some((amount) => amount > 0) && guard < totalLeftover + 500) {
+          guard += 1;
+          const candidates = matrix.finalDemand.map((demand, index) => {
+            const consumed = demand.reduce((sum, amount, seafoodIndex) => {
+              return sum + Math.min(remaining[seafoodIndex], amount);
+            }, 0);
+            const needed = demand.reduce((sum, amount, seafoodIndex) => {
+              return sum + Math.max(0, amount - remaining[seafoodIndex]);
+            }, 0);
+
+            return { index, consumed, needed, value: values[index] };
+          });
+          const best = candidates.sort((a, b) => {
+            if (b.consumed !== a.consumed) {
+              return b.consumed - a.consumed;
+            }
+            if (a.needed !== b.needed) {
+              return a.needed - b.needed;
+            }
+            return b.value - a.value;
+          })[0];
+
+          if (!best || best.consumed <= 0) {
+            break;
+          }
+
+          counts[best.index] += 1;
+          matrix.finalDemand[best.index].forEach((amount, seafoodIndex) => {
+            remaining[seafoodIndex] = Math.max(0, remaining[seafoodIndex] - amount);
+          });
+        }
+
+        const rawDemand = alchemyData.seafoodTypes.map((_, seafoodIndex) =>
+          matrix.finalDemand.reduce(
+            (sum, demand, finalIndex) => sum + demand[seafoodIndex] * counts[finalIndex],
+            0,
+          ),
+        );
+        const adjustedDemand = applyAlchemyEvenBatchRule(gradePlan.gradeData, rawDemand);
+        const additions = adjustedDemand.map((amount, index) => Math.max(0, amount - leftover[index]));
+        const value = values.reduce((sum, price, index) => sum + price * counts[index], 0);
+
+        return { additions, value, counts };
+      };
+
+      const getAlchemyAdditionRecommendation = (stock, includeDiluted) => {
+        const currentPlan = getBestAlchemyPlan(stock, includeDiluted);
+        const additions = getEmptyAlchemyAdditionMap();
+        let workingStock = stock;
+        let completionValue = 0;
+
+        for (let attempt = 0; attempt < 6; attempt += 1) {
+          const workingPlan = getBestAlchemyPlan(workingStock, includeDiluted);
+          if (getAlchemyPlanLeftoverTotal(workingPlan) <= 0) {
+            break;
+          }
+
+          const passAdditions = getEmptyAlchemyAdditionMap();
+          let passAddedTotal = 0;
+
+          workingPlan.gradePlans.forEach((gradePlan) => {
+            const completion = getGreedyGradeCompletion(gradePlan);
+            passAdditions[gradePlan.gradeData.grade] = completion.additions;
+            passAddedTotal += completion.additions.reduce((sum, value) => sum + value, 0);
+            completionValue += completion.value;
+          });
+
+          if (passAddedTotal <= 0) {
+            break;
+          }
+
+          mergeAlchemyAdditions(additions, passAdditions);
+          workingStock = getStockWithAdditions(stock, additions);
+        }
+
+        const addedTotal = getTotalFromAdditionMap(additions);
+        const newStock = getStockWithAdditions(stock, additions);
+        const newPlan = getBestAlchemyPlan(newStock, includeDiluted);
+
+        return {
+          additions,
+          addedTotal,
+          completionValue,
+          currentPlan,
+          newStock,
+          newPlan,
+          profitIncrease: newPlan.totalValue - currentPlan.totalValue,
+          leftoverBefore: getAlchemyPlanLeftoverTotal(currentPlan),
+          leftoverAfter: getAlchemyPlanLeftoverTotal(newPlan),
+        };
+      };
+
+      const formatAlchemyList = (items) => {
+        const visible = items.filter((item) => item.count > 0);
+
+        if (!visible.length) {
+          return "-";
+        }
+
+        return visible
+          .map(
+            (item) => `
+              <span class="alchemy-list-item">
+                <span class="alchemy-list-name">${item.name}</span>
+                <span class="leftover-amount">${formatSetPieceAmount(item.count)}</span>
+              </span>
+            `,
+          )
+          .join("");
+      };
+
+      const formatAlchemyStageList = (items) => {
+        const visible = items.filter((item) => item.count > 0);
+
+        if (!visible.length) {
+          return '<div class="alchemy-stage-empty">제작 없음</div>';
+        }
+
+        return `
+          <div class="alchemy-stage-items">
+            ${visible
+              .map(
+                (item) => `
+                  <div class="alchemy-stage-item">
+                    <span class="alchemy-stage-item-name">${item.name}</span>
+                    <span class="leftover-amount">${formatSetPieceAmount(item.count)}</span>
+                    ${
+                      item.zeroCount > 0
+                        ? `<span class="alchemy-stage-zero-note">(0성 재료 ${formatSetPieceText(item.zeroCount)})</span>`
+                        : ""
+                    }
+                    ${
+                      item.ingredients?.length
+                        ? `
+                          <div class="alchemy-stage-ingredients">
+                            <span class="alchemy-stage-ingredients-label">필요 재료</span>
+                            <div class="alchemy-stage-ingredient-list">
+                              ${item.ingredients
+                                .filter((ingredient) => ingredient.count > 0)
+                                .map(
+                                  (ingredient) => `
+                                    <span class="alchemy-stage-ingredient">
+                                      <span class="alchemy-stage-ingredient-name">${ingredient.name}</span>
+                                      <span class="alchemy-stage-ingredient-count">${formatSetPieceText(ingredient.count)}</span>
+                                      ${
+                                        ingredient.zeroCount > 0
+                                          ? `<span class="alchemy-stage-ingredient-zero">(0성 ${formatSetPieceText(ingredient.zeroCount)})</span>`
+                                          : ""
+                                      }
+                                    </span>
+                                  `,
+                                )
+                                .join("")}
+                            </div>
+                          </div>
+                        `
+                        : ""
+                    }
+                  </div>
+                `,
+              )
+              .join("")}
+          </div>
+        `;
+      };
+
+      const formatAlchemyStageColumn = (label, title, items) => {
+        const total = items.reduce((sum, item) => sum + item.count, 0);
+
+        return `
+          <section class="alchemy-stage-column">
+            <div class="alchemy-stage-column-head">
+              <span class="alchemy-stage-column-title">
+                <span>${label}</span>
+                <strong>${title}</strong>
+              </span>
+              <span class="alchemy-stage-column-total">${formatSetPieceText(total)}</span>
+            </div>
+            ${formatAlchemyStageList(items)}
+          </section>
+        `;
+      };
+
+      const getAlchemyRecipeLookup = (gradeData) => ({
+        seafoodByKey: Object.fromEntries(alchemyData.seafoodTypes.map((item) => [item.key, item])),
+        tier1ByKey: Object.fromEntries(gradeData.tier1.map((item) => [item.key, item])),
+        tier2ByKey: Object.fromEntries(gradeData.tier2.map((item) => [item.key, item])),
+      });
+
+      const renderAlchemyPlan = (plan, stock) => {
+        const productRows = [];
+        let totalProducts = plan.zeroCount;
+        let totalLeftover = 0;
+
+        plan.gradePlans.forEach((gradePlan) => {
+          gradePlan.gradeData.finals.forEach((final, index) => {
+            const count = gradePlan.finalCounts[index];
+            if (count <= 0) {
+              return;
+            }
+
+            totalProducts += count;
+            productRows.push({
+              grade: gradePlan.gradeData.label,
+              name: final.name,
+              count,
+              unitPrice: getAlchemySalePrice(final.price),
+              total: getAlchemySalePrice(final.price) * count,
+            });
+          });
+        });
+
+        if (plan.zeroCount > 0) {
+          productRows.push({
+            grade: "0성",
+            name: alchemyData.zeroProduct.name,
+            count: plan.zeroCount,
+            unitPrice: getAlchemySalePrice(alchemyData.zeroProduct.price),
+            total: getAlchemySalePrice(alchemyData.zeroProduct.price) * plan.zeroCount,
+          });
+        }
+
+        plan.gradePlans.forEach((gradePlan) => {
+          totalLeftover += gradePlan.seafoodLeftover.reduce((sum, value) => sum + value, 0);
+        });
+
+        alchemyTotalValue.textContent = formatGold(plan.totalValue);
+        alchemyTotalProducts.textContent = formatCount(totalProducts);
+        alchemyDilutedCount.textContent = formatCount(plan.zeroCount);
+        alchemyLeftoverCount.innerHTML = formatSetPieceAmount(totalLeftover);
+        alchemyVerdict.innerHTML = `
+          <strong>최대 판매가 조합: ${formatGold(plan.totalValue)}</strong>
+          <p>연금품 판매가 전문가 MAX 기준으로 기본 판매가에 30%를 더해 계산했습니다. ${plan.zeroCount > 0 ? `희석된 추출액은 ${formatNumber(plan.zeroCount)}개 제작합니다.` : "희석된 추출액은 제작하지 않는 조합입니다."}</p>
+        `;
+
+        alchemyProductBody.innerHTML = productRows.length
+          ? productRows
+              .sort((a, b) => b.total - a.total)
+              .map(
+                (product) => `
+                  <tr>
+                    <td>${product.grade}</td>
+                    <td>${product.name}</td>
+                    <td>${formatCount(product.count)}</td>
+                    <td>${formatGold(product.unitPrice)}</td>
+                    <td class="profit-value">${formatGold(product.total)}</td>
+                  </tr>
+                `,
+              )
+              .join("")
+          : `
+            <tr>
+              <td class="result-empty" colspan="5">현재 재고로 제작 가능한 완제품이 없습니다.</td>
+            </tr>
+          `;
+
+        const gradeStageCards = plan.gradePlans
+          .map((gradePlan) => {
+            const { seafoodByKey, tier1ByKey, tier2ByKey } = getAlchemyRecipeLookup(gradePlan.gradeData);
+            const tier1Items = gradePlan.gradeData.tier1.map((item, index) => ({
+              name: item.name,
+              count: gradePlan.tier1Crafted[index],
+              zeroCount: gradePlan.zeroTier1Demand[index],
+              ingredients: [
+                {
+                  name: `${seafoodByKey[item.seafood].name} ${gradePlan.gradeData.label}`,
+                  count: gradePlan.tier1Crafted[index],
+                  zeroCount: gradePlan.zeroTier1Demand[index],
+                },
+              ],
+            }));
+            const tier2Items = gradePlan.gradeData.tier2.map((item, index) => ({
+              name: item.name,
+              count: gradePlan.tier2Counts[index],
+              zeroCount: gradePlan.zeroTier2Counts[index],
+              ingredients: item.inputs.map((inputKey) => ({
+                name: tier1ByKey[inputKey].name,
+                count: gradePlan.tier2Counts[index],
+                zeroCount: gradePlan.zeroTier2Counts[index],
+              })),
+            }));
+            const finalItems = gradePlan.gradeData.finals.map((item, index) => ({
+              name: item.name,
+              count: gradePlan.finalCounts[index],
+              ingredients: item.inputs.map((inputKey) => ({
+                name: tier2ByKey[inputKey].name,
+                count: gradePlan.finalCounts[index],
+              })),
+            }));
+            const gradeClass = `grade-${gradePlan.gradeData.grade}`;
+            const finalTotal = finalItems.reduce((sum, item) => sum + item.count, 0);
+
+            return `
+              <section class="alchemy-stage-card ${gradeClass}">
+                <div class="alchemy-stage-card-head">
+                  <span class="alchemy-stage-heading">
+                    <strong class="alchemy-stage-grade ${gradeClass}">${gradePlan.gradeData.label}</strong>
+                    <span class="alchemy-stage-route">${gradePlan.gradeData.tier1Name} &gt; ${gradePlan.gradeData.tier2Name} &gt; 완제품</span>
+                  </span>
+                  <span class="alchemy-stage-final-total">완제품 ${formatSetPieceText(finalTotal)}</span>
+                </div>
+                <div class="alchemy-stage-columns">
+                  ${formatAlchemyStageColumn("1티어 제작", gradePlan.gradeData.tier1Name, tier1Items)}
+                  ${formatAlchemyStageColumn("2티어 제작", gradePlan.gradeData.tier2Name, tier2Items)}
+                  ${formatAlchemyStageColumn("3티어 제작", "완제품", finalItems)}
+                </div>
+              </section>
+            `;
+          })
+          .join("");
+
+        alchemyStageBody.innerHTML = gradeStageCards;
+
+        alchemyLeftoverBody.innerHTML = alchemyData.seafoodTypes
+          .map((seafood, seafoodIndex) => {
+            const leftovers = alchemyData.grades.map((gradeData) => {
+              const gradePlan = plan.gradePlans.find((item) => item.gradeData.grade === gradeData.grade);
+              return gradePlan?.seafoodLeftover[seafoodIndex] || 0;
+            });
+
+            return `
+              <tr>
+                <td>${seafood.name}</td>
+                ${leftovers
+                  .map((amount) => `<td><span class="leftover-amount">${formatSetPieceAmount(amount)}</span></td>`)
+                  .join("")}
+              </tr>
+            `;
+          })
+          .join("");
+
+        alchemyIntermediateBody.innerHTML = plan.gradePlans
+          .map((gradePlan) => {
+            const tier1Leftovers = gradePlan.gradeData.tier1.map((item, index) => ({
+              name: item.name,
+              count: gradePlan.tier1Leftover[index],
+            }));
+
+            return `
+              <tr>
+                <td>${gradePlan.gradeData.label}</td>
+                <td>${formatAlchemyList(tier1Leftovers)}</td>
+                <td>-</td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        alchemyResults.hidden = false;
+      };
+
+      const renderAlchemyOptimizationResult = (recommendation) => {
+        lastAlchemyRecommendation = recommendation;
+        alchemyOptimizationResults.hidden = false;
+        alchemyOptimizationAddTotal.innerHTML = formatSetPieceAmount(recommendation.addedTotal);
+        alchemyOptimizationProfit.textContent = formatGold(recommendation.profitIncrease);
+        alchemyOptimizationNewTotal.textContent = formatGold(recommendation.newPlan.totalValue);
+        alchemyOptimizationLeftover.innerHTML = formatSetPieceAmount(recommendation.leftoverAfter);
+
+        if (recommendation.addedTotal <= 0) {
+          alchemyOptimizationVerdict.innerHTML = `
+            <strong>추가 추천 재료가 없습니다.</strong>
+            <p>현재 계산 결과에서 남은 어패류가 없거나, 추가 제작으로 더 소진할 남은 재료가 없습니다.</p>
+          `;
+          applyAlchemyRecommendationButton.hidden = true;
+        } else {
+          const leftoverMessage =
+            recommendation.leftoverAfter <= 0
+              ? "추가 후 남은 어패류 없이 맞출 수 있습니다."
+              : `추가 후 남은 어패류는 ${formatSetPieceText(recommendation.leftoverAfter)}까지 줄어듭니다.`;
+          alchemyOptimizationVerdict.innerHTML = `
+            <strong>${formatSetPieceText(recommendation.addedTotal)}를 더하는 추천입니다.</strong>
+            <p>현재 남은 어패류 ${formatSetPieceText(recommendation.leftoverBefore)}를 기준으로 계산했습니다. ${leftoverMessage} 추가 후 예상 판매가는 ${formatGold(recommendation.newPlan.totalValue)}입니다.</p>
+          `;
+          applyAlchemyRecommendationButton.hidden = false;
+        }
+
+        alchemyOptimizationBody.innerHTML = alchemyData.seafoodTypes
+          .map((seafood, seafoodIndex) => {
+            return `
+              <tr>
+                <td>${seafood.name}</td>
+                ${alchemyData.grades
+                  .map((gradeData) => {
+                    const amount = recommendation.additions[gradeData.grade]?.[seafoodIndex] || 0;
+
+                    return `<td><span class="leftover-amount">${formatSetPieceAmount(amount)}</span></td>`;
+                  })
+                  .join("")}
+              </tr>
+            `;
+          })
+          .join("");
+      };
+
+      const renderAlchemyCalculator = () => {
+        const stock = getAlchemyStock();
+        const includeDiluted = alchemyIncludeDiluted.checked;
+        const plan = getBestAlchemyPlan(stock, includeDiluted);
+
+        lastAlchemyStock = stock;
+        lastAlchemyPlan = plan;
+        lastAlchemyRecommendation = null;
+        alchemyOptimizationResults.hidden = true;
+        renderAlchemyPlan(plan, stock);
+      };
+
+      const renderAlchemyOptimization = () => {
+        const stock = getAlchemyStock();
+        const includeDiluted = alchemyIncludeDiluted.checked;
+        const recommendation = getAlchemyAdditionRecommendation(stock, includeDiluted);
+
+        lastAlchemyStock = stock;
+        lastAlchemyPlan = recommendation.currentPlan;
+        renderAlchemyPlan(recommendation.currentPlan, stock);
+        renderAlchemyOptimizationResult(recommendation);
+      };
 
       const validateTradePrices = () => {
         const missing = [];
@@ -3934,6 +5854,19 @@
         });
       });
 
+      document.querySelectorAll('[data-field^="alchemy.stock."]').forEach((field) => {
+        field.addEventListener("input", updateAlchemyStockTotals);
+      });
+      updateAlchemyStockTotals();
+
+      document.querySelectorAll("[data-add-field]").forEach((field) => {
+        field.addEventListener("input", () => {
+          field.value = formatInputNumber(field.value);
+          updateAlchemyAddTotals();
+        });
+      });
+      updateAlchemyAddTotals();
+
       savePricesButton.addEventListener("click", () => {
         saveFieldGroup("price");
         renderEngravingStoneEfficiency();
@@ -3951,6 +5884,58 @@
       });
 
       seafoodTradeCalculateButton.addEventListener("click", renderSeafoodTradeComparison);
+
+      openAlchemyAddButton.addEventListener("click", () => {
+        alchemyAddModal.hidden = false;
+      });
+
+      closeAlchemyAddButton.addEventListener("click", () => {
+        alchemyAddModal.hidden = true;
+      });
+
+      alchemyAddModal.addEventListener("click", (event) => {
+        if (event.target === alchemyAddModal) {
+          alchemyAddModal.hidden = true;
+        }
+      });
+
+      clearAlchemyAddButton.addEventListener("click", () => {
+        clearAlchemyAddFields();
+        updateAlchemyAddTotals();
+      });
+
+      applyAlchemyAddButton.addEventListener("click", () => {
+        const additions = getAlchemyAdditionsFromModal();
+        const addedTotal = getTotalFromAdditionMap(additions);
+
+        if (addedTotal <= 0) {
+          return;
+        }
+
+        addAlchemyAmountsToStock(additions);
+        clearAlchemyAddFields();
+        updateAlchemyAddTotals();
+        alchemyAddModal.hidden = true;
+        renderAlchemyCalculator();
+      });
+
+      alchemyOptimizeButton.addEventListener("click", renderAlchemyOptimization);
+
+      saveAlchemyStockButton.addEventListener("click", () => {
+        saveFieldGroup("alchemy");
+        showSavedFeedback(saveAlchemyStockButton, "재고 저장");
+      });
+
+      alchemyCalculateButton.addEventListener("click", renderAlchemyCalculator);
+
+      applyAlchemyRecommendationButton.addEventListener("click", () => {
+        if (!lastAlchemyRecommendation || lastAlchemyRecommendation.addedTotal <= 0) {
+          return;
+        }
+
+        addAlchemyAmountsToStock(lastAlchemyRecommendation.additions);
+        renderAlchemyCalculator();
+      });
 
       tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
