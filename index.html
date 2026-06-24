@@ -1743,6 +1743,7 @@
               <span class="status-pill">연금품 +30%</span>
               <button class="secondary-button" type="button" id="open-alchemy-add-button">재료 추가</button>
               <button class="secondary-button" type="button" id="alchemy-optimize-button">남은 재료 최적화</button>
+              <button class="secondary-button" type="button" id="alchemy-optimize-set-button">세트 단위 최적화</button>
               <button class="secondary-button" type="button" id="save-alchemy-stock-button">재고 저장</button>
               <button class="primary-button" type="button" id="alchemy-calculate-button">연금 계산</button>
             </div>
@@ -2870,6 +2871,7 @@
       const alchemyStockBody = document.querySelector("#alchemy-stock-body");
       const openAlchemyAddButton = document.querySelector("#open-alchemy-add-button");
       const alchemyOptimizeButton = document.querySelector("#alchemy-optimize-button");
+      const alchemyOptimizeSetButton = document.querySelector("#alchemy-optimize-set-button");
       const alchemyAddModal = document.querySelector("#alchemy-add-modal");
       const closeAlchemyAddButton = document.querySelector("#close-alchemy-add-button");
       const clearAlchemyAddButton = document.querySelector("#clear-alchemy-add-button");
@@ -2911,6 +2913,7 @@
       };
       const storageKey = "ocean-spec-calculator-inputs";
       const defaultPriceVersion = "2026-06-05-market-update-v1";
+      const defaultAlchemyStockVersion = "2026-06-25-alchemy-stock-v2";
       const resultRowsPerPage = 10;
       let efficiencyCandidates = [];
       let currentResultPage = 1;
@@ -2955,6 +2958,53 @@
         "price.recycle.plastic": 1800,
         "price.recycle.fiber": 3000,
       };
+      const defaultAlchemyStockValues = {
+        "alchemy.stock.oyster.grade1.box": 0,
+        "alchemy.stock.oyster.grade1.set": 47,
+        "alchemy.stock.oyster.grade1.piece": 32,
+        "alchemy.stock.oyster.grade2.box": 0,
+        "alchemy.stock.oyster.grade2.set": 24,
+        "alchemy.stock.oyster.grade2.piece": 40,
+        "alchemy.stock.oyster.grade3.box": 0,
+        "alchemy.stock.oyster.grade3.set": 9,
+        "alchemy.stock.oyster.grade3.piece": 32,
+        "alchemy.stock.conch.grade1.box": 0,
+        "alchemy.stock.conch.grade1.set": 48,
+        "alchemy.stock.conch.grade1.piece": 1,
+        "alchemy.stock.conch.grade2.box": 0,
+        "alchemy.stock.conch.grade2.set": 25,
+        "alchemy.stock.conch.grade2.piece": 13,
+        "alchemy.stock.conch.grade3.box": 0,
+        "alchemy.stock.conch.grade3.set": 10,
+        "alchemy.stock.conch.grade3.piece": 53,
+        "alchemy.stock.octopus.grade1.box": 0,
+        "alchemy.stock.octopus.grade1.set": 48,
+        "alchemy.stock.octopus.grade1.piece": 56,
+        "alchemy.stock.octopus.grade2.box": 0,
+        "alchemy.stock.octopus.grade2.set": 24,
+        "alchemy.stock.octopus.grade2.piece": 57,
+        "alchemy.stock.octopus.grade3.box": 0,
+        "alchemy.stock.octopus.grade3.set": 10,
+        "alchemy.stock.octopus.grade3.piece": 35,
+        "alchemy.stock.seaweed.grade1.box": 0,
+        "alchemy.stock.seaweed.grade1.set": 46,
+        "alchemy.stock.seaweed.grade1.piece": 30,
+        "alchemy.stock.seaweed.grade2.box": 0,
+        "alchemy.stock.seaweed.grade2.set": 24,
+        "alchemy.stock.seaweed.grade2.piece": 23,
+        "alchemy.stock.seaweed.grade3.box": 0,
+        "alchemy.stock.seaweed.grade3.set": 10,
+        "alchemy.stock.seaweed.grade3.piece": 35,
+        "alchemy.stock.urchin.grade1.box": 0,
+        "alchemy.stock.urchin.grade1.set": 48,
+        "alchemy.stock.urchin.grade1.piece": 50,
+        "alchemy.stock.urchin.grade2.box": 0,
+        "alchemy.stock.urchin.grade2.set": 23,
+        "alchemy.stock.urchin.grade2.piece": 14,
+        "alchemy.stock.urchin.grade3.box": 0,
+        "alchemy.stock.urchin.grade3.set": 11,
+        "alchemy.stock.urchin.grade3.piece": 13,
+      };
       const engravingStoneGrades = ["투박한", "단정한", "정교한"];
       const engravingEffects = [
         engravingEffectData.shellSearch.name,
@@ -2987,21 +3037,37 @@
 
       const applyLatestDefaultPrices = () => {
         const savedInputs = getSavedInputs();
+        let shouldSave = false;
 
-        if (savedInputs["system.defaultPriceVersion"] === defaultPriceVersion) {
-          return savedInputs;
+        if (savedInputs["system.defaultPriceVersion"] !== defaultPriceVersion) {
+          Object.keys(savedInputs).forEach((key) => {
+            if (key.startsWith("price.")) {
+              delete savedInputs[key];
+            }
+          });
+
+          Object.assign(savedInputs, defaultPriceValues, {
+            "system.defaultPriceVersion": defaultPriceVersion,
+          });
+          shouldSave = true;
         }
 
-        Object.keys(savedInputs).forEach((key) => {
-          if (key.startsWith("price.")) {
-            delete savedInputs[key];
-          }
-        });
+        if (savedInputs["system.defaultAlchemyStockVersion"] !== defaultAlchemyStockVersion) {
+          Object.keys(savedInputs).forEach((key) => {
+            if (key.startsWith("alchemy.stock.")) {
+              delete savedInputs[key];
+            }
+          });
 
-        Object.assign(savedInputs, defaultPriceValues, {
-          "system.defaultPriceVersion": defaultPriceVersion,
-        });
-        localStorage.setItem(storageKey, JSON.stringify(savedInputs));
+          Object.assign(savedInputs, defaultAlchemyStockValues, {
+            "system.defaultAlchemyStockVersion": defaultAlchemyStockVersion,
+          });
+          shouldSave = true;
+        }
+
+        if (shouldSave) {
+          localStorage.setItem(storageKey, JSON.stringify(savedInputs));
+        }
 
         return savedInputs;
       };
@@ -4391,6 +4457,27 @@
         return target;
       };
 
+      const cloneAlchemyAdditionMap = (additions) => {
+        const copy = getEmptyAlchemyAdditionMap();
+        mergeAlchemyAdditions(copy, additions);
+
+        return copy;
+      };
+
+      const roundAlchemyAdditionsToSetUnits = (additions) => {
+        const rounded = getEmptyAlchemyAdditionMap();
+
+        alchemyData.grades.forEach((gradeData) => {
+          alchemyData.seafoodTypes.forEach((_, seafoodIndex) => {
+            const amount = additions[gradeData.grade]?.[seafoodIndex] || 0;
+            rounded[gradeData.grade][seafoodIndex] =
+              amount > 0 ? Math.ceil(amount / alchemyData.setToPieces) * alchemyData.setToPieces : 0;
+          });
+        });
+
+        return rounded;
+      };
+
       const getAlchemyPlanLeftoverTotal = (plan) =>
         plan.gradePlans.reduce(
           (sum, gradePlan) => sum + gradePlan.seafoodLeftover.reduce((gradeSum, value) => gradeSum + value, 0),
@@ -4461,13 +4548,15 @@
         return { additions, value, counts };
       };
 
-      const getAlchemyAdditionRecommendation = (stock, includeDiluted) => {
+      const getAlchemyAdditionRecommendation = (stock, includeDiluted, options = {}) => {
+        const unitMode = options.unitMode || "piece";
         const currentPlan = getBestAlchemyPlan(stock, includeDiluted);
         const additions = getEmptyAlchemyAdditionMap();
         let workingStock = stock;
         let completionValue = 0;
+        const maxAttempts = unitMode === "set" ? 1 : 6;
 
-        for (let attempt = 0; attempt < 6; attempt += 1) {
+        for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
           const workingPlan = getBestAlchemyPlan(workingStock, includeDiluted);
           if (getAlchemyPlanLeftoverTotal(workingPlan) <= 0) {
             break;
@@ -4483,12 +4572,27 @@
             completionValue += completion.value;
           });
 
+          if (unitMode === "set") {
+            const roundedAdditions = roundAlchemyAdditionsToSetUnits(passAdditions);
+            passAddedTotal = getTotalFromAdditionMap(roundedAdditions);
+            Object.assign(passAdditions, roundedAdditions);
+          }
+
           if (passAddedTotal <= 0) {
             break;
           }
 
+          const candidateAdditions = cloneAlchemyAdditionMap(additions);
+          mergeAlchemyAdditions(candidateAdditions, passAdditions);
+          const candidateStock = getStockWithAdditions(stock, candidateAdditions);
+          const candidatePlan = getBestAlchemyPlan(candidateStock, includeDiluted);
+
+          if (unitMode === "set" && candidatePlan.totalValue <= workingPlan.totalValue) {
+            break;
+          }
+
           mergeAlchemyAdditions(additions, passAdditions);
-          workingStock = getStockWithAdditions(stock, additions);
+          workingStock = candidateStock;
         }
 
         const addedTotal = getTotalFromAdditionMap(additions);
@@ -4502,6 +4606,7 @@
           currentPlan,
           newStock,
           newPlan,
+          unitMode,
           profitIncrease: newPlan.totalValue - currentPlan.totalValue,
           leftoverBefore: getAlchemyPlanLeftoverTotal(currentPlan),
           leftoverAfter: getAlchemyPlanLeftoverTotal(newPlan),
@@ -4837,6 +4942,8 @@
       };
 
       const renderAlchemyOptimizationResult = (recommendation) => {
+        const isSetMode = recommendation.unitMode === "set";
+        const modeLabel = isSetMode ? "세트 단위" : "낱개 단위";
         lastAlchemyRecommendation = recommendation;
         alchemyOptimizationResults.hidden = false;
         alchemyOptimizationAddTotal.innerHTML = formatSetPieceAmount(recommendation.addedTotal);
@@ -4847,7 +4954,7 @@
         if (recommendation.addedTotal <= 0) {
           alchemyOptimizationVerdict.innerHTML = `
             <strong>추가 추천 재료가 없습니다.</strong>
-            <p>현재 계산 결과에서 남은 어패류가 없거나, 추가 제작으로 더 소진할 남은 재료가 없습니다.</p>
+            <p>${modeLabel} 기준으로 현재 계산 결과에서 남은 어패류가 없거나, 추가 제작으로 더 소진할 남은 재료가 없습니다.</p>
           `;
           applyAlchemyRecommendationButton.hidden = true;
         } else {
@@ -4855,9 +4962,12 @@
             recommendation.leftoverAfter <= 0
               ? "추가 후 남은 어패류 없이 맞출 수 있습니다."
               : `추가 후 남은 어패류는 ${formatSetPieceText(recommendation.leftoverAfter)}까지 줄어듭니다.`;
+          const unitMessage = isSetMode
+            ? "각 어패류·등급별 추가량을 1세트(64개) 단위로 맞춘 뒤 다시 계산했습니다."
+            : "필요한 낱개 수량 그대로 추가하는 기준입니다.";
           alchemyOptimizationVerdict.innerHTML = `
-            <strong>${formatSetPieceText(recommendation.addedTotal)}를 더하는 추천입니다.</strong>
-            <p>현재 남은 어패류 ${formatSetPieceText(recommendation.leftoverBefore)}를 기준으로 계산했습니다. ${leftoverMessage} 추가 후 예상 판매가는 ${formatGold(recommendation.newPlan.totalValue)}입니다.</p>
+            <strong>${modeLabel}로 ${formatSetPieceText(recommendation.addedTotal)}를 더하는 추천입니다.</strong>
+            <p>현재 남은 어패류 ${formatSetPieceText(recommendation.leftoverBefore)}를 기준으로 계산했습니다. ${leftoverMessage} 추가 후 예상 판매가는 ${formatGold(recommendation.newPlan.totalValue)}입니다. ${unitMessage}</p>
           `;
           applyAlchemyRecommendationButton.hidden = false;
         }
@@ -4892,10 +5002,10 @@
         renderAlchemyPlan(plan, stock);
       };
 
-      const renderAlchemyOptimization = () => {
+      const renderAlchemyOptimization = (unitMode = "piece") => {
         const stock = getAlchemyStock();
         const includeDiluted = alchemyIncludeDiluted.checked;
-        const recommendation = getAlchemyAdditionRecommendation(stock, includeDiluted);
+        const recommendation = getAlchemyAdditionRecommendation(stock, includeDiluted, { unitMode });
 
         lastAlchemyStock = stock;
         lastAlchemyPlan = recommendation.currentPlan;
@@ -6070,7 +6180,8 @@
         renderAlchemyCalculator();
       });
 
-      alchemyOptimizeButton.addEventListener("click", renderAlchemyOptimization);
+      alchemyOptimizeButton.addEventListener("click", () => renderAlchemyOptimization("piece"));
+      alchemyOptimizeSetButton.addEventListener("click", () => renderAlchemyOptimization("set"));
 
       saveAlchemyStockButton.addEventListener("click", () => {
         saveFieldGroup("alchemy");
