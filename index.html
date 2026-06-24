@@ -897,6 +897,16 @@
         white-space: nowrap;
       }
 
+      .alchemy-stage-ingredients.extra {
+        border-top-color: #d4e8dc;
+        background: #f8fdf9;
+      }
+
+      .alchemy-stage-ingredients.extra .alchemy-stage-ingredient {
+        border-color: #cce4d5;
+        background: #ffffff;
+      }
+
       .alchemy-stage-empty {
         display: grid;
         min-height: 58px;
@@ -906,6 +916,53 @@
         color: #7b8794;
         font-size: 13px;
         font-weight: 800;
+      }
+
+      .alchemy-extra-board {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 8px;
+        padding: 12px;
+        border: 1px solid #cfe0ed;
+        border-radius: 8px;
+        background: #f3f8fc;
+      }
+
+      .alchemy-extra-chip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        min-width: 0;
+        padding: 8px 10px;
+        border: 1px solid #c5d9ee;
+        border-radius: 7px;
+        background: #ffffff;
+        color: #405162;
+        font-size: 13px;
+        font-weight: 900;
+        line-height: 1.35;
+      }
+
+      .alchemy-extra-name {
+        overflow-wrap: anywhere;
+      }
+
+      .alchemy-extra-amount {
+        color: #526373;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .alchemy-extra-empty {
+        grid-column: 1 / -1;
+        padding: 12px;
+        border: 1px dashed #c9d8e6;
+        border-radius: 7px;
+        color: #728091;
+        font-size: 13px;
+        font-weight: 800;
+        text-align: center;
       }
 
       .alchemy-list-item {
@@ -1805,6 +1862,12 @@
             </div>
 
             <div class="data-section">
+              <h3 class="data-title">필요 추가 재료 합계</h3>
+              <p class="muted-note">완제품 제작 과정에서 어패류 외에 추가로 들어가는 재료만 합산합니다.</p>
+              <div class="alchemy-extra-board" id="alchemy-extra-material-board" aria-label="어패류 연금 필요 추가 재료 합계"></div>
+            </div>
+
+            <div class="data-section">
               <h3 class="data-title">등급별 제작 단계</h3>
               <p class="muted-note">괄호 안의 0성 재료 수량은 희석된 추출액 제작에 사용할 몫입니다.</p>
               <div class="alchemy-stage-board" id="alchemy-stage-body" aria-label="어패류 연금 등급별 제작 단계"></div>
@@ -2557,18 +2620,18 @@
             finalLabel: "★",
             evenTier1Batch: true,
             tier1: [
-              { key: "guard", seafood: "oyster", name: "수호의 정수" },
-              { key: "wave", seafood: "conch", name: "파동의 정수" },
-              { key: "chaos", seafood: "octopus", name: "혼란의 정수" },
-              { key: "life", seafood: "seaweed", name: "생명의 정수" },
-              { key: "corrosion", seafood: "urchin", name: "부식의 정수" },
+              { key: "guard", seafood: "oyster", name: "수호의 정수", extraMaterials: [{ name: "점토", amount: 1 }] },
+              { key: "wave", seafood: "conch", name: "파동의 정수", extraMaterials: [{ name: "모래", amount: 2 }] },
+              { key: "chaos", seafood: "octopus", name: "혼란의 정수", extraMaterials: [{ name: "흙", amount: 4 }] },
+              { key: "life", seafood: "seaweed", name: "생명의 정수", extraMaterials: [{ name: "자갈", amount: 2 }] },
+              { key: "corrosion", seafood: "urchin", name: "부식의 정수", extraMaterials: [{ name: "화강암", amount: 1 }] },
             ],
             tier2: [
-              { key: "waveGuard", name: "물결 수호의 핵", inputs: ["guard", "wave"] },
-              { key: "wavePollution", name: "파동 오염의 핵", inputs: ["wave", "chaos"] },
-              { key: "orderBreak", name: "질서 파괴의 핵", inputs: ["chaos", "life"] },
-              { key: "vitalCollapse", name: "활력 붕괴의 핵", inputs: ["life", "corrosion"] },
-              { key: "erosionDefense", name: "침식 방어의 핵", inputs: ["corrosion", "guard"] },
+              { key: "waveGuard", name: "물결 수호의 핵", inputs: ["guard", "wave"], extraMaterials: [{ name: "깐 새우", amount: 1 }] },
+              { key: "wavePollution", name: "파동 오염의 핵", inputs: ["wave", "chaos"], extraMaterials: [{ name: "도미 회", amount: 1 }] },
+              { key: "orderBreak", name: "질서 파괴의 핵", inputs: ["chaos", "life"], extraMaterials: [{ name: "청어 회", amount: 1 }] },
+              { key: "vitalCollapse", name: "활력 붕괴의 핵", inputs: ["life", "corrosion"], extraMaterials: [{ name: "금붕어 회", amount: 1 }] },
+              { key: "erosionDefense", name: "침식 방어의 핵", inputs: ["corrosion", "guard"], extraMaterials: [{ name: "농어 회", amount: 1 }] },
             ],
             finals: [
               { key: "aquatis", name: "영생의 아쿠티스 ★", price: 5159, inputs: ["waveGuard", "orderBreak", "vitalCollapse"] },
@@ -2586,18 +2649,18 @@
             finalLabel: "★★",
             evenTier1Batch: true,
             tier1: [
-              { key: "guard", seafood: "oyster", name: "수호 에센스" },
-              { key: "wave", seafood: "conch", name: "파동 에센스" },
-              { key: "chaos", seafood: "octopus", name: "혼란 에센스" },
-              { key: "life", seafood: "seaweed", name: "생명 에센스" },
-              { key: "corrosion", seafood: "urchin", name: "부식 에센스" },
+              { key: "guard", seafood: "oyster", name: "수호 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "참나무 잎", amount: 3 }] },
+              { key: "wave", seafood: "conch", name: "파동 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "가문비나무 잎", amount: 3 }] },
+              { key: "chaos", seafood: "octopus", name: "혼란 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "자작나무 잎", amount: 3 }] },
+              { key: "life", seafood: "seaweed", name: "생명 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "벚나무 잎", amount: 3 }] },
+              { key: "corrosion", seafood: "urchin", name: "부식 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "짙은 참나무 잎", amount: 3 }] },
             ],
             tier2: [
-              { key: "vigorPreserve", name: "활기 보존의 결정", inputs: ["guard", "life"] },
-              { key: "waveErosion", name: "파도 침식의 결정", inputs: ["wave", "corrosion"] },
-              { key: "defensePollution", name: "방어 오염의 결정", inputs: ["chaos", "guard"] },
-              { key: "torrentRegen", name: "격류 재생의 결정", inputs: ["life", "wave"] },
-              { key: "toxicChaos", name: "맹독 혼란의 결정", inputs: ["corrosion", "chaos"] },
+              { key: "vigorPreserve", name: "활기 보존의 결정", inputs: ["guard", "life"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "청금석 블록", amount: 1 }] },
+              { key: "waveErosion", name: "파도 침식의 결정", inputs: ["wave", "corrosion"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "레드스톤 블록", amount: 1 }] },
+              { key: "defensePollution", name: "방어 오염의 결정", inputs: ["chaos", "guard"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "철 주괴", amount: 3 }] },
+              { key: "torrentRegen", name: "격류 재생의 결정", inputs: ["life", "wave"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "금 주괴", amount: 2 }] },
+              { key: "toxicChaos", name: "맹독 혼란의 결정", inputs: ["corrosion", "chaos"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "다이아몬드", amount: 1 }] },
             ],
             finals: [
               { key: "trenchCore", name: "해구의 파동 코어 ★★", price: 11131, inputs: ["vigorPreserve", "waveErosion", "torrentRegen"] },
@@ -2615,18 +2678,18 @@
             finalLabel: "★★★",
             evenTier1Batch: false,
             tier1: [
-              { key: "guard", seafood: "oyster", name: "수호의 엘릭서" },
-              { key: "wave", seafood: "conch", name: "파동의 엘릭서" },
-              { key: "chaos", seafood: "octopus", name: "혼란의 엘릭서" },
-              { key: "life", seafood: "seaweed", name: "생명의 엘릭서" },
-              { key: "corrosion", seafood: "urchin", name: "부식의 엘릭서" },
+              { key: "guard", seafood: "oyster", name: "수호의 엘릭서", extraMaterials: [{ name: "불우렁쉥이", amount: 2 }, { name: "유리병", amount: 3 }, { name: "네더랙", amount: 8 }] },
+              { key: "wave", seafood: "conch", name: "파동의 엘릭서", extraMaterials: [{ name: "불우렁쉥이", amount: 2 }, { name: "유리병", amount: 3 }, { name: "마그마 블록", amount: 4 }] },
+              { key: "chaos", seafood: "octopus", name: "혼란의 엘릭서", extraMaterials: [{ name: "불우렁쉥이", amount: 2 }, { name: "유리병", amount: 3 }, { name: "영혼 흙", amount: 4 }] },
+              { key: "life", seafood: "seaweed", name: "생명의 엘릭서", extraMaterials: [{ name: "불우렁쉥이", amount: 2 }, { name: "유리병", amount: 3 }, { name: "진홍빛 자루", amount: 4 }] },
+              { key: "corrosion", seafood: "urchin", name: "부식의 엘릭서", extraMaterials: [{ name: "불우렁쉥이", amount: 2 }, { name: "유리병", amount: 3 }, { name: "뒤틀린 자루", amount: 4 }] },
             ],
             tier2: [
-              { key: "immortalRegen", name: "불멸 재생의 영약", inputs: ["guard", "life"] },
-              { key: "waveBarrier", name: "파동 장벽의 영약", inputs: ["wave", "guard"] },
-              { key: "fallenErosion", name: "타락 침식의 영약", inputs: ["chaos", "corrosion"] },
-              { key: "lifeFrenzy", name: "생명 광란의 영약", inputs: ["life", "chaos"] },
-              { key: "toxicWave", name: "맹독 파동의 영약", inputs: ["corrosion", "wave"] },
+              { key: "immortalRegen", name: "불멸 재생의 영약", inputs: ["guard", "life"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 관 산호 블록", amount: 2 }] },
+              { key: "waveBarrier", name: "파동 장벽의 영약", inputs: ["wave", "guard"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 사방산호 블록", amount: 2 }] },
+              { key: "fallenErosion", name: "타락 침식의 영약", inputs: ["chaos", "corrosion"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 거품 산호 블록", amount: 2 }] },
+              { key: "lifeFrenzy", name: "생명 광란의 영약", inputs: ["life", "chaos"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 불 산호 블록", amount: 2 }] },
+              { key: "toxicWave", name: "맹독 파동의 영약", inputs: ["corrosion", "wave"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 뇌 산호 블록", amount: 2 }] },
             ],
             finals: [
               { key: "aquaPulse", name: "아쿠아 펄스 파편 ★★★", price: 21833, inputs: ["immortalRegen", "waveBarrier", "toxicWave"] },
@@ -2822,6 +2885,7 @@
       const alchemyDilutedCount = document.querySelector("#alchemy-diluted-count");
       const alchemyLeftoverCount = document.querySelector("#alchemy-leftover-count");
       const alchemyProductBody = document.querySelector("#alchemy-product-body");
+      const alchemyExtraMaterialBoard = document.querySelector("#alchemy-extra-material-board");
       const alchemyStageBody = document.querySelector("#alchemy-stage-body");
       const alchemyLeftoverBody = document.querySelector("#alchemy-leftover-body");
       const alchemyIntermediateBody = document.querySelector("#alchemy-intermediate-body");
@@ -3911,6 +3975,24 @@
         const { sets, pieces } = getSetPieceParts(value);
         return `${formatNumber(sets)}세트 ${formatNumber(pieces)}개`;
       };
+      const formatBoxSetPieceText = (value) => {
+        const { box, set, piece } = getBoxSetPiece(Math.max(0, Math.round(value)));
+        const parts = [];
+
+        if (box > 0) {
+          parts.push(`${formatNumber(box)}상자`);
+        }
+
+        if (set > 0) {
+          parts.push(`${formatNumber(set)}세트`);
+        }
+
+        if (piece > 0 || !parts.length) {
+          parts.push(`${formatNumber(piece)}개`);
+        }
+
+        return parts.join(" ");
+      };
       const formatSetPieceAmount = (value) => {
         const { amount } = getSetPieceParts(value);
 
@@ -4445,6 +4527,37 @@
           .join("");
       };
 
+      const getScaledExtraMaterials = (materials = [], count = 0) =>
+        materials
+          .map((material) => ({
+            name: material.name,
+            count: material.amount * count,
+          }))
+          .filter((material) => material.count > 0);
+
+      const addAlchemyExtraMaterialTotals = (totals, materials = []) => {
+        materials.forEach((material) => {
+          totals.set(material.name, (totals.get(material.name) || 0) + material.count);
+        });
+      };
+
+      const renderAlchemyExtraMaterialTotals = (totals) => {
+        const materials = [...totals.entries()].filter(([, amount]) => amount > 0);
+
+        alchemyExtraMaterialBoard.innerHTML = materials.length
+          ? materials
+              .map(
+                ([name, amount]) => `
+                  <span class="alchemy-extra-chip">
+                    <span class="alchemy-extra-name">${name}</span>
+                    <span class="alchemy-extra-amount">${formatBoxSetPieceText(amount)}</span>
+                  </span>
+                `,
+              )
+              .join("")
+          : '<div class="alchemy-extra-empty">필요 추가 재료가 없습니다.</div>';
+      };
+
       const formatAlchemyStageList = (items) => {
         const visible = items.filter((item) => item.count > 0);
 
@@ -4492,6 +4605,28 @@
                         `
                         : ""
                     }
+                    ${
+                      item.extraMaterials?.length
+                        ? `
+                          <div class="alchemy-stage-ingredients extra">
+                            <span class="alchemy-stage-ingredients-label">추가 재료</span>
+                            <div class="alchemy-stage-ingredient-list">
+                              ${item.extraMaterials
+                                .filter((material) => material.count > 0)
+                                .map(
+                                  (material) => `
+                                    <span class="alchemy-stage-ingredient">
+                                      <span class="alchemy-stage-ingredient-name">${material.name}</span>
+                                      <span class="alchemy-stage-ingredient-count">${formatBoxSetPieceText(material.count)}</span>
+                                    </span>
+                                  `,
+                                )
+                                .join("")}
+                            </div>
+                          </div>
+                        `
+                        : ""
+                    }
                   </div>
                 `,
               )
@@ -4525,6 +4660,7 @@
 
       const renderAlchemyPlan = (plan, stock) => {
         const productRows = [];
+        const extraMaterialTotals = new Map();
         let totalProducts = plan.zeroCount;
         let totalLeftover = 0;
 
@@ -4593,28 +4729,42 @@
         const gradeStageCards = plan.gradePlans
           .map((gradePlan) => {
             const { seafoodByKey, tier1ByKey, tier2ByKey } = getAlchemyRecipeLookup(gradePlan.gradeData);
-            const tier1Items = gradePlan.gradeData.tier1.map((item, index) => ({
-              name: item.name,
-              count: gradePlan.tier1Crafted[index],
-              zeroCount: gradePlan.zeroTier1Demand[index],
-              ingredients: [
-                {
-                  name: `${seafoodByKey[item.seafood].name} ${gradePlan.gradeData.label}`,
-                  count: gradePlan.tier1Crafted[index],
-                  zeroCount: gradePlan.zeroTier1Demand[index],
-                },
-              ],
-            }));
-            const tier2Items = gradePlan.gradeData.tier2.map((item, index) => ({
-              name: item.name,
-              count: gradePlan.tier2Counts[index],
-              zeroCount: gradePlan.zeroTier2Counts[index],
-              ingredients: item.inputs.map((inputKey) => ({
-                name: tier1ByKey[inputKey].name,
-                count: gradePlan.tier2Counts[index],
+            const tier1Items = gradePlan.gradeData.tier1.map((item, index) => {
+              const count = gradePlan.tier1Crafted[index];
+              const extraMaterials = getScaledExtraMaterials(item.extraMaterials, count);
+              addAlchemyExtraMaterialTotals(extraMaterialTotals, extraMaterials);
+
+              return {
+                name: item.name,
+                count,
+                zeroCount: gradePlan.zeroTier1Demand[index],
+                extraMaterials,
+                ingredients: [
+                  {
+                    name: `${seafoodByKey[item.seafood].name} ${gradePlan.gradeData.label}`,
+                    count,
+                    zeroCount: gradePlan.zeroTier1Demand[index],
+                  },
+                ],
+              };
+            });
+            const tier2Items = gradePlan.gradeData.tier2.map((item, index) => {
+              const count = gradePlan.tier2Counts[index];
+              const extraMaterials = getScaledExtraMaterials(item.extraMaterials, count);
+              addAlchemyExtraMaterialTotals(extraMaterialTotals, extraMaterials);
+
+              return {
+                name: item.name,
+                count,
                 zeroCount: gradePlan.zeroTier2Counts[index],
-              })),
-            }));
+                extraMaterials,
+                ingredients: item.inputs.map((inputKey) => ({
+                  name: tier1ByKey[inputKey].name,
+                  count,
+                  zeroCount: gradePlan.zeroTier2Counts[index],
+                })),
+              };
+            });
             const finalItems = gradePlan.gradeData.finals.map((item, index) => ({
               name: item.name,
               count: gradePlan.finalCounts[index],
@@ -4645,6 +4795,7 @@
           })
           .join("");
 
+        renderAlchemyExtraMaterialTotals(extraMaterialTotals);
         alchemyStageBody.innerHTML = gradeStageCards;
 
         alchemyLeftoverBody.innerHTML = alchemyData.seafoodTypes
