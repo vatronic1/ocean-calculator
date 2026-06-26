@@ -668,10 +668,16 @@
 
       .alchemy-stage-board {
         display: grid;
+        grid-template-columns: repeat(3, minmax(360px, 1fr));
+        align-items: start;
         gap: 14px;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        padding-bottom: 6px;
       }
 
       .alchemy-stage-card {
+        min-width: 0;
         overflow: hidden;
         border: 1px solid #dce6ee;
         border-left-width: 4px;
@@ -746,7 +752,7 @@
 
       .alchemy-stage-columns {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: 1fr;
         gap: 12px;
         padding: 12px;
         background: #fbfcfd;
@@ -1355,6 +1361,10 @@
 
         .alchemy-grade-grid {
           grid-template-columns: 1fr;
+        }
+
+        .alchemy-stage-board {
+          grid-template-columns: repeat(3, minmax(310px, 1fr));
         }
 
         .alchemy-stage-card-head {
@@ -2650,11 +2660,11 @@
             finalLabel: "★★",
             evenTier1Batch: true,
             tier1: [
-              { key: "guard", seafood: "oyster", name: "수호 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "참나무 잎", amount: 3 }] },
-              { key: "wave", seafood: "conch", name: "파동 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "가문비나무 잎", amount: 3 }] },
-              { key: "chaos", seafood: "octopus", name: "혼란 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "자작나무 잎", amount: 3 }] },
-              { key: "life", seafood: "seaweed", name: "생명 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "벚나무 잎", amount: 3 }] },
-              { key: "corrosion", seafood: "urchin", name: "부식 에센스", extraMaterials: [{ name: "해초", amount: 8 }, { name: "짙은 참나무 잎", amount: 3 }] },
+              { key: "guard", seafood: "oyster", name: "수호 에센스", extraMaterials: [{ name: "해초", amount: 3 }, { name: "참나무 잎", amount: 3 }] },
+              { key: "wave", seafood: "conch", name: "파동 에센스", extraMaterials: [{ name: "해초", amount: 3 }, { name: "가문비나무 잎", amount: 3 }] },
+              { key: "chaos", seafood: "octopus", name: "혼란 에센스", extraMaterials: [{ name: "해초", amount: 3 }, { name: "자작나무 잎", amount: 3 }] },
+              { key: "life", seafood: "seaweed", name: "생명 에센스", extraMaterials: [{ name: "해초", amount: 3 }, { name: "벚나무 잎", amount: 3 }] },
+              { key: "corrosion", seafood: "urchin", name: "부식 에센스", extraMaterials: [{ name: "해초", amount: 3 }, { name: "짙은 참나무 잎", amount: 3 }] },
             ],
             tier2: [
               { key: "vigorPreserve", name: "활기 보존의 결정", inputs: ["guard", "life"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "청금석 블록", amount: 1 }] },
