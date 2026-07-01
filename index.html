@@ -1405,6 +1405,9 @@
         <button class="tab-button" type="button" aria-selected="false" data-tab="income">
           수익 계산
         </button>
+        <button class="tab-button" type="button" aria-selected="false" data-tab="stamina-drink">
+          스태미나 드링크
+        </button>
         <button class="tab-button" type="button" aria-selected="false" data-tab="seafood-trade">
           어패류 판매 비교
         </button>
@@ -1630,6 +1633,115 @@
                 </table>
               </div>
               <p class="muted-note">정령 고래와 가오리 인도는 이벤트성 수익이지만 현재 입력한 각인 레벨 기준 기대값에 포함합니다.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" data-panel="stamina-drink">
+        <div class="workspace">
+          <div class="panel-head">
+            <h2 class="panel-title">스태미나 드링크</h2>
+            <div class="panel-actions">
+              <span class="status-pill">하루 최대 5회</span>
+              <button class="secondary-button" type="button" id="save-stamina-drink-button">가격 저장</button>
+              <button class="primary-button" type="button" id="stamina-drink-calculate-button">드링크 효율 계산</button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3 class="form-title">스태미나 드링크 가격</h3>
+            <p class="muted-note">현재 정보 입력 탭의 스펙과 시세 입력값을 기준으로, 추가 스태미나를 사용했을 때의 기대수익을 계산합니다.</p>
+            <div class="form-grid">
+              <div class="field">
+                <label for="price-stamina-drink-1">스태미나 드링크 1</label>
+                <input id="price-stamina-drink-1" data-field="price.staminaDrink.1" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-stamina-drink-2">스태미나 드링크 2</label>
+                <input id="price-stamina-drink-2" data-field="price.staminaDrink.2" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-stamina-drink-3">스태미나 드링크 3</label>
+                <input id="price-stamina-drink-3" data-field="price.staminaDrink.3" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-stamina-drink-4">스태미나 드링크 4</label>
+                <input id="price-stamina-drink-4" data-field="price.staminaDrink.4" type="number" min="0" placeholder="골드" />
+              </div>
+              <div class="field">
+                <label for="price-stamina-drink-5">스태미나 드링크 5</label>
+                <input id="price-stamina-drink-5" data-field="price.staminaDrink.5" type="number" min="0" placeholder="골드" />
+              </div>
+            </div>
+          </div>
+
+          <div class="section-body" id="stamina-drink-results" hidden>
+            <div class="comparison-verdict" id="stamina-drink-verdict"></div>
+
+            <div class="summary-grid" aria-label="스태미나 드링크 계산 요약">
+              <div class="metric">
+                <span class="metric-label">3000 스태미나 기대수익</span>
+                <span class="metric-value" id="stamina-drink-base-profit">-</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">1스태미나 기대수익</span>
+                <span class="metric-value" id="stamina-drink-profit-per-stamina">-</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">채집 1회 기대수익</span>
+                <span class="metric-value" id="stamina-drink-profit-per-gather">-</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">추천 드링크</span>
+                <span class="metric-value" id="stamina-drink-best">-</span>
+              </div>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">개별 드링크 효율</h3>
+              <div class="table-wrap">
+                <table class="result-table" aria-label="스태미나 드링크 개별 효율">
+                  <thead>
+                    <tr>
+                      <th>드링크</th>
+                      <th>추가 스태미나</th>
+                      <th>추가 채집</th>
+                      <th>가격</th>
+                      <th>기대 추가수익</th>
+                      <th>순이익</th>
+                      <th>회수율</th>
+                      <th>판정</th>
+                    </tr>
+                  </thead>
+                  <tbody id="stamina-drink-body">
+                    <tr>
+                      <td class="result-empty" colspan="8">가격과 현재 스펙을 입력한 뒤 계산하세요.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="data-section">
+              <h3 class="data-title">하루 5회 기준</h3>
+              <div class="table-wrap">
+                <table class="result-table" aria-label="스태미나 드링크 하루 5회 전략">
+                  <thead>
+                    <tr>
+                      <th>전략</th>
+                      <th>마시는 횟수</th>
+                      <th>추가 스태미나</th>
+                      <th>추가 채집</th>
+                      <th>총 가격</th>
+                      <th>기대 추가수익</th>
+                      <th>순이익</th>
+                    </tr>
+                  </thead>
+                  <tbody id="stamina-drink-daily-body"></tbody>
+                </table>
+              </div>
+              <p class="muted-note">추천 반복은 같은 단계 드링크를 여러 번 구매할 수 있다는 기준입니다. 구매 제한이 단계별 1개라면 1~5 각 1개씩 행을 기준으로 보면 됩니다.</p>
             </div>
           </div>
         </div>
@@ -2387,6 +2499,14 @@
         staminaPotionIncluded: false,
       };
 
+      const staminaDrinkData = [
+        { level: 1, stamina: 100 },
+        { level: 2, stamina: 300 },
+        { level: 3, stamina: 500 },
+        { level: 4, stamina: 700 },
+        { level: 5, stamina: 1000 },
+      ];
+
       const engravingEffectData = {
         shellSearch: {
           name: "조개 탐색",
@@ -2475,6 +2595,19 @@
           goldDiceChanceOnTrigger: 10,
           goldDiceMultiplier: 10,
           seafoodGradeApplies: true,
+        },
+        fastFisher: {
+          name: "빠른 어부",
+          rarity: "Epic",
+          trigger: "효율 비교 전용",
+          efficiencyOnly: true,
+          levels: [
+            { level: 1 },
+            { level: 2 },
+            { level: 3 },
+            { level: 4 },
+            { level: 5 },
+          ],
         },
       };
 
@@ -2867,6 +3000,16 @@
       const incomeRecycle = document.querySelector("#income-recycle");
       const incomeBreakdownBody = document.querySelector("#income-breakdown-body");
       const incomeGradeBody = document.querySelector("#income-grade-body");
+      const staminaDrinkCalculateButton = document.querySelector("#stamina-drink-calculate-button");
+      const saveStaminaDrinkButton = document.querySelector("#save-stamina-drink-button");
+      const staminaDrinkResults = document.querySelector("#stamina-drink-results");
+      const staminaDrinkVerdict = document.querySelector("#stamina-drink-verdict");
+      const staminaDrinkBaseProfit = document.querySelector("#stamina-drink-base-profit");
+      const staminaDrinkProfitPerStamina = document.querySelector("#stamina-drink-profit-per-stamina");
+      const staminaDrinkProfitPerGather = document.querySelector("#stamina-drink-profit-per-gather");
+      const staminaDrinkBest = document.querySelector("#stamina-drink-best");
+      const staminaDrinkBody = document.querySelector("#stamina-drink-body");
+      const staminaDrinkDailyBody = document.querySelector("#stamina-drink-daily-body");
       const tradeMarketPriceBody = document.querySelector("#trade-market-price-body");
       const saveTradePricesButton = document.querySelector("#save-trade-prices-button");
       const seafoodTradeCalculateButton = document.querySelector("#seafood-trade-calculate-button");
@@ -2959,6 +3102,9 @@
         "price.engraving.투박한 어부 룰렛 각인석": 450000,
         "price.engraving.단정한 어부 룰렛 각인석": 650000,
         "price.engraving.정교한 어부 룰렛 각인석": 1100000,
+        "price.engraving.투박한 빠른 어부 각인석": 0,
+        "price.engraving.단정한 빠른 어부 각인석": 0,
+        "price.engraving.정교한 빠른 어부 각인석": 0,
         "price.seafood.grade1": 700,
         "price.seafood.grade2": 1800,
         "price.seafood.grade3": 3000,
@@ -2967,6 +3113,11 @@
         "price.recycle.resin": 18000,
         "price.recycle.plastic": 1800,
         "price.recycle.fiber": 3000,
+        "price.staminaDrink.1": 0,
+        "price.staminaDrink.2": 0,
+        "price.staminaDrink.3": 0,
+        "price.staminaDrink.4": 0,
+        "price.staminaDrink.5": 0,
       };
       const defaultAlchemyStockValues = {
         "alchemy.stock.oyster.grade1.box": 0,
@@ -3022,6 +3173,7 @@
         engravingEffectData.spiritWhale.name,
         engravingEffectData.rayGuide.name,
         engravingEffectData.fisherRoulette.name,
+        engravingEffectData.fastFisher.name,
       ];
       const expertProfileTargets = [
         expertSkillData.deepSeaGatherer,
@@ -3315,7 +3467,11 @@
         )
         .join("");
 
-      engravingProfileFields.innerHTML = Object.values(engravingEffectData)
+      const specEngravingEffects = Object.values(engravingEffectData).filter(
+        (effect) => !effect.efficiencyOnly,
+      );
+
+      engravingProfileFields.innerHTML = specEngravingEffects
         .map((effect) => {
           const id = `profile-engraving-${createSafeId(effect.name)}`;
           const maxLevel = effect.levels.length;
@@ -3393,7 +3549,7 @@
         )
         .join("");
 
-      engravingEffectTable.innerHTML = Object.values(engravingEffectData)
+      engravingEffectTable.innerHTML = specEngravingEffects
         .flatMap((effect) =>
           effect.levels.map(
             (levelData) => `
@@ -3713,7 +3869,7 @@
           },
         };
 
-        Object.values(engravingEffectData).forEach((effect) => {
+        specEngravingEffects.forEach((effect) => {
           profile.engravings[effect.name] = getNumberField(`profile.engraving.${effect.name}`);
         });
 
@@ -5279,6 +5435,157 @@
         }
       };
 
+      const getStaminaDrinkRows = (income, prices) => {
+        const profitPerStamina = income.totalProfit / oceanGatheringRules.baseStamina;
+
+        return staminaDrinkData.map((drink) => {
+          const price = prices[`price.staminaDrink.${drink.level}`] || 0;
+          const expectedProfit = profitPerStamina * drink.stamina;
+          const netProfit = expectedProfit - price;
+          const gatherCount = drink.stamina / oceanGatheringRules.staminaCostPerGather;
+          const recoveryRate = price > 0 ? (expectedProfit / price) * 100 : null;
+
+          return {
+            ...drink,
+            price,
+            expectedProfit,
+            netProfit,
+            gatherCount,
+            recoveryRate,
+          };
+        });
+      };
+
+      const getStaminaDrinkVerdictText = (netProfit) => {
+        if (netProfit > 0) {
+          return "이득";
+        }
+
+        if (netProfit < 0) {
+          return "손해";
+        }
+
+        return "손익분기";
+      };
+
+      const renderStaminaDrinkDailyRow = (label, rows) => {
+        const total = rows.reduce(
+          (sum, row) => ({
+            count: sum.count + 1,
+            stamina: sum.stamina + row.stamina,
+            gatherCount: sum.gatherCount + row.gatherCount,
+            price: sum.price + row.price,
+            expectedProfit: sum.expectedProfit + row.expectedProfit,
+            netProfit: sum.netProfit + row.netProfit,
+          }),
+          { count: 0, stamina: 0, gatherCount: 0, price: 0, expectedProfit: 0, netProfit: 0 },
+        );
+
+        return `
+          <tr>
+            <td>${label}</td>
+            <td>${formatCount(total.count, "회")}</td>
+            <td>${formatCount(total.stamina, " 스태미나")}</td>
+            <td>${formatCount(total.gatherCount, "회")}</td>
+            <td>${formatGold(total.price)}</td>
+            <td class="profit-value">${formatGold(total.expectedProfit)}</td>
+            <td class="${total.netProfit >= 0 ? "profit-value" : ""}">${formatGold(total.netProfit)}</td>
+          </tr>
+        `;
+      };
+
+      const renderStaminaDrinkEfficiency = (shouldActivate = true) => {
+        const missingPrices = validatePrices();
+
+        staminaDrinkResults.hidden = false;
+
+        if (missingPrices.length > 0) {
+          staminaDrinkVerdict.innerHTML = `
+            <strong>시세 입력 필요</strong>
+            <p>시세 입력이 비어 있어 계산할 수 없습니다. 누락: ${missingPrices.slice(0, 8).join(", ")}${missingPrices.length > 8 ? " 외" : ""}</p>
+          `;
+          [staminaDrinkBaseProfit, staminaDrinkProfitPerStamina, staminaDrinkProfitPerGather, staminaDrinkBest].forEach(
+            (item) => {
+              item.textContent = "-";
+            },
+          );
+          staminaDrinkBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="8">시세 입력을 먼저 채워주세요.</td>
+            </tr>
+          `;
+          staminaDrinkDailyBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="7">시세 입력을 먼저 채워주세요.</td>
+            </tr>
+          `;
+          if (shouldActivate) {
+            activateTab("prices");
+          }
+          return;
+        }
+
+        const prices = getPriceMap();
+        const profile = getCurrentProfile();
+        const income = getIncomeBreakdown(profile, prices);
+        const profitPerStamina = income.totalProfit / oceanGatheringRules.baseStamina;
+        const profitPerGather =
+          income.totalProfit / (oceanGatheringRules.baseStamina / oceanGatheringRules.staminaCostPerGather);
+        const rows = getStaminaDrinkRows(income, prices);
+        const bestRow = [...rows].sort((a, b) => b.netProfit - a.netProfit)[0];
+        const bestPositiveRow = bestRow && bestRow.netProfit > 0 ? bestRow : null;
+        const repeatedRows = bestPositiveRow ? Array.from({ length: 5 }, () => bestPositiveRow) : [];
+        const onceLimitedRows = [...rows]
+          .filter((row) => row.netProfit > 0)
+          .sort((a, b) => b.netProfit - a.netProfit)
+          .slice(0, 5);
+
+        staminaDrinkBaseProfit.textContent = formatGold(income.totalProfit);
+        staminaDrinkProfitPerStamina.textContent = `${formatGold(profitPerStamina)} / 스태미나`;
+        staminaDrinkProfitPerGather.textContent = `${formatGold(profitPerGather)} / 회`;
+        staminaDrinkBest.textContent = bestPositiveRow ? `${bestPositiveRow.level}단계` : "구매 안 함";
+
+        staminaDrinkVerdict.innerHTML = bestPositiveRow
+          ? `
+            <strong>${bestPositiveRow.level}단계 추천</strong>
+            <p>현재 가격 기준 1회당 ${formatGold(bestPositiveRow.netProfit)} 순이익으로 가장 좋습니다.</p>
+          `
+          : `
+            <strong>구매 비추천</strong>
+            <p>현재 가격 기준 이득인 스태미나 드링크가 없습니다.</p>
+          `;
+
+        staminaDrinkBody.innerHTML = rows
+          .map(
+            (row) => `
+              <tr class="${row === bestPositiveRow ? "comparison-best-row" : ""}">
+                <td>${row.level}단계</td>
+                <td>${formatCount(row.stamina, " 스태미나")}</td>
+                <td>${formatCount(row.gatherCount, "회")}</td>
+                <td>${formatGold(row.price)}</td>
+                <td class="profit-value">${formatGold(row.expectedProfit)}</td>
+                <td class="${row.netProfit >= 0 ? "profit-value" : ""}">${formatGold(row.netProfit)}</td>
+                <td>${row.recoveryRate === null ? "-" : `${row.recoveryRate.toFixed(1)}%`}</td>
+                <td>${getStaminaDrinkVerdictText(row.netProfit)}</td>
+              </tr>
+            `,
+          )
+          .join("");
+
+        staminaDrinkDailyBody.innerHTML = [
+          renderStaminaDrinkDailyRow(
+            bestPositiveRow ? `${bestPositiveRow.level}단계 5회 반복` : "구매 안 함",
+            repeatedRows,
+          ),
+          renderStaminaDrinkDailyRow("단계별 1회 제한 최적", onceLimitedRows),
+          renderStaminaDrinkDailyRow("1~5단계 각 1회", rows),
+        ].join("");
+
+        if (shouldActivate) {
+          activateTab("stamina-drink");
+        }
+      };
+
       const cloneProfile = (profile) => JSON.parse(JSON.stringify(profile));
 
       const getRodUpgradeCost = (targetLevel, prices) => {
@@ -5442,7 +5749,7 @@
           candidates.push(rodCandidate);
         }
 
-        Object.values(engravingEffectData).forEach((effect) => {
+        specEngravingEffects.forEach((effect) => {
           const currentLevel = profile.engravings[effect.name] || 0;
           const nextLevel = currentLevel + 1;
           const nextLevelData = effect.levels[nextLevel - 1];
@@ -6038,9 +6345,14 @@
         if (lastIncomePrices && lastIncomeProfile) {
           renderIncomeEstimate(false);
         }
+
+        if (!staminaDrinkResults.hidden) {
+          renderStaminaDrinkEfficiency(false);
+        }
       });
 
       incomeCalculateButton.addEventListener("click", renderIncomeEstimate);
+      staminaDrinkCalculateButton.addEventListener("click", renderStaminaDrinkEfficiency);
 
       efficiencyResultBody.addEventListener("change", (event) => {
         const selector = event.target.closest("[data-engraving-override]");
@@ -6114,6 +6426,9 @@
           if (lastIncomePrices && lastIncomeProfile) {
             renderIncomeEstimate(false);
           }
+          if (!staminaDrinkResults.hidden) {
+            renderStaminaDrinkEfficiency(false);
+          }
         });
       });
 
@@ -6121,6 +6436,9 @@
         field.addEventListener("change", () => {
           if (lastIncomePrices && lastIncomeProfile) {
             renderIncomeEstimate(false);
+          }
+          if (!staminaDrinkResults.hidden) {
+            renderStaminaDrinkEfficiency(false);
           }
         });
       });
@@ -6142,6 +6460,15 @@
         saveFieldGroup("price");
         renderEngravingStoneEfficiency();
         showSavedFeedback(savePricesButton, "시세 저장");
+      });
+
+      saveStaminaDrinkButton.addEventListener("click", () => {
+        saveFieldGroup("price");
+        renderEngravingStoneEfficiency();
+        if (!staminaDrinkResults.hidden) {
+          renderStaminaDrinkEfficiency(false);
+        }
+        showSavedFeedback(saveStaminaDrinkButton, "가격 저장");
       });
 
       saveProfileButton.addEventListener("click", () => {
