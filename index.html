@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>해양 스펙업 계산기</title>
+    <title>전문가 스펙업 계산기</title>
     <style>
       * {
         box-sizing: border-box;
@@ -19,6 +19,83 @@
           sans-serif;
         background: #f5f7f8;
         color: #17212b;
+      }
+
+      .app-shell {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .side-menu {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        height: 100vh;
+        padding: 20px 16px;
+        border-right: 1px solid #d8e2ea;
+        background: #102331;
+        color: #ffffff;
+      }
+
+      .side-title {
+        margin: 0 0 18px;
+        color: #d9eef2;
+        font-size: 14px;
+        font-weight: 900;
+      }
+
+      .module-menu {
+        display: grid;
+        gap: 8px;
+      }
+
+      .module-button {
+        appearance: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 44px;
+        padding: 0 12px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: #c4d6df;
+        font: inherit;
+        font-size: 15px;
+        font-weight: 900;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .module-button::after {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: transparent;
+      }
+
+      .module-button[aria-selected="true"] {
+        border-color: #4db5c4;
+        background: #173949;
+        color: #ffffff;
+      }
+
+      .module-button[aria-selected="true"]::after {
+        background: #67d7e7;
+      }
+
+      .app-content {
+        min-width: 0;
+      }
+
+      .module-view {
+        display: none;
+      }
+
+      .module-view.active {
+        display: block;
       }
 
       header {
@@ -79,7 +156,22 @@
         cursor: pointer;
       }
 
-      .tab-button[aria-selected="true"] {
+      .farm-tab-button {
+        appearance: none;
+        min-height: 44px;
+        padding: 0 18px;
+        border: 0;
+        border-bottom: 3px solid transparent;
+        background: transparent;
+        color: #617184;
+        font: inherit;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .tab-button[aria-selected="true"],
+      .farm-tab-button[aria-selected="true"] {
         border-bottom-color: #167f92;
         color: #102331;
       }
@@ -94,7 +186,12 @@
         display: none;
       }
 
-      .tab-panel.active {
+      .farm-tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active,
+      .farm-tab-panel.active {
         display: block;
         animation: soft-rise 180ms ease-out;
       }
@@ -1014,6 +1111,7 @@
       }
 
       @media (prefers-reduced-motion: reduce) {
+        .farm-tab-panel.active,
         .tab-panel.active,
         .result-table tbody tr.row-changed {
           animation: none;
@@ -1317,6 +1415,26 @@
       }
 
       @media (max-width: 760px) {
+        .app-shell {
+          grid-template-columns: 1fr;
+        }
+
+        .side-menu {
+          position: static;
+          height: auto;
+          padding: 14px 18px;
+          border-right: 0;
+          border-bottom: 1px solid #d8e2ea;
+        }
+
+        .side-title {
+          margin-bottom: 10px;
+        }
+
+        .module-menu {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         header {
           padding: 20px 18px 0;
         }
@@ -1393,43 +1511,58 @@
     </style>
   </head>
   <body>
-    <header>
-      <div class="header-inner">
-        <h1>해양 스펙업 계산기</h1>
-        <span class="admin-mark">DATA STORE</span>
-      </div>
-      <nav class="tabs" aria-label="주요 탭">
-        <button class="tab-button" type="button" aria-selected="true" data-tab="calculator">
-          계산기
-        </button>
-        <button class="tab-button" type="button" aria-selected="false" data-tab="income">
-          수익 계산
-        </button>
-        <button class="tab-button" type="button" aria-selected="false" data-tab="stamina-drink">
-          스태미나 드링크
-        </button>
-        <button class="tab-button" type="button" aria-selected="false" data-tab="seafood-trade">
-          어패류 판매 비교
-        </button>
-        <button class="tab-button" type="button" aria-selected="false" data-tab="alchemy">
-          어패류 계산기
-        </button>
-        <button class="tab-button" type="button" aria-selected="false" data-tab="engraving-efficiency">
-          각인석 효율
-        </button>
-        <button class="tab-button" type="button" aria-selected="false" data-tab="prices">
-          시세 입력
-        </button>
-        <button class="tab-button" type="button" aria-selected="false" data-tab="profile">
-          정보 입력
-        </button>
-        <button class="tab-button" type="button" aria-selected="false" data-tab="admin">
-          정보
-        </button>
-      </nav>
-    </header>
+    <div class="app-shell">
+      <aside class="side-menu" aria-label="전문가 선택">
+        <p class="side-title">전문가 계산기</p>
+        <nav class="module-menu">
+          <button class="module-button" type="button" aria-selected="true" data-module-button="ocean">
+            해양
+          </button>
+          <button class="module-button" type="button" aria-selected="false" data-module-button="farming">
+            재배
+          </button>
+        </nav>
+      </aside>
 
-    <main>
+      <div class="app-content">
+        <section class="module-view active" data-module="ocean">
+          <header>
+            <div class="header-inner">
+              <h1>해양 스펙업 계산기</h1>
+              <span class="admin-mark">DATA STORE</span>
+            </div>
+            <nav class="tabs" aria-label="해양 탭">
+              <button class="tab-button" type="button" aria-selected="true" data-tab="calculator">
+                계산기
+              </button>
+              <button class="tab-button" type="button" aria-selected="false" data-tab="income">
+                수익 계산
+              </button>
+              <button class="tab-button" type="button" aria-selected="false" data-tab="stamina-drink">
+                스태미나 드링크
+              </button>
+              <button class="tab-button" type="button" aria-selected="false" data-tab="seafood-trade">
+                어패류 판매 비교
+              </button>
+              <button class="tab-button" type="button" aria-selected="false" data-tab="alchemy">
+                어패류 계산기
+              </button>
+              <button class="tab-button" type="button" aria-selected="false" data-tab="engraving-efficiency">
+                각인석 효율
+              </button>
+              <button class="tab-button" type="button" aria-selected="false" data-tab="prices">
+                시세 입력
+              </button>
+              <button class="tab-button" type="button" aria-selected="false" data-tab="profile">
+                정보 입력
+              </button>
+              <button class="tab-button" type="button" aria-selected="false" data-tab="admin">
+                정보
+              </button>
+            </nav>
+          </header>
+
+          <main>
       <section class="tab-panel active" data-panel="calculator">
         <div class="workspace">
           <div class="panel-head">
@@ -2442,7 +2575,336 @@
           </div>
         </div>
       </section>
-    </main>
+          </main>
+        </section>
+
+        <section class="module-view" data-module="farming">
+          <header>
+            <div class="header-inner">
+              <h1>재배 스펙업 계산기</h1>
+              <span class="admin-mark">DATA STORE</span>
+            </div>
+            <nav class="tabs" aria-label="재배 탭">
+              <button class="farm-tab-button" type="button" aria-selected="true" data-farm-tab="calculator">
+                계산기
+              </button>
+              <button class="farm-tab-button" type="button" aria-selected="false" data-farm-tab="income">
+                수익 계산
+              </button>
+              <button class="farm-tab-button" type="button" aria-selected="false" data-farm-tab="prices">
+                시세 입력
+              </button>
+              <button class="farm-tab-button" type="button" aria-selected="false" data-farm-tab="profile">
+                정보 입력
+              </button>
+              <button class="farm-tab-button" type="button" aria-selected="false" data-farm-tab="info">
+                정보
+              </button>
+            </nav>
+          </header>
+
+          <main>
+            <section class="farm-tab-panel active" data-farm-panel="calculator">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">재배 계산기</h2>
+                  <div class="panel-actions">
+                    <span class="status-pill">세이지 괭이</span>
+                    <button class="primary-button" type="button" id="farm-calculate-button">효율 계산</button>
+                  </div>
+                </div>
+                <div class="section-body">
+                  <div class="summary-grid" aria-label="재배 계산 기준 요약">
+                    <div class="metric">
+                      <span class="metric-label">기본 스태미나</span>
+                      <span class="metric-value">3000</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">예상 채집 횟수</span>
+                      <span class="metric-value">600회</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">계산 대상</span>
+                      <span class="metric-value">씨앗</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">바리스타</span>
+                      <span class="metric-value">보류</span>
+                    </div>
+                  </div>
+                  <div class="table-wrap">
+                    <table class="result-table" aria-label="재배 스펙업 효율 순위">
+                      <thead>
+                        <tr>
+                          <th>구분</th>
+                          <th>항목</th>
+                          <th>현재</th>
+                          <th>변경</th>
+                          <th>기대 씨앗 증가</th>
+                          <th>기대수익 증가</th>
+                          <th>기대비용</th>
+                          <th>효율</th>
+                        </tr>
+                      </thead>
+                      <tbody id="farm-efficiency-result-body">
+                        <tr>
+                          <td class="result-empty" colspan="8">재배 시세와 현재 스펙을 입력한 뒤 효율 계산을 누르세요.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="farm-tab-panel" data-farm-panel="income">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">재배 수익 계산</h2>
+                  <div class="panel-actions">
+                    <span class="status-pill">3000 스태미나</span>
+                    <button class="primary-button" type="button" id="farm-income-calculate-button">수익 계산</button>
+                  </div>
+                </div>
+                <div class="section-body">
+                  <div class="summary-grid" aria-label="재배 수익 요약">
+                    <div class="metric">
+                      <span class="metric-label">총 기대수익</span>
+                      <span class="metric-value" id="farm-income-total">-</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">기대 씨앗</span>
+                      <span class="metric-value" id="farm-income-seed-count">-</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">씨앗 개당 환산가</span>
+                      <span class="metric-value" id="farm-income-seed-price">-</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">채집 횟수</span>
+                      <span class="metric-value" id="farm-income-gather-count">-</span>
+                    </div>
+                  </div>
+                  <div class="data-section">
+                    <h3 class="data-title">씨앗 기대수익 상세</h3>
+                    <div class="table-wrap">
+                      <table class="result-table" aria-label="재배 씨앗 기대수익 상세">
+                        <thead>
+                          <tr>
+                            <th>구분</th>
+                            <th>계산 항목</th>
+                            <th>기대 씨앗</th>
+                            <th>기대수익</th>
+                          </tr>
+                        </thead>
+                        <tbody id="farm-income-breakdown-body">
+                          <tr>
+                            <td class="result-empty" colspan="4">수익 계산 후 표시됩니다.</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="farm-tab-panel" data-farm-panel="prices">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">재배 시세 입력</h2>
+                  <div class="panel-actions">
+                    <button class="secondary-button" type="button" id="save-farm-prices-button">시세 저장</button>
+                  </div>
+                </div>
+                <div class="form-section">
+                  <h3 class="form-title">씨앗 시세</h3>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="farm-seed-price-mode">입력 방식</label>
+                      <select id="farm-seed-price-mode" data-field="setting.farmSeedPriceMode">
+                        <option value="piece">개당 가격</option>
+                        <option value="set">세트 가격</option>
+                      </select>
+                    </div>
+                    <div class="field" id="farm-seed-piece-field">
+                      <label for="farm-seed-piece-price">씨앗 1개 가격</label>
+                      <input id="farm-seed-piece-price" data-field="price.farm.seedPiece" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field hidden" id="farm-seed-set-field">
+                      <label for="farm-seed-set-price">씨앗 1세트 가격</label>
+                      <input id="farm-seed-set-price" data-field="price.farm.seedSet" type="number" min="0" placeholder="64개 가격" />
+                    </div>
+                  </div>
+                  <p class="muted-note">씨앗 1세트는 64개로 계산합니다.</p>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-title">재배 공통 재료 시세</h3>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="price-farm-low-stone">하급 라이프스톤</label>
+                      <input id="price-farm-low-stone" data-field="price.farm.lowLifeStone" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <label for="price-farm-mid-stone">중급 라이프스톤</label>
+                      <input id="price-farm-mid-stone" data-field="price.farm.midLifeStone" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <label for="price-farm-high-stone">상급 라이프스톤</label>
+                      <input id="price-farm-high-stone" data-field="price.farm.highLifeStone" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <label for="price-farm-prosperity-contract">번영의 영혼 계약서</label>
+                      <input id="price-farm-prosperity-contract" data-field="price.farm.prosperitySoulContract" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <label for="price-farm-ability-stone">어빌리티 스톤</label>
+                      <input id="price-farm-ability-stone" data-field="price.farm.abilityStone" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <label for="price-farm-skill-point">스킬 포인트</label>
+                      <input id="price-farm-skill-point" data-field="price.farm.skillPoint" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <span class="field-label">스킬 포인트 처리</span>
+                      <label class="choice">
+                        <input id="farm-skill-point-bound" data-field="price.farm.skillPointBound" type="checkbox" />
+                        귀속 스킬 포인트 사용
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-title">재배 각인석 시세</h3>
+                  <div class="form-grid" id="farm-engraving-price-fields"></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="farm-tab-panel" data-farm-panel="profile">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">재배 정보 입력</h2>
+                  <div class="panel-actions">
+                    <button class="secondary-button" type="button" id="save-farm-profile-button">스펙 저장</button>
+                  </div>
+                </div>
+                <div class="form-section">
+                  <h3 class="form-title">괭이</h3>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="current-hoe-level">현재 괭이 강화</label>
+                      <select id="current-hoe-level" data-field="farm.profile.hoeLevel"></select>
+                    </div>
+                    <div class="field">
+                      <span class="field-label">계산 기준</span>
+                      <label class="choice">
+                        <input type="checkbox" checked disabled />
+                        기본 스태미나 3000
+                      </label>
+                    </div>
+                    <div class="field">
+                      <span class="field-label">채집 방식</span>
+                      <label class="choice">
+                        <input type="checkbox" checked disabled />
+                        씨앗 수익 기준
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-title">재배 각인석</h3>
+                  <div class="form-grid" id="farm-engraving-profile-fields"></div>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-title">재배 전문가</h3>
+                  <div class="form-grid" id="farm-expert-profile-fields"></div>
+                  <p class="muted-note">바리스타 관련 전문가는 현재 계산에서 제외하고, 씨앗 수익 전문가만 반영합니다.</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="farm-tab-panel" data-farm-panel="info">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">재배 정보</h2>
+                </div>
+                <div class="admin-layout">
+                  <section class="info-board" aria-label="재배 계산 기준 정보">
+                    <div class="board-header">반영된 재배 데이터값과 계산식</div>
+                    <div class="data-section">
+                      <h3 class="data-title">괭이 강화 스펙</h3>
+                      <div class="table-wrap">
+                        <table aria-label="괭이 강화 단계별 스펙">
+                          <thead>
+                            <tr>
+                              <th>강화</th>
+                              <th>채집력</th>
+                              <th>채집 속도</th>
+                              <th>씨앗 드롭 수</th>
+                              <th>두더지 등장 확률</th>
+                              <th>채집 경험치</th>
+                            </tr>
+                          </thead>
+                          <tbody id="farm-hoe-stat-table"></tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="data-section">
+                      <h3 class="data-title">재배 각인석 데이터</h3>
+                      <div class="table-wrap">
+                        <table aria-label="재배 각인석 데이터">
+                          <thead>
+                            <tr>
+                              <th>효과</th>
+                              <th>등급</th>
+                              <th>레벨</th>
+                              <th>최소 강화</th>
+                              <th>수치</th>
+                              <th>계산 반영</th>
+                            </tr>
+                          </thead>
+                          <tbody id="farm-engraving-data-table"></tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="data-section">
+                      <h3 class="data-title">재배 전문가 데이터</h3>
+                      <div class="table-wrap">
+                        <table aria-label="재배 전문가 데이터">
+                          <thead>
+                            <tr>
+                              <th>전문가</th>
+                              <th>레벨</th>
+                              <th>효과</th>
+                              <th>스킬 포인트</th>
+                              <th>골드</th>
+                              <th>어빌리티 스톤</th>
+                            </tr>
+                          </thead>
+                          <tbody id="farm-expert-data-table"></tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="data-section">
+                      <h3 class="data-title">재배 계산식</h3>
+                      <ul class="formula-list" id="farm-formula-list"></ul>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </section>
+          </main>
+        </section>
+      </div>
+    </div>
 
     <script>
       const fishingRodEnhancementData = [
@@ -2506,6 +2968,104 @@
         { level: 4, stamina: 700 },
         { level: 5, stamina: 1000 },
       ];
+
+      const farmingRules = {
+        baseStamina: 3000,
+        staminaCostPerGather: 5,
+        seedSetSize: 64,
+        cropBoxSeedRange: [1, 50],
+        farmerRouletteDiceSides: 6,
+        farmerRouletteNormalMultiplier: 6,
+        farmerRouletteGoldChance: 10,
+        farmerRouletteGoldMultiplier: 12,
+      };
+
+      farmingRules.gatherCount = farmingRules.baseStamina / farmingRules.staminaCostPerGather;
+      farmingRules.cropBoxAverageSeeds =
+        (farmingRules.cropBoxSeedRange[0] + farmingRules.cropBoxSeedRange[1]) / 2;
+      farmingRules.farmerRouletteExpectedSeeds =
+        ((1 - farmingRules.farmerRouletteGoldChance / 100) *
+          ((1 + farmingRules.farmerRouletteDiceSides) / 2) *
+          farmingRules.farmerRouletteNormalMultiplier) +
+        (farmingRules.farmerRouletteGoldChance / 100) *
+          ((1 + farmingRules.farmerRouletteDiceSides) / 2) *
+          farmingRules.farmerRouletteGoldMultiplier;
+
+      const farmingHoeStatData = [
+        { level: 1, gatheringPower: 22, gatheringSpeed: 0.7, seedDrop: 2, moleChance: 0, gatherExp: 1 },
+        { level: 2, gatheringPower: 24, gatheringSpeed: 0.7, seedDrop: 3, moleChance: 0, gatherExp: 1 },
+        { level: 3, gatheringPower: 30, gatheringSpeed: 0.7, seedDrop: 3, moleChance: 0, gatherExp: 2 },
+        { level: 4, gatheringPower: 33, gatheringSpeed: 0.7, seedDrop: 3, moleChance: 0, gatherExp: 4 },
+        { level: 5, gatheringPower: 35, gatheringSpeed: 0.7, seedDrop: 4, moleChance: 0, gatherExp: 8 },
+        { level: 6, gatheringPower: 50, gatheringSpeed: 0.7, seedDrop: 4, moleChance: 0, gatherExp: 9 },
+        { level: 7, gatheringPower: 53, gatheringSpeed: 0.7, seedDrop: 4, moleChance: 1, gatherExp: 9 },
+        { level: 8, gatheringPower: 57, gatheringSpeed: 0.7, seedDrop: 5, moleChance: 1, gatherExp: 13 },
+        { level: 9, gatheringPower: 60, gatheringSpeed: 0.7, seedDrop: 5, moleChance: 3, gatherExp: 13 },
+        { level: 10, gatheringPower: 70, gatheringSpeed: 0.5, seedDrop: 8, moleChance: 3, gatherExp: 13 },
+        { level: 11, gatheringPower: 73, gatheringSpeed: 0.5, seedDrop: 10, moleChance: 4, gatherExp: 13 },
+        { level: 12, gatheringPower: 77, gatheringSpeed: 0.5, seedDrop: 10, moleChance: 4, gatherExp: 13 },
+        { level: 13, gatheringPower: 80, gatheringSpeed: 0.5, seedDrop: 12, moleChance: 8, gatherExp: 17 },
+        { level: 14, gatheringPower: 85, gatheringSpeed: 0.5, seedDrop: 12, moleChance: 8, gatherExp: 20 },
+        { level: 15, gatheringPower: 100, gatheringSpeed: 0.3, seedDrop: 17, moleChance: 10, gatherExp: 34 },
+      ];
+
+      const farmingEngravingData = {
+        seedLuck: {
+          name: "씨앗 행운",
+          rarity: "Legendary",
+          trigger: "작물 채집 시",
+          levels: [
+            { level: 1, minHoeLevel: 5, chance: 25, extraSeeds: 2 },
+            { level: 2, minHoeLevel: 7, chance: 50, extraSeeds: 2 },
+            { level: 3, minHoeLevel: 9, chance: 75, extraSeeds: 2 },
+            { level: 4, minHoeLevel: 11, chance: 100, extraSeeds: 2 },
+          ],
+        },
+        cropBox: {
+          name: "작물 상자",
+          rarity: "Legendary",
+          trigger: "작물 채집 시",
+          levels: [
+            { level: 1, minHoeLevel: 7, chance: 1 },
+            { level: 2, minHoeLevel: 7, chance: 2 },
+            { level: 3, minHoeLevel: 9, chance: 3 },
+            { level: 4, minHoeLevel: 9, chance: 4 },
+            { level: 5, minHoeLevel: 11, chance: 5 },
+          ],
+          averageSeeds: farmingRules.cropBoxAverageSeeds,
+        },
+        farmerRoulette: {
+          name: "농부 룰렛",
+          rarity: "Rare",
+          trigger: "작물 채집 시",
+          levels: [
+            { level: 1, minHoeLevel: 5, chance: 1 },
+            { level: 2, minHoeLevel: 5, chance: 2 },
+            { level: 3, minHoeLevel: 7, chance: 3 },
+            { level: 4, minHoeLevel: 7, chance: 4 },
+            { level: 5, minHoeLevel: 9, chance: 5 },
+          ],
+          expectedSeeds: farmingRules.farmerRouletteExpectedSeeds,
+        },
+      };
+
+      const farmingExpertData = {
+        natureGift: {
+          name: "자연이 주는 선물",
+          levels: [
+            { level: 1, chance: 1, extraSeeds: 1, skillPoint: 1, gold: 5000, abilityStone: 2 },
+            { level: 2, chance: 2, extraSeeds: 1, skillPoint: 2, gold: 10000, abilityStone: 4 },
+            { level: 3, chance: 3, extraSeeds: 1, skillPoint: 5, gold: 30000, abilityStone: 10 },
+            { level: 4, chance: 4, extraSeeds: 1, skillPoint: 8, gold: 50000, abilityStone: 16 },
+            { level: 5, chance: 5, extraSeeds: 2, skillPoint: 15, gold: 100000, abilityStone: 30 },
+            { level: 6, chance: 6, extraSeeds: 2, skillPoint: 25, gold: 250000, abilityStone: 50 },
+            { level: 7, chance: 7, extraSeeds: 3, skillPoint: 40, gold: 700000, abilityStone: 80 },
+            { level: 8, chance: 8, extraSeeds: 4, skillPoint: 50, gold: 1500000, abilityStone: 100 },
+            { level: 9, chance: 9, extraSeeds: 5, skillPoint: 60, gold: 3000000, abilityStone: 120 },
+            { level: 10, chance: 10, extraSeeds: 8, skillPoint: 100, gold: 7000000, abilityStone: 200 },
+          ],
+        },
+      };
 
       const engravingEffectData = {
         shellSearch: {
@@ -2954,8 +3514,33 @@
         return "-";
       };
 
+      const moduleButtons = document.querySelectorAll("[data-module-button]");
+      const moduleViews = document.querySelectorAll("[data-module]");
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabPanels = document.querySelectorAll(".tab-panel");
+      const farmTabButtons = document.querySelectorAll(".farm-tab-button");
+      const farmTabPanels = document.querySelectorAll(".farm-tab-panel");
+      const farmCalculateButton = document.querySelector("#farm-calculate-button");
+      const farmEfficiencyResultBody = document.querySelector("#farm-efficiency-result-body");
+      const farmIncomeCalculateButton = document.querySelector("#farm-income-calculate-button");
+      const farmIncomeTotal = document.querySelector("#farm-income-total");
+      const farmIncomeSeedCount = document.querySelector("#farm-income-seed-count");
+      const farmIncomeSeedPrice = document.querySelector("#farm-income-seed-price");
+      const farmIncomeGatherCount = document.querySelector("#farm-income-gather-count");
+      const farmIncomeBreakdownBody = document.querySelector("#farm-income-breakdown-body");
+      const farmSeedPriceMode = document.querySelector("#farm-seed-price-mode");
+      const farmSeedPieceField = document.querySelector("#farm-seed-piece-field");
+      const farmSeedSetField = document.querySelector("#farm-seed-set-field");
+      const farmEngravingPriceFields = document.querySelector("#farm-engraving-price-fields");
+      const currentHoeLevel = document.querySelector("#current-hoe-level");
+      const farmEngravingProfileFields = document.querySelector("#farm-engraving-profile-fields");
+      const farmExpertProfileFields = document.querySelector("#farm-expert-profile-fields");
+      const saveFarmPricesButton = document.querySelector("#save-farm-prices-button");
+      const saveFarmProfileButton = document.querySelector("#save-farm-profile-button");
+      const farmHoeStatTable = document.querySelector("#farm-hoe-stat-table");
+      const farmEngravingDataTable = document.querySelector("#farm-engraving-data-table");
+      const farmExpertDataTable = document.querySelector("#farm-expert-data-table");
+      const farmFormulaList = document.querySelector("#farm-formula-list");
       const fishingRodTable = document.querySelector("#fishing-rod-table");
       const fishingRodStatTable = document.querySelector("#fishing-rod-stat-table");
       const engravingEffectTable = document.querySelector("#engraving-effect-table");
@@ -3065,7 +3650,7 @@
         return item.craftMaterials.map((material) => `${material.name} ${material.amount}개`).join(", ");
       };
       const storageKey = "ocean-spec-calculator-inputs";
-      const defaultPriceVersion = "2026-06-05-market-update-v1";
+      const defaultPriceVersion = "2026-07-02-farming-market-update-v1";
       const defaultAlchemyStockVersion = "2026-06-25-alchemy-stock-v2";
       const resultRowsPerPage = 10;
       let efficiencyCandidates = [];
@@ -3118,6 +3703,25 @@
         "price.staminaDrink.3": 0,
         "price.staminaDrink.4": 0,
         "price.staminaDrink.5": 0,
+        "setting.farmSeedPriceMode": "set",
+        "price.farm.seedPiece": 0,
+        "price.farm.seedSet": 12000,
+        "price.farm.lowLifeStone": 14000,
+        "price.farm.midLifeStone": 38000,
+        "price.farm.highLifeStone": 84000,
+        "price.farm.prosperitySoulContract": 29000,
+        "price.farm.abilityStone": 22000,
+        "price.farm.skillPoint": 90000,
+        "price.farm.skillPointBound": false,
+        "price.farm.engraving.투박한 씨앗 행운 각인석": 210000,
+        "price.farm.engraving.단정한 씨앗 행운 각인석": 420000,
+        "price.farm.engraving.정교한 씨앗 행운 각인석": 860000,
+        "price.farm.engraving.투박한 작물 상자 각인석": 200000,
+        "price.farm.engraving.단정한 작물 상자 각인석": 386000,
+        "price.farm.engraving.정교한 작물 상자 각인석": 685000,
+        "price.farm.engraving.투박한 농부 룰렛 각인석": 200000,
+        "price.farm.engraving.단정한 농부 룰렛 각인석": 390000,
+        "price.farm.engraving.정교한 농부 룰렛 각인석": 820000,
       };
       const defaultAlchemyStockValues = {
         "alchemy.stock.oyster.grade1.box": 0,
@@ -3246,6 +3850,28 @@
         document.querySelectorAll(`[data-field^="${prefix}."]`).forEach((field) => {
           savedInputs[field.dataset.field] =
             field.type === "checkbox" ? field.checked : parseNumericInput(field.value);
+        });
+
+        localStorage.setItem(storageKey, JSON.stringify(savedInputs));
+      };
+
+      const saveExactFields = (fieldNames) => {
+        const savedInputs = getSavedInputs();
+
+        fieldNames.forEach((fieldName) => {
+          const field = document.querySelector(`[data-field="${fieldName}"]`);
+
+          if (!field) {
+            return;
+          }
+
+          if (field.type === "checkbox") {
+            savedInputs[fieldName] = field.checked;
+          } else if (field.tagName === "SELECT") {
+            savedInputs[fieldName] = field.value;
+          } else {
+            savedInputs[fieldName] = parseNumericInput(field.value);
+          }
         });
 
         localStorage.setItem(storageKey, JSON.stringify(savedInputs));
@@ -3510,11 +4136,72 @@
         })
         .join("");
 
+      currentHoeLevel.innerHTML = farmingHoeStatData
+        .map((item) => `<option value="${item.level}">${item.level}강</option>`)
+        .join("");
+
+      farmEngravingPriceFields.innerHTML = Object.values(farmingEngravingData)
+        .flatMap((effect) =>
+          engravingStoneGrades.map((grade) => {
+            const itemName = `${grade} ${effect.name} 각인석`;
+            const id = `price-farm-engraving-${createSafeId(`${grade}-${effect.name}`)}`;
+
+            return `
+              <div class="field">
+                <label for="${id}">${itemName}</label>
+                <input id="${id}" data-field="price.farm.engraving.${itemName}" type="number" min="0" placeholder="골드" />
+              </div>
+            `;
+          }),
+        )
+        .join("");
+
+      farmEngravingProfileFields.innerHTML = Object.values(farmingEngravingData)
+        .map((effect) => {
+          const id = `farm-profile-engraving-${createSafeId(effect.name)}`;
+          const options = [
+            '<option value="0">없음</option>',
+            ...effect.levels.map((item) => `<option value="${item.level}">${item.level}레벨</option>`),
+          ].join("");
+
+          return `
+            <div class="field">
+              <label for="${id}">${effect.name}</label>
+              <select id="${id}" data-field="farm.profile.engraving.${effect.name}">
+                ${options}
+              </select>
+            </div>
+          `;
+        })
+        .join("");
+
+      farmExpertProfileFields.innerHTML = Object.entries(farmingExpertData)
+        .map(([, skill]) => {
+          const id = `farm-profile-expert-${createSafeId(skill.name)}`;
+          const options = [
+            '<option value="0">0레벨</option>',
+            ...skill.levels.map((item) => `<option value="${item.level}">${item.level}레벨</option>`),
+          ].join("");
+
+          return `
+            <div class="field">
+              <label for="${id}">${skill.name}</label>
+              <select id="${id}" data-field="farm.profile.expert.${skill.name}">
+                ${options}
+              </select>
+            </div>
+          `;
+        })
+        .join("");
+
       loadSavedInputs();
       artifactSaleRateInput.value = getSavedInputs()["setting.artifactSaleRate"] || "100";
       updateArtifactSaleRateLabel();
       if (!currentRodLevel.value) {
         currentRodLevel.value = "1";
+      }
+      if (!currentHoeLevel.value) {
+        currentHoeLevel.value = "1";
       }
       formatPriceFields();
 
@@ -3628,6 +4315,90 @@
         })
         .join("");
 
+      farmHoeStatTable.innerHTML = farmingHoeStatData
+        .map(
+          (item) => `
+            <tr>
+              <td>${item.level}강</td>
+              <td>${item.gatheringPower}</td>
+              <td>${item.gatheringSpeed}</td>
+              <td>${item.seedDrop}개</td>
+              <td>${item.moleChance}%</td>
+              <td>${item.gatherExp}</td>
+            </tr>
+          `,
+        )
+        .join("");
+
+      farmEngravingDataTable.innerHTML = Object.values(farmingEngravingData)
+        .flatMap((effect) =>
+          effect.levels.map((levelData) => {
+            const valueText =
+              effect.name === "씨앗 행운"
+                ? `${levelData.chance}% 확률로 씨앗 ${levelData.extraSeeds}개 추가`
+                : effect.name === "작물 상자"
+                  ? `${levelData.chance}% 확률로 상자 등장, 평균 ${effect.averageSeeds}개`
+                  : `${levelData.chance}% 확률로 룰렛 등장, 평균 ${effect.expectedSeeds.toFixed(1)}개`;
+
+            const formulaText =
+              effect.name === "씨앗 행운"
+                ? "채집 횟수 × 발동확률 × 2개"
+                : effect.name === "작물 상자"
+                  ? "채집 횟수 × 등장확률 × 25.5개"
+                  : "채집 횟수 × 등장확률 × 23.1개";
+
+            return `
+              <tr>
+                <td>${effect.name}</td>
+                <td>${effect.rarity}</td>
+                <td>${levelData.level}레벨</td>
+                <td>${levelData.minHoeLevel}강</td>
+                <td>${valueText}</td>
+                <td>${formulaText}</td>
+              </tr>
+            `;
+          }),
+        )
+        .join("");
+
+      farmExpertDataTable.innerHTML = Object.values(farmingExpertData)
+        .flatMap((skill) =>
+          skill.levels.map(
+            (levelData) => `
+              <tr>
+                <td>${skill.name}</td>
+                <td>${levelData.level}레벨</td>
+                <td>${levelData.chance}% 확률로 씨앗 ${levelData.extraSeeds}개 추가</td>
+                <td>${levelData.skillPoint}</td>
+                <td>${formatNumber(levelData.gold)} G</td>
+                <td>${levelData.abilityStone}</td>
+              </tr>
+            `,
+          ),
+        )
+        .join("");
+
+      farmFormulaList.innerHTML = [
+        ["채집 횟수", "기본 스태미나 3000 / 채집 1회 스태미나 5 = 600회"],
+        ["씨앗 개당 환산가", "개당 입력은 입력값 그대로 사용. 세트 입력은 1세트 가격 / 64"],
+        ["기본 씨앗", "채집 횟수 × 현재 괭이 씨앗 드롭 수"],
+        ["씨앗 행운", "채집 횟수 × 발동확률 × 2개"],
+        ["작물 상자", "채집 횟수 × 상자 등장확률 × 25.5개. 1~50개 균등 기준"],
+        ["농부 룰렛", "채집 횟수 × 등장확률 × ((일반 주사위 90% × 평균눈 3.5 × 6개) + (골드 주사위 10% × 평균눈 3.5 × 12개)) = 등장확률 × 23.1개"],
+        ["자연이 주는 선물", "채집 횟수 × 발동확률 × 추가 씨앗 수"],
+        ["씨앗 수익", "총 기대 씨앗 수 × 씨앗 개당 환산가"],
+        ["효율", "기대수익 증가 / 기대비용. 표시는 100만G당 기대수익 증가로 변환"],
+      ]
+        .map(
+          ([name, formula]) => `
+            <li>
+              <span class="formula-name">${name}</span>
+              <pre class="formula-code">${formula}</pre>
+            </li>
+          `,
+        )
+        .join("");
+
       formulaList.innerHTML = [
         ["채집 횟수", "기본 스태미나 3000 / 채집 1회 스태미나 15 = 200회"],
         ["어패류 1개 기대가", "1성가격×P(1성) + 2성가격×P(2성) + 3성가격×P(3성). 개별 시세 모드는 각 등급의 5종 평균 가격 사용"],
@@ -3663,6 +4434,14 @@
         });
       });
 
+      const updateFarmSeedPriceMode = () => {
+        const useSetPrice = farmSeedPriceMode.value === "set";
+        farmSeedPieceField.classList.toggle("hidden", useSetPrice);
+        farmSeedSetField.classList.toggle("hidden", !useSetPrice);
+      };
+
+      updateFarmSeedPriceMode();
+
       const activateTab = (tabName) => {
         tabButtons.forEach((item) => {
           item.setAttribute("aria-selected", String(item.dataset.tab === tabName));
@@ -3670,6 +4449,26 @@
 
         tabPanels.forEach((panel) => {
           panel.classList.toggle("active", panel.dataset.panel === tabName);
+        });
+      };
+
+      const activateModule = (moduleName) => {
+        moduleButtons.forEach((item) => {
+          item.setAttribute("aria-selected", String(item.dataset.moduleButton === moduleName));
+        });
+
+        moduleViews.forEach((view) => {
+          view.classList.toggle("active", view.dataset.module === moduleName);
+        });
+      };
+
+      const activateFarmTab = (tabName) => {
+        farmTabButtons.forEach((item) => {
+          item.setAttribute("aria-selected", String(item.dataset.farmTab === tabName));
+        });
+
+        farmTabPanels.forEach((panel) => {
+          panel.classList.toggle("active", panel.dataset.farmPanel === tabName);
         });
       };
 
@@ -3881,6 +4680,26 @@
         return profile;
       };
 
+      const getCurrentFarmProfile = () => {
+        const profile = {
+          hoeLevel: Math.max(1, Number(currentHoeLevel.value) || 1),
+          engravings: {},
+          experts: {
+            natureGift: 0,
+          },
+        };
+
+        Object.values(farmingEngravingData).forEach((effect) => {
+          profile.engravings[effect.name] = getNumberField(`farm.profile.engraving.${effect.name}`);
+        });
+
+        Object.entries(farmingExpertData).forEach(([key, skill]) => {
+          profile.experts[key] = getNumberField(`farm.profile.expert.${skill.name}`);
+        });
+
+        return profile;
+      };
+
       const getLevelData = (data, level) => data.levels.find((item) => item.level === level);
       const getRodStats = (level) =>
         fishingRodStatData.find((item) => item.level === level) || {
@@ -3888,6 +4707,83 @@
           shellChance: 0,
           seafoodDrop: 1,
         };
+
+      const getHoeStats = (level) =>
+        farmingHoeStatData.find((item) => item.level === level) || {
+          level: 0,
+          seedDrop: 1,
+          moleChance: 0,
+        };
+
+      const getFarmSeedUnitPrice = (prices) => {
+        if (farmSeedPriceMode.value === "set") {
+          return (prices["price.farm.seedSet"] || 0) / farmingRules.seedSetSize;
+        }
+
+        return prices["price.farm.seedPiece"] || 0;
+      };
+
+      const getFarmSeedProduction = (profile) => {
+        const gatherCount = farmingRules.gatherCount;
+        const hoeStats = getHoeStats(profile.hoeLevel);
+        const seedLuckLevel = profile.engravings[farmingEngravingData.seedLuck.name] || 0;
+        const cropBoxLevel = profile.engravings[farmingEngravingData.cropBox.name] || 0;
+        const farmerRouletteLevel =
+          profile.engravings[farmingEngravingData.farmerRoulette.name] || 0;
+        const natureGiftLevel = profile.experts.natureGift || 0;
+
+        const seedLuckData = getLevelData(farmingEngravingData.seedLuck, seedLuckLevel);
+        const cropBoxData = getLevelData(farmingEngravingData.cropBox, cropBoxLevel);
+        const farmerRouletteData = getLevelData(
+          farmingEngravingData.farmerRoulette,
+          farmerRouletteLevel,
+        );
+        const natureGiftData = getLevelData(farmingExpertData.natureGift, natureGiftLevel);
+
+        const sources = [
+          {
+            name: "괭이 기본 씨앗",
+            expectedSeeds: gatherCount * hoeStats.seedDrop,
+          },
+          {
+            name: "씨앗 행운",
+            expectedSeeds:
+              gatherCount *
+              ((seedLuckData?.chance || 0) / 100) *
+              (seedLuckData?.extraSeeds || 0),
+          },
+          {
+            name: "작물 상자",
+            expectedSeeds:
+              gatherCount *
+              ((cropBoxData?.chance || 0) / 100) *
+              farmingRules.cropBoxAverageSeeds,
+          },
+          {
+            name: "농부 룰렛",
+            expectedSeeds:
+              gatherCount *
+              ((farmerRouletteData?.chance || 0) / 100) *
+              farmingRules.farmerRouletteExpectedSeeds,
+          },
+          {
+            name: "자연이 주는 선물",
+            expectedSeeds:
+              gatherCount *
+              ((natureGiftData?.chance || 0) / 100) *
+              (natureGiftData?.extraSeeds || 0),
+          },
+        ];
+
+        return {
+          gatherCount,
+          totalSeeds: sources.reduce((sum, source) => sum + source.expectedSeeds, 0),
+          sources,
+        };
+      };
+
+      const getFarmExpectedProfit = (profile, prices) =>
+        getFarmSeedProduction(profile).totalSeeds * getFarmSeedUnitPrice(prices);
 
       const getExpectedSeafoodProduction = (profile) => {
         const gatherCount = oceanGatheringRules.baseStamina / oceanGatheringRules.staminaCostPerGather;
@@ -5640,6 +6536,328 @@
         };
       };
 
+      const getFarmHoeUpgradeCost = (targetLevel, prices) => {
+        const data = fishingRodEnhancementData.find((item) => item.level === targetLevel);
+        const attemptCost =
+          data.gold +
+          data.lowStone * prices["price.farm.lowLifeStone"] +
+          data.midStone * prices["price.farm.midLifeStone"] +
+          data.highStone * prices["price.farm.highLifeStone"];
+        const expectedAttempts = 100 / data.successRate;
+
+        return {
+          goldCost: attemptCost * expectedAttempts,
+          ruby: data.ruby * expectedAttempts,
+        };
+      };
+
+      const getFarmHoeUpgradeRangeCost = (startLevel, targetLevel, prices) => {
+        let goldCost = 0;
+        let ruby = 0;
+
+        for (let level = startLevel + 1; level <= targetLevel; level += 1) {
+          const cost = getFarmHoeUpgradeCost(level, prices);
+          goldCost += cost.goldCost;
+          ruby += cost.ruby;
+        }
+
+        return { goldCost, ruby };
+      };
+
+      const getFarmExpertUpgradeCost = (levelData, prices) => ({
+        goldCost:
+          levelData.gold +
+          levelData.abilityStone * prices["price.farm.abilityStone"] +
+          levelData.skillPoint * (prices["price.farm.skillPointBound"] ? 0 : prices["price.farm.skillPoint"]),
+        ruby: 0,
+      });
+
+      const getFarmEngravingUpgradeCost = (effect, nextLevel, grade, prices) => {
+        const stone = engravingStoneData[grade];
+        const itemName = `${grade} ${effect.name} 각인석`;
+        const attemptGold = engravingAttemptGoldByRarity[effect.rarity][grade];
+        const attemptCost =
+          attemptGold +
+          prices[`price.farm.engraving.${itemName}`] +
+          engravingContractByLevel[nextLevel] * prices["price.farm.prosperitySoulContract"];
+        const expectedAttempts = 100 / stone.successRate;
+
+        return {
+          goldCost: attemptCost * expectedAttempts,
+          ruby: stone.ruby * expectedAttempts,
+        };
+      };
+
+      const getNextFarmHoeCandidate = (profile, prices) => {
+        if (profile.hoeLevel >= 15) {
+          return null;
+        }
+
+        const previousProfit = getFarmExpectedProfit(profile, prices);
+
+        for (let targetLevel = profile.hoeLevel + 1; targetLevel <= 15; targetLevel += 1) {
+          const nextProfile = cloneProfile(profile);
+          nextProfile.hoeLevel = targetLevel;
+          const profitGain = getFarmExpectedProfit(nextProfile, prices) - previousProfit;
+
+          if (profitGain > 0) {
+            const seedGain =
+              getFarmSeedProduction(nextProfile).totalSeeds -
+              getFarmSeedProduction(profile).totalSeeds;
+            const cost = getFarmHoeUpgradeRangeCost(profile.hoeLevel, targetLevel, prices);
+            const isBundled = targetLevel - profile.hoeLevel > 1;
+
+            return {
+              category: "괭이",
+              detail: isBundled ? "강화 묶음" : "강화",
+              item: "세이지 괭이",
+              current: `${profile.hoeLevel}강`,
+              target: `${targetLevel}강`,
+              apply: { type: "hoe", level: targetLevel },
+              seedGain,
+              profitGain,
+              ...cost,
+            };
+          }
+        }
+
+        return null;
+      };
+
+      const getFarmImmediateCandidates = (profile, prices) => {
+        const candidates = [];
+        const hoeCandidate = getNextFarmHoeCandidate(profile, prices);
+
+        if (hoeCandidate) {
+          candidates.push(hoeCandidate);
+        }
+
+        Object.values(farmingEngravingData).forEach((effect) => {
+          const currentLevel = profile.engravings[effect.name] || 0;
+          const nextLevel = currentLevel + 1;
+          const nextLevelData = effect.levels[nextLevel - 1];
+
+          if (!nextLevelData || nextLevelData.minHoeLevel > profile.hoeLevel) {
+            return;
+          }
+
+          engravingStoneGrades.forEach((grade) => {
+            const nextProfile = cloneProfile(profile);
+            nextProfile.engravings[effect.name] = nextLevel;
+            const cost = getFarmEngravingUpgradeCost(effect, nextLevel, grade, prices);
+            const seedGain =
+              getFarmSeedProduction(nextProfile).totalSeeds -
+              getFarmSeedProduction(profile).totalSeeds;
+            const profitGain = getFarmExpectedProfit(nextProfile, prices) - getFarmExpectedProfit(profile, prices);
+
+            candidates.push({
+              category: "각인석",
+              detail: `${grade} 각인`,
+              item: effect.name,
+              current: `${currentLevel}레벨`,
+              target: `${nextLevel}레벨`,
+              apply: { type: "engraving", name: effect.name, level: nextLevel },
+              grade,
+              seedGain,
+              profitGain,
+              ...cost,
+            });
+          });
+        });
+
+        Object.entries(farmingExpertData).forEach(([skillKey, skill]) => {
+          const currentLevel = profile.experts[skillKey] || 0;
+          const nextLevel = currentLevel + 1;
+          const nextLevelData = skill.levels[nextLevel - 1];
+
+          if (!nextLevelData) {
+            return;
+          }
+
+          const nextProfile = cloneProfile(profile);
+          nextProfile.experts[skillKey] = nextLevel;
+          const cost = getFarmExpertUpgradeCost(nextLevelData, prices);
+          const seedGain =
+            getFarmSeedProduction(nextProfile).totalSeeds -
+            getFarmSeedProduction(profile).totalSeeds;
+          const profitGain = getFarmExpectedProfit(nextProfile, prices) - getFarmExpectedProfit(profile, prices);
+
+          candidates.push({
+            category: "전문가",
+            detail: "스킬 레벨",
+            item: skill.name,
+            current: `${currentLevel}레벨`,
+            target: `${nextLevel}레벨`,
+            apply: { type: "expert", key: skillKey, level: nextLevel },
+            seedGain,
+            profitGain,
+            ...cost,
+          });
+        });
+
+        return candidates
+          .map((candidate) => ({
+            ...candidate,
+            efficiency: candidate.goldCost > 0 ? candidate.profitGain / candidate.goldCost : 0,
+          }))
+          .filter((candidate) => candidate.goldCost > 0 && candidate.profitGain > 0)
+          .sort((a, b) => b.efficiency - a.efficiency);
+      };
+
+      const applyFarmUpgradeToProfile = (profile, candidate) => {
+        if (candidate.apply.type === "hoe") {
+          profile.hoeLevel = candidate.apply.level;
+        }
+
+        if (candidate.apply.type === "engraving") {
+          profile.engravings[candidate.apply.name] = candidate.apply.level;
+        }
+
+        if (candidate.apply.type === "expert") {
+          profile.experts[candidate.apply.key] = candidate.apply.level;
+        }
+      };
+
+      const buildFarmEfficiencyRoadmap = (profile, prices) => {
+        const workingProfile = cloneProfile(profile);
+        const roadmap = [];
+
+        for (let step = 0; step < 60; step += 1) {
+          const candidates = getFarmImmediateCandidates(workingProfile, prices);
+
+          if (candidates.length === 0) {
+            break;
+          }
+
+          const selected = candidates[0];
+          roadmap.push(selected);
+          applyFarmUpgradeToProfile(workingProfile, selected);
+        }
+
+        return roadmap;
+      };
+
+      const getFarmCostText = (candidate) =>
+        `${formatGold(candidate.goldCost)}${candidate.ruby ? ` / ${candidate.ruby.toFixed(1)} R` : ""}`;
+
+      const renderFarmIncomeEstimate = (shouldActivate = true) => {
+        const missingPrices = validatePrices();
+
+        if (missingPrices.length > 0) {
+          farmIncomeBreakdownBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="4">
+                시세 입력이 비어 있어 계산할 수 없습니다. 누락: ${missingPrices.slice(0, 8).join(", ")}${missingPrices.length > 8 ? " 외" : ""}
+              </td>
+            </tr>
+          `;
+          [farmIncomeTotal, farmIncomeSeedCount, farmIncomeSeedPrice, farmIncomeGatherCount].forEach((item) => {
+            item.textContent = "-";
+          });
+          if (shouldActivate) {
+            activateModule("farming");
+            activateFarmTab("prices");
+          }
+          return;
+        }
+
+        const prices = getPriceMap();
+        const profile = getCurrentFarmProfile();
+        const production = getFarmSeedProduction(profile);
+        const seedUnitPrice = getFarmSeedUnitPrice(prices);
+
+        farmIncomeTotal.textContent = formatGold(production.totalSeeds * seedUnitPrice);
+        farmIncomeSeedCount.textContent = formatCount(production.totalSeeds);
+        farmIncomeSeedPrice.textContent = `${formatGold(seedUnitPrice)} / 개`;
+        farmIncomeGatherCount.textContent = formatCount(production.gatherCount, "회");
+
+        farmIncomeBreakdownBody.innerHTML = production.sources
+          .map(
+            (source) => `
+              <tr>
+                <td>씨앗</td>
+                <td>${source.name}</td>
+                <td>${formatCount(source.expectedSeeds)}</td>
+                <td class="profit-value">${formatGold(source.expectedSeeds * seedUnitPrice)}</td>
+              </tr>
+            `,
+          )
+          .join("");
+
+        if (shouldActivate) {
+          activateModule("farming");
+          activateFarmTab("income");
+        }
+      };
+
+      const renderFarmEfficiency = () => {
+        const missingPrices = validatePrices();
+
+        if (missingPrices.length > 0) {
+          farmEfficiencyResultBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="8">
+                시세 입력이 비어 있어 계산할 수 없습니다. 누락: ${missingPrices.slice(0, 8).join(", ")}${missingPrices.length > 8 ? " 외" : ""}
+              </td>
+            </tr>
+          `;
+          activateModule("farming");
+          activateFarmTab("prices");
+          return;
+        }
+
+        const prices = getPriceMap();
+        const seedUnitPrice = getFarmSeedUnitPrice(prices);
+
+        if (seedUnitPrice <= 0) {
+          farmEfficiencyResultBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="8">씨앗 시세를 먼저 입력해야 효율을 계산할 수 있습니다.</td>
+            </tr>
+          `;
+          activateModule("farming");
+          activateFarmTab("prices");
+          return;
+        }
+
+        const profile = getCurrentFarmProfile();
+        const roadmap = buildFarmEfficiencyRoadmap(profile, prices);
+
+        if (roadmap.length === 0) {
+          farmEfficiencyResultBody.innerHTML = `
+            <tr>
+              <td class="result-empty" colspan="8">현재 조건에서 계산 가능한 재배 스펙업 후보가 없습니다.</td>
+            </tr>
+          `;
+          activateModule("farming");
+          activateFarmTab("calculator");
+          return;
+        }
+
+        farmEfficiencyResultBody.innerHTML = roadmap
+          .map(
+            (candidate) => `
+              <tr>
+                <td>${candidate.category}</td>
+                <td>
+                  <span class="tag">${candidate.detail}</span>
+                  ${candidate.item}
+                </td>
+                <td>${candidate.current}</td>
+                <td>${candidate.target}</td>
+                <td>${formatCount(candidate.seedGain)}</td>
+                <td class="profit-value">+${formatGold(candidate.profitGain)}</td>
+                <td>${getFarmCostText(candidate)}</td>
+                <td class="profit-value">${formatGold(candidate.efficiency * 1000000)} / 100만G</td>
+              </tr>
+            `,
+          )
+          .join("");
+
+        activateModule("farming");
+        activateFarmTab("calculator");
+      };
+
       const getEngravingContractCost = (level, prices) =>
         engravingContractByLevel[level] * (prices["price.tideSoulContract"] || 0);
 
@@ -6353,6 +7571,12 @@
 
       incomeCalculateButton.addEventListener("click", renderIncomeEstimate);
       staminaDrinkCalculateButton.addEventListener("click", renderStaminaDrinkEfficiency);
+      farmCalculateButton.addEventListener("click", renderFarmEfficiency);
+      farmIncomeCalculateButton.addEventListener("click", renderFarmIncomeEstimate);
+
+      farmSeedPriceMode.addEventListener("change", () => {
+        updateFarmSeedPriceMode();
+      });
 
       efficiencyResultBody.addEventListener("change", (event) => {
         const selector = event.target.closest("[data-engraving-override]");
@@ -6471,9 +7695,20 @@
         showSavedFeedback(saveStaminaDrinkButton, "가격 저장");
       });
 
+      saveFarmPricesButton.addEventListener("click", () => {
+        saveFieldGroup("price.farm");
+        saveExactFields(["setting.farmSeedPriceMode"]);
+        showSavedFeedback(saveFarmPricesButton, "시세 저장");
+      });
+
       saveProfileButton.addEventListener("click", () => {
         saveFieldGroup("profile");
         showSavedFeedback(saveProfileButton, "스펙 저장");
+      });
+
+      saveFarmProfileButton.addEventListener("click", () => {
+        saveFieldGroup("farm.profile");
+        showSavedFeedback(saveFarmProfileButton, "스펙 저장");
       });
 
       saveTradePricesButton.addEventListener("click", () => {
@@ -6539,6 +7774,18 @@
       tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
           activateTab(button.dataset.tab);
+        });
+      });
+
+      farmTabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          activateFarmTab(button.dataset.farmTab);
+        });
+      });
+
+      moduleButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          activateModule(button.dataset.moduleButton);
         });
       });
     </script>
