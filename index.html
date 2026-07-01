@@ -2636,22 +2636,73 @@
                     <table class="result-table" aria-label="재배 스펙업 효율 순위">
                       <thead>
                         <tr>
-                          <th>구분</th>
+                          <th>순서</th>
+                          <th>분류</th>
+                          <th>세부</th>
                           <th>항목</th>
                           <th>현재</th>
                           <th>변경</th>
-                          <th>기대 씨앗 증가</th>
-                          <th>기대수익 증가</th>
-                          <th>기대비용</th>
+                          <th>기대 수익 증가</th>
+                          <th>기대 비용</th>
                           <th>효율</th>
                         </tr>
                       </thead>
                       <tbody id="farm-efficiency-result-body">
                         <tr>
-                          <td class="result-empty" colspan="8">재배 시세와 현재 스펙을 입력한 뒤 효율 계산을 누르세요.</td>
+                          <td class="result-empty" colspan="9">재배 시세와 현재 스펙을 입력한 뒤 효율 계산을 누르세요.</td>
                         </tr>
                       </tbody>
                     </table>
+                  </div>
+                  <div class="pagination" id="farm-result-pagination" hidden>
+                    <button class="page-button" type="button" id="prev-farm-result-page">이전</button>
+                    <span class="pagination-info" id="farm-result-page-info">1 / 1</span>
+                    <button class="page-button" type="button" id="next-farm-result-page">다음</button>
+                  </div>
+                  <div id="farm-efficiency-detail-home">
+                    <section class="efficiency-detail" id="farm-efficiency-detail" aria-live="polite" hidden>
+                      <div class="efficiency-detail-head">
+                        <div>
+                          <span class="efficiency-detail-kicker" id="farm-efficiency-detail-kicker">재배 스펙업 근거</span>
+                          <h3 class="efficiency-detail-title" id="farm-efficiency-detail-title"></h3>
+                          <p class="efficiency-detail-subtitle" id="farm-efficiency-detail-subtitle"></p>
+                        </div>
+                        <button
+                          class="detail-close-button"
+                          type="button"
+                          id="farm-efficiency-detail-close"
+                          aria-label="재배 스펙업 근거 닫기"
+                          title="닫기"
+                        >×</button>
+                      </div>
+                      <div class="efficiency-detail-body">
+                        <div class="evidence-summary" id="farm-efficiency-evidence-summary"></div>
+
+                        <div class="evidence-section">
+                          <h4 class="evidence-section-title">기대 수익 증가 근거</h4>
+                          <div class="table-wrap">
+                            <table class="evidence-table" aria-label="재배 기대 수익 증가 근거">
+                              <thead>
+                                <tr>
+                                  <th>수익원</th>
+                                  <th>적용 전</th>
+                                  <th>적용 후</th>
+                                  <th>증가분</th>
+                                </tr>
+                              </thead>
+                              <tbody id="farm-efficiency-profit-evidence"></tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                        <div class="evidence-section">
+                          <h4 class="evidence-section-title">기대 비용 계산 근거</h4>
+                          <div id="farm-efficiency-cost-evidence"></div>
+                        </div>
+
+                        <p class="evidence-note" id="farm-efficiency-detail-note"></p>
+                      </div>
+                    </section>
                   </div>
                 </div>
               </div>
@@ -3522,6 +3573,20 @@
       const farmTabPanels = document.querySelectorAll(".farm-tab-panel");
       const farmCalculateButton = document.querySelector("#farm-calculate-button");
       const farmEfficiencyResultBody = document.querySelector("#farm-efficiency-result-body");
+      const farmResultPagination = document.querySelector("#farm-result-pagination");
+      const prevFarmResultPage = document.querySelector("#prev-farm-result-page");
+      const nextFarmResultPage = document.querySelector("#next-farm-result-page");
+      const farmResultPageInfo = document.querySelector("#farm-result-page-info");
+      const farmEfficiencyDetailHome = document.querySelector("#farm-efficiency-detail-home");
+      const farmEfficiencyDetail = document.querySelector("#farm-efficiency-detail");
+      const farmEfficiencyDetailKicker = document.querySelector("#farm-efficiency-detail-kicker");
+      const farmEfficiencyDetailTitle = document.querySelector("#farm-efficiency-detail-title");
+      const farmEfficiencyDetailSubtitle = document.querySelector("#farm-efficiency-detail-subtitle");
+      const farmEfficiencyDetailClose = document.querySelector("#farm-efficiency-detail-close");
+      const farmEfficiencyEvidenceSummary = document.querySelector("#farm-efficiency-evidence-summary");
+      const farmEfficiencyProfitEvidence = document.querySelector("#farm-efficiency-profit-evidence");
+      const farmEfficiencyCostEvidence = document.querySelector("#farm-efficiency-cost-evidence");
+      const farmEfficiencyDetailNote = document.querySelector("#farm-efficiency-detail-note");
       const farmIncomeCalculateButton = document.querySelector("#farm-income-calculate-button");
       const farmIncomeTotal = document.querySelector("#farm-income-total");
       const farmIncomeSeedCount = document.querySelector("#farm-income-seed-count");
@@ -3656,9 +3721,15 @@
       let efficiencyCandidates = [];
       let currentResultPage = 1;
       let engravingGradeOverrides = {};
+      let farmEfficiencyCandidates = [];
+      let currentFarmResultPage = 1;
+      let farmEngravingGradeOverrides = {};
       let lastCalculationPrices = null;
       let lastCalculationProfile = null;
       let selectedEfficiencyRowKey = null;
+      let lastFarmCalculationPrices = null;
+      let lastFarmCalculationProfile = null;
+      let selectedFarmEfficiencyRowKey = null;
       let lastIncomePrices = null;
       let lastIncomeProfile = null;
       let lastAlchemyPlan = null;
@@ -6641,7 +6712,35 @@
             return;
           }
 
-          engravingStoneGrades.forEach((grade) => {
+          const overrideKey = getEngravingOverrideKey(effect.name, nextLevel);
+          const gradeOptions = engravingStoneGrades
+            .map((grade) => {
+              const nextProfile = cloneProfile(profile);
+              nextProfile.engravings[effect.name] = nextLevel;
+              const cost = getFarmEngravingUpgradeCost(effect, nextLevel, grade, prices);
+              const seedGain =
+                getFarmSeedProduction(nextProfile).totalSeeds -
+                getFarmSeedProduction(profile).totalSeeds;
+              const profitGain =
+                getFarmExpectedProfit(nextProfile, prices) -
+                getFarmExpectedProfit(profile, prices);
+              const efficiency = cost.goldCost > 0 ? profitGain / cost.goldCost : 0;
+
+              return {
+                grade,
+                seedGain,
+                profitGain,
+                efficiency,
+                ...cost,
+              };
+            })
+            .sort((a, b) => b.efficiency - a.efficiency);
+          const bestGrade = gradeOptions[0]?.grade;
+          const selectedGrades = farmEngravingGradeOverrides[overrideKey]
+            ? [farmEngravingGradeOverrides[overrideKey]]
+            : engravingStoneGrades;
+
+          selectedGrades.forEach((grade) => {
             const nextProfile = cloneProfile(profile);
             nextProfile.engravings[effect.name] = nextLevel;
             const cost = getFarmEngravingUpgradeCost(effect, nextLevel, grade, prices);
@@ -6658,6 +6757,9 @@
               target: `${nextLevel}레벨`,
               apply: { type: "engraving", name: effect.name, level: nextLevel },
               grade,
+              bestGrade,
+              overrideKey,
+              gradeOptions,
               seedGain,
               profitGain,
               ...cost,
@@ -6721,8 +6823,9 @@
       const buildFarmEfficiencyRoadmap = (profile, prices) => {
         const workingProfile = cloneProfile(profile);
         const roadmap = [];
+        const maxSteps = 120;
 
-        for (let step = 0; step < 60; step += 1) {
+        for (let step = 1; step <= maxSteps; step += 1) {
           const candidates = getFarmImmediateCandidates(workingProfile, prices);
 
           if (candidates.length === 0) {
@@ -6730,8 +6833,10 @@
           }
 
           const selected = candidates[0];
-          roadmap.push(selected);
+          const beforeProfile = cloneProfile(workingProfile);
           applyFarmUpgradeToProfile(workingProfile, selected);
+          const afterProfile = cloneProfile(workingProfile);
+          roadmap.push({ ...selected, order: step, beforeProfile, afterProfile });
         }
 
         return roadmap;
@@ -6739,6 +6844,415 @@
 
       const getFarmCostText = (candidate) =>
         `${formatGold(candidate.goldCost)}${candidate.ruby ? ` / ${candidate.ruby.toFixed(1)} R` : ""}`;
+
+      const resetFarmEfficiencyDetailPlacement = () => {
+        const inlineRow = farmEfficiencyResultBody.querySelector(".inline-evidence-row");
+
+        if (farmEfficiencyDetail.parentElement !== farmEfficiencyDetailHome) {
+          farmEfficiencyDetailHome.append(farmEfficiencyDetail);
+        }
+
+        inlineRow?.remove();
+      };
+
+      const closeFarmEfficiencyDetail = () => {
+        selectedFarmEfficiencyRowKey = null;
+        farmEfficiencyDetail.hidden = true;
+        resetFarmEfficiencyDetailPlacement();
+        farmEfficiencyResultBody
+          .querySelectorAll("tr.selected-result")
+          .forEach((row) => {
+            row.classList.remove("selected-result");
+            row.setAttribute("aria-selected", "false");
+          });
+      };
+
+      const getFarmVisibleRowPositions = () => {
+        const positions = new Map();
+
+        farmEfficiencyResultBody.querySelectorAll("tr[data-row-key]").forEach((row) => {
+          positions.set(row.dataset.rowKey, row.getBoundingClientRect());
+        });
+
+        return positions;
+      };
+
+      const animateFarmRowMovement = (previousPositions) => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          return;
+        }
+
+        const transitionRow = (row, fromTransform, fromOpacity = "1") => {
+          row.style.transition = "none";
+          row.style.transform = fromTransform;
+          row.style.opacity = fromOpacity;
+
+          window.requestAnimationFrame(() => {
+            row.style.transition =
+              "transform 260ms cubic-bezier(0.2, 0, 0, 1), opacity 180ms ease-out";
+            row.style.transform = "translateY(0)";
+            row.style.opacity = "1";
+          });
+
+          window.setTimeout(() => {
+            row.style.transition = "";
+            row.style.transform = "";
+            row.style.opacity = "";
+          }, 280);
+        };
+
+        farmEfficiencyResultBody.querySelectorAll("tr[data-row-key]").forEach((row) => {
+          const previousPosition = previousPositions.get(row.dataset.rowKey);
+
+          if (!previousPosition) {
+            row.classList.add("row-changed");
+            transitionRow(row, "translateY(8px)", "0");
+            return;
+          }
+
+          const currentPosition = row.getBoundingClientRect();
+          const deltaY = previousPosition.top - currentPosition.top;
+
+          if (Math.abs(deltaY) < 1) {
+            return;
+          }
+
+          row.classList.add("row-changed");
+          transitionRow(row, `translateY(${deltaY}px)`);
+        });
+
+        window.setTimeout(() => {
+          farmEfficiencyResultBody
+            .querySelectorAll("tr.row-changed")
+            .forEach((row) => row.classList.remove("row-changed"));
+        }, 920);
+      };
+
+      const renderFarmHoeCostEvidence = (candidate, prices) => {
+        const startLevel = candidate.beforeProfile.hoeLevel;
+        const targetLevel = candidate.afterProfile.hoeLevel;
+        const rows = [];
+
+        for (let level = startLevel + 1; level <= targetLevel; level += 1) {
+          const data = fishingRodEnhancementData.find((item) => item.level === level);
+          const materials = [
+            data.lowStone ? `하급 ${data.lowStone}개` : "",
+            data.midStone ? `중급 ${data.midStone}개` : "",
+            data.highStone ? `상급 ${data.highStone}개` : "",
+          ]
+            .filter(Boolean)
+            .join(", ");
+          const attemptCost =
+            data.gold +
+            data.lowStone * prices["price.farm.lowLifeStone"] +
+            data.midStone * prices["price.farm.midLifeStone"] +
+            data.highStone * prices["price.farm.highLifeStone"];
+          const expectedAttempts = 100 / data.successRate;
+          const expectedCost = attemptCost * expectedAttempts;
+
+          rows.push([
+            `${level - 1}강 → ${level}강`,
+            materials || "-",
+            formatGold(attemptCost),
+            `${data.successRate}%`,
+            `${expectedAttempts.toFixed(2)}회`,
+            `${formatGold(expectedCost)}${data.ruby ? ` / ${(data.ruby * expectedAttempts).toFixed(1)} R` : ""}`,
+          ]);
+        }
+
+        return renderEvidenceTable(
+          ["단계", "1회 재료", "1회 비용", "성공률", "기대 시도", "단계 기대비용"],
+          rows,
+          "괭이 강화 기대비용",
+        );
+      };
+
+      const renderFarmEngravingCostEvidence = (candidate, prices) => {
+        const effect = Object.values(farmingEngravingData).find(
+          (item) => item.name === candidate.apply.name,
+        );
+        const stone = engravingStoneData[candidate.grade];
+        const level = candidate.apply.level;
+        const itemName = `${candidate.grade} ${effect.name} 각인석`;
+        const stonePrice = prices[`price.farm.engraving.${itemName}`];
+        const attemptGold = engravingAttemptGoldByRarity[effect.rarity][candidate.grade];
+        const contractAmount = engravingContractByLevel[level];
+        const contractCost = contractAmount * prices["price.farm.prosperitySoulContract"];
+        const attemptTotal = stonePrice + attemptGold + contractCost;
+        const expectedAttempts = 100 / stone.successRate;
+
+        return renderEvidenceTable(
+          ["비용 항목", "수량·기준", "단가", "1회 금액"],
+          [
+            [`${candidate.grade} 각인석`, "1개", formatGold(stonePrice), formatGold(stonePrice)],
+            ["각인 시도 골드", `${effect.rarity} 등급`, "-", formatGold(attemptGold)],
+            [
+              "번영의 영혼 계약서",
+              `${contractAmount}장`,
+              formatGold(prices["price.farm.prosperitySoulContract"]),
+              formatGold(contractCost),
+            ],
+            ["1회 시도 합계", "-", "-", formatGold(attemptTotal)],
+            [
+              "성공까지 기대비용",
+              `${stone.successRate}% · ${expectedAttempts.toFixed(2)}회`,
+              "-",
+              `${formatGold(candidate.goldCost)} / ${candidate.ruby.toFixed(1)} R`,
+            ],
+          ],
+          "재배 각인석 기대비용",
+        );
+      };
+
+      const renderFarmExpertCostEvidence = (candidate, prices) => {
+        const skill = farmingExpertData[candidate.apply.key];
+        const levelData = skill.levels[candidate.apply.level - 1];
+        const skillPointBound = Boolean(prices["price.farm.skillPointBound"]);
+        const skillPointCost = skillPointBound
+          ? 0
+          : levelData.skillPoint * prices["price.farm.skillPoint"];
+        const abilityStoneCost = levelData.abilityStone * prices["price.farm.abilityStone"];
+
+        return renderEvidenceTable(
+          ["비용 항목", "수량", "단가", "금액"],
+          [
+            ["기본 골드", "-", "-", formatGold(levelData.gold)],
+            [
+              "어빌리티 스톤",
+              `${levelData.abilityStone}개`,
+              formatGold(prices["price.farm.abilityStone"]),
+              formatGold(abilityStoneCost),
+            ],
+            [
+              `스킬 포인트${skillPointBound ? " (귀속)" : ""}`,
+              `${levelData.skillPoint} Point`,
+              skillPointBound ? "0 G" : formatGold(prices["price.farm.skillPoint"]),
+              formatGold(skillPointCost),
+            ],
+            ["합계", "-", "-", formatGold(candidate.goldCost)],
+          ],
+          "재배 전문가 기대비용",
+        );
+      };
+
+      const renderFarmEfficiencyEvidence = (candidate) => {
+        if (!candidate?.beforeProfile || !candidate?.afterProfile || !lastFarmCalculationPrices) {
+          return;
+        }
+
+        selectedFarmEfficiencyRowKey = getCandidateRowKey(candidate);
+        const seedUnitPrice = getFarmSeedUnitPrice(lastFarmCalculationPrices);
+        const before = getFarmSeedProduction(candidate.beforeProfile);
+        const after = getFarmSeedProduction(candidate.afterProfile);
+        const beforeSourceMap = new Map(before.sources.map((source) => [source.name, source.expectedSeeds]));
+        const afterSourceMap = new Map(after.sources.map((source) => [source.name, source.expectedSeeds]));
+        const sourceNames = [
+          ...new Set([...before.sources.map((source) => source.name), ...after.sources.map((source) => source.name)]),
+        ];
+
+        farmEfficiencyDetailKicker.textContent = `${candidate.order}순위 · ${candidate.category}`;
+        farmEfficiencyDetailTitle.textContent = `${candidate.item} ${candidate.current} → ${candidate.target}`;
+        farmEfficiencyDetailSubtitle.textContent =
+          "이 단계 직전의 재배 스펙을 기준으로 3000 스태미나 사용 시 변화를 계산했습니다.";
+        farmEfficiencyEvidenceSummary.innerHTML = [
+          ["기대 수익 증가", `+${formatGold(candidate.profitGain)}`, "positive"],
+          ["기대 씨앗 증가", `+${formatCount(candidate.seedGain)}`, "positive"],
+          ["기대 비용", formatGold(candidate.goldCost), ""],
+          ["효율", `${(candidate.efficiency * 1000000).toFixed(2)} / 100만G`, "positive"],
+          ["기대 루비", candidate.ruby > 0 ? `${candidate.ruby.toFixed(1)} R` : "없음", ""],
+        ]
+          .map(
+            ([label, value, className]) => `
+              <div class="evidence-metric">
+                <span class="evidence-metric-label">${label}</span>
+                <strong class="evidence-metric-value ${className}">${value}</strong>
+              </div>
+            `,
+          )
+          .join("");
+        farmEfficiencyProfitEvidence.innerHTML = [
+          ...sourceNames.map((name) => {
+            const beforeSeeds = beforeSourceMap.get(name) || 0;
+            const afterSeeds = afterSourceMap.get(name) || 0;
+            const delta = afterSeeds - beforeSeeds;
+
+            return `
+              <tr>
+                <td>${name}</td>
+                <td>${formatCount(beforeSeeds)} / ${formatGold(beforeSeeds * seedUnitPrice)}</td>
+                <td>${formatCount(afterSeeds)} / ${formatGold(afterSeeds * seedUnitPrice)}</td>
+                <td class="evidence-delta">${delta > 0 ? "+" : ""}${formatCount(delta)} / ${delta > 0 ? "+" : ""}${formatGold(delta * seedUnitPrice)}</td>
+              </tr>
+            `;
+          }),
+          `
+            <tr>
+              <td>총 기대 수익</td>
+              <td>${formatCount(before.totalSeeds)} / ${formatGold(before.totalSeeds * seedUnitPrice)}</td>
+              <td>${formatCount(after.totalSeeds)} / ${formatGold(after.totalSeeds * seedUnitPrice)}</td>
+              <td class="evidence-delta">+${formatCount(after.totalSeeds - before.totalSeeds)} / +${formatGold(candidate.profitGain)}</td>
+            </tr>
+          `,
+        ].join("");
+
+        if (candidate.apply.type === "hoe") {
+          farmEfficiencyCostEvidence.innerHTML = renderFarmHoeCostEvidence(
+            candidate,
+            lastFarmCalculationPrices,
+          );
+          farmEfficiencyDetailNote.textContent =
+            "괭이는 순서대로 강화합니다. 씨앗 기대수익이 오르는 다음 강화 구간까지의 단계 기대비용을 합산합니다. 강화 비용과 성공률은 낚싯대 강화 표와 동일하게 적용했습니다.";
+        }
+
+        if (candidate.apply.type === "engraving") {
+          farmEfficiencyCostEvidence.innerHTML = renderFarmEngravingCostEvidence(
+            candidate,
+            lastFarmCalculationPrices,
+          );
+          farmEfficiencyDetailNote.textContent =
+            "재배 각인석 시세, 효과 등급별 시도 골드, 목표 레벨의 번영 계약서 비용을 1회 비용에 포함한 뒤 선택한 각인석의 성공률로 기대비용을 계산합니다.";
+        }
+
+        if (candidate.apply.type === "expert") {
+          farmEfficiencyCostEvidence.innerHTML = renderFarmExpertCostEvidence(
+            candidate,
+            lastFarmCalculationPrices,
+          );
+          farmEfficiencyDetailNote.textContent = lastFarmCalculationPrices["price.farm.skillPointBound"]
+            ? "스킬 포인트가 귀속으로 설정되어 있어 스킬 포인트의 골드 가치는 0 G로 계산했습니다."
+            : "재배 전문가 비용은 기본 골드, 어빌리티 스톤 시세, 스킬 포인트 시세를 합산합니다.";
+        }
+
+        farmEfficiencyResultBody.querySelectorAll("tr[data-row-key]").forEach((row) => {
+          const selected = row.dataset.rowKey === selectedFarmEfficiencyRowKey;
+          row.classList.toggle("selected-result", selected);
+          row.setAttribute("aria-selected", String(selected));
+        });
+
+        const selectedRow = farmEfficiencyResultBody.querySelector(
+          `tr[data-row-key="${CSS.escape(selectedFarmEfficiencyRowKey)}"]`,
+        );
+
+        if (!selectedRow) {
+          closeFarmEfficiencyDetail();
+          return;
+        }
+
+        resetFarmEfficiencyDetailPlacement();
+        const detailRow = document.createElement("tr");
+        const detailCell = document.createElement("td");
+        detailRow.className = "inline-evidence-row";
+        detailCell.colSpan = 9;
+        detailCell.append(farmEfficiencyDetail);
+        detailRow.append(detailCell);
+        selectedRow.after(detailRow);
+        farmEfficiencyDetail.hidden = false;
+      };
+
+      const refreshSelectedFarmEfficiencyEvidence = () => {
+        if (!selectedFarmEfficiencyRowKey) {
+          return;
+        }
+
+        const candidate = farmEfficiencyCandidates.find(
+          (item) => getCandidateRowKey(item) === selectedFarmEfficiencyRowKey,
+        );
+        const visibleRow = farmEfficiencyResultBody.querySelector(
+          `tr[data-row-key="${CSS.escape(selectedFarmEfficiencyRowKey)}"]`,
+        );
+
+        if (candidate && visibleRow) {
+          renderFarmEfficiencyEvidence(candidate);
+        } else {
+          closeFarmEfficiencyDetail();
+        }
+      };
+
+      const renderFarmEfficiencyResults = (candidates, page = 1) => {
+        const previousPositions = getFarmVisibleRowPositions();
+        resetFarmEfficiencyDetailPlacement();
+
+        if (!candidates.length) {
+          farmResultPagination.hidden = true;
+          farmEfficiencyResultBody.innerHTML = `
+            <tr>
+              <td class="result-empty" colspan="9">현재 입력값 기준으로 표시할 수 있는 다음 재배 스펙업 후보가 없습니다.</td>
+            </tr>
+          `;
+          closeFarmEfficiencyDetail();
+          return;
+        }
+
+        const pageCount = Math.ceil(candidates.length / resultRowsPerPage);
+        currentFarmResultPage = Math.min(Math.max(page, 1), pageCount);
+        const startIndex = (currentFarmResultPage - 1) * resultRowsPerPage;
+        const pageCandidates = candidates.slice(startIndex, startIndex + resultRowsPerPage);
+
+        const renderDetailCell = (candidate) => {
+          if (candidate.category !== "각인석") {
+            return candidate.detail;
+          }
+
+          const gradeOptionMap = new Map(candidate.gradeOptions.map((option) => [option.grade, option]));
+          const options = engravingStoneGrades
+            .map((grade) => gradeOptionMap.get(grade))
+            .filter(Boolean)
+            .map((option) => {
+              const selected = option.grade === candidate.grade ? "selected" : "";
+              const label =
+                option.grade === candidate.bestGrade
+                  ? `${option.grade} 각인 (효율 제일 좋음)`
+                  : `${option.grade} 각인`;
+
+              return `<option value="${option.grade}" ${selected}>${label}</option>`;
+            })
+            .join("");
+
+          return `
+            <select class="inline-select" data-farm-engraving-override="${candidate.overrideKey}" aria-label="${candidate.item} 각인석 등급 선택">
+              ${options}
+            </select>
+          `;
+        };
+
+        farmEfficiencyResultBody.innerHTML = pageCandidates
+          .map((candidate) => {
+            const rowKey = getCandidateRowKey(candidate);
+            const costText =
+              candidate.ruby > 0
+                ? `${formatNumber(Math.round(candidate.goldCost))} G / ${candidate.ruby.toFixed(1)} R`
+                : `${formatNumber(Math.round(candidate.goldCost))} G`;
+
+            return `
+              <tr
+                data-row-key="${rowKey}"
+                tabindex="0"
+                role="button"
+                aria-label="${candidate.item} ${candidate.current}에서 ${candidate.target} 재배 근거 보기"
+                aria-selected="${rowKey === selectedFarmEfficiencyRowKey}"
+                class="${rowKey === selectedFarmEfficiencyRowKey ? "selected-result" : ""}"
+              >
+                <td>${candidate.order}</td>
+                <td>${candidate.category}</td>
+                <td>${renderDetailCell(candidate)}</td>
+                <td>${candidate.item}</td>
+                <td>${candidate.current}</td>
+                <td>${candidate.target}</td>
+                <td class="profit-value">+${formatNumber(Math.round(candidate.profitGain))} G</td>
+                <td>${costText}</td>
+                <td>${(candidate.efficiency * 1000000).toFixed(2)} / 100만G</td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        farmResultPagination.hidden = pageCount <= 1;
+        farmResultPageInfo.textContent = `${currentFarmResultPage} / ${pageCount}`;
+        prevFarmResultPage.disabled = currentFarmResultPage <= 1;
+        nextFarmResultPage.disabled = currentFarmResultPage >= pageCount;
+        animateFarmRowMovement(previousPositions);
+        refreshSelectedFarmEfficiencyEvidence();
+      };
 
       const renderFarmIncomeEstimate = (shouldActivate = true) => {
         const missingPrices = validatePrices();
@@ -6794,9 +7308,11 @@
         const missingPrices = validatePrices();
 
         if (missingPrices.length > 0) {
+          closeFarmEfficiencyDetail();
+          farmResultPagination.hidden = true;
           farmEfficiencyResultBody.innerHTML = `
             <tr>
-              <td class="result-empty error" colspan="8">
+              <td class="result-empty error" colspan="9">
                 시세 입력이 비어 있어 계산할 수 없습니다. 누락: ${missingPrices.slice(0, 8).join(", ")}${missingPrices.length > 8 ? " 외" : ""}
               </td>
             </tr>
@@ -6810,9 +7326,11 @@
         const seedUnitPrice = getFarmSeedUnitPrice(prices);
 
         if (seedUnitPrice <= 0) {
+          closeFarmEfficiencyDetail();
+          farmResultPagination.hidden = true;
           farmEfficiencyResultBody.innerHTML = `
             <tr>
-              <td class="result-empty error" colspan="8">씨앗 시세를 먼저 입력해야 효율을 계산할 수 있습니다.</td>
+              <td class="result-empty error" colspan="9">씨앗 시세를 먼저 입력해야 효율을 계산할 수 있습니다.</td>
             </tr>
           `;
           activateModule("farming");
@@ -6820,40 +7338,14 @@
           return;
         }
 
-        const profile = getCurrentFarmProfile();
-        const roadmap = buildFarmEfficiencyRoadmap(profile, prices);
-
-        if (roadmap.length === 0) {
-          farmEfficiencyResultBody.innerHTML = `
-            <tr>
-              <td class="result-empty" colspan="8">현재 조건에서 계산 가능한 재배 스펙업 후보가 없습니다.</td>
-            </tr>
-          `;
-          activateModule("farming");
-          activateFarmTab("calculator");
-          return;
-        }
-
-        farmEfficiencyResultBody.innerHTML = roadmap
-          .map(
-            (candidate) => `
-              <tr>
-                <td>${candidate.category}</td>
-                <td>
-                  <span class="tag">${candidate.detail}</span>
-                  ${candidate.item}
-                </td>
-                <td>${candidate.current}</td>
-                <td>${candidate.target}</td>
-                <td>${formatCount(candidate.seedGain)}</td>
-                <td class="profit-value">+${formatGold(candidate.profitGain)}</td>
-                <td>${getFarmCostText(candidate)}</td>
-                <td class="profit-value">${formatGold(candidate.efficiency * 1000000)} / 100만G</td>
-              </tr>
-            `,
-          )
-          .join("");
-
+        lastFarmCalculationPrices = prices;
+        lastFarmCalculationProfile = getCurrentFarmProfile();
+        closeFarmEfficiencyDetail();
+        farmEfficiencyCandidates = buildFarmEfficiencyRoadmap(
+          lastFarmCalculationProfile,
+          lastFarmCalculationPrices,
+        );
+        renderFarmEfficiencyResults(farmEfficiencyCandidates, 1);
         activateModule("farming");
         activateFarmTab("calculator");
       };
@@ -7576,6 +8068,67 @@
 
       farmSeedPriceMode.addEventListener("change", () => {
         updateFarmSeedPriceMode();
+      });
+
+      farmEfficiencyResultBody.addEventListener("change", (event) => {
+        const selector = event.target.closest("[data-farm-engraving-override]");
+
+        if (!selector || !lastFarmCalculationPrices || !lastFarmCalculationProfile) {
+          return;
+        }
+
+        farmEngravingGradeOverrides[selector.dataset.farmEngravingOverride] = selector.value;
+        farmEfficiencyCandidates = buildFarmEfficiencyRoadmap(
+          lastFarmCalculationProfile,
+          lastFarmCalculationPrices,
+        );
+        renderFarmEfficiencyResults(farmEfficiencyCandidates, currentFarmResultPage);
+      });
+
+      const openFarmEvidenceFromRow = (row) => {
+        const candidate = farmEfficiencyCandidates.find(
+          (item) => getCandidateRowKey(item) === row.dataset.rowKey,
+        );
+
+        if (candidate) {
+          renderFarmEfficiencyEvidence(candidate);
+          farmEfficiencyDetail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      };
+
+      farmEfficiencyResultBody.addEventListener("click", (event) => {
+        if (event.target.closest("select, button, input, a")) {
+          return;
+        }
+
+        const row = event.target.closest("tr[data-row-key]");
+        if (row) {
+          openFarmEvidenceFromRow(row);
+        }
+      });
+
+      farmEfficiencyResultBody.addEventListener("keydown", (event) => {
+        if (!["Enter", " "].includes(event.key) || event.target.closest("select, button, input, a")) {
+          return;
+        }
+
+        const row = event.target.closest("tr[data-row-key]");
+        if (row) {
+          event.preventDefault();
+          openFarmEvidenceFromRow(row);
+        }
+      });
+
+      farmEfficiencyDetailClose.addEventListener("click", closeFarmEfficiencyDetail);
+
+      prevFarmResultPage.addEventListener("click", () => {
+        closeFarmEfficiencyDetail();
+        renderFarmEfficiencyResults(farmEfficiencyCandidates, currentFarmResultPage - 1);
+      });
+
+      nextFarmResultPage.addEventListener("click", () => {
+        closeFarmEfficiencyDetail();
+        renderFarmEfficiencyResults(farmEfficiencyCandidates, currentFarmResultPage + 1);
       });
 
       efficiencyResultBody.addEventListener("change", (event) => {
