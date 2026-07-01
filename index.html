@@ -2588,6 +2588,9 @@
               <button class="farm-tab-button" type="button" aria-selected="true" data-farm-tab="calculator">
                 계산기
               </button>
+              <button class="farm-tab-button" type="button" aria-selected="false" data-farm-tab="engraving-efficiency">
+                각인석 효율
+              </button>
               <button class="farm-tab-button" type="button" aria-selected="false" data-farm-tab="income">
                 수익 계산
               </button>
@@ -2703,6 +2706,78 @@
                         <p class="evidence-note" id="farm-efficiency-detail-note"></p>
                       </div>
                     </section>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="farm-tab-panel" data-farm-panel="engraving-efficiency">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">재배 각인석 효율</h2>
+                  <div class="panel-actions">
+                    <span class="status-pill">각인석 비교</span>
+                    <button class="secondary-button" type="button" id="farm-engraving-efficiency-button">다시 계산</button>
+                  </div>
+                </div>
+                <div class="section-body">
+                  <div class="summary-grid" aria-label="재배 각인석 효율 기준 요약">
+                    <div class="metric">
+                      <span class="metric-label">비교 기준</span>
+                      <span class="metric-value">기대 성공비용</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">투박 성공확률</span>
+                      <span class="metric-value">10%</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">단정 성공확률</span>
+                      <span class="metric-value">20%</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">정교 성공확률</span>
+                      <span class="metric-value">30%</span>
+                    </div>
+                  </div>
+
+                  <div class="data-section">
+                    <h3 class="data-title">손익분기 공식</h3>
+                    <p class="muted-note">x는 같은 효과의 투박한 각인석 시세, C는 해당 각인 레벨의 번영 계약서 비용입니다. 효과 등급별 시도 골드 차이까지 기준가에 포함합니다.</p>
+                    <div class="table-wrap">
+                      <table aria-label="재배 각인석 손익분기 공식">
+                        <thead>
+                          <tr>
+                            <th>효과</th>
+                            <th>목표 레벨</th>
+                            <th>계약서 비용 C</th>
+                            <th>투박한 기준</th>
+                            <th>단정한 기준가</th>
+                            <th>정교한 기준가</th>
+                          </tr>
+                        </thead>
+                        <tbody id="farm-engraving-break-even-body"></tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="data-section">
+                    <h3 class="data-title">현재 시세 기준 비교</h3>
+                    <div class="table-wrap">
+                      <table class="result-table" aria-label="재배 각인석 현재 시세 효율 비교">
+                        <thead>
+                          <tr>
+                            <th>효과</th>
+                            <th>목표 레벨</th>
+                            <th>투박한 기대비용</th>
+                            <th>단정한 기대비용</th>
+                            <th>정교한 기대비용</th>
+                            <th>추천</th>
+                            <th>단정/정교 기준가</th>
+                          </tr>
+                        </thead>
+                        <tbody id="farm-engraving-efficiency-body"></tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -3587,6 +3662,9 @@
       const farmEfficiencyProfitEvidence = document.querySelector("#farm-efficiency-profit-evidence");
       const farmEfficiencyCostEvidence = document.querySelector("#farm-efficiency-cost-evidence");
       const farmEfficiencyDetailNote = document.querySelector("#farm-efficiency-detail-note");
+      const farmEngravingEfficiencyButton = document.querySelector("#farm-engraving-efficiency-button");
+      const farmEngravingBreakEvenBody = document.querySelector("#farm-engraving-break-even-body");
+      const farmEngravingEfficiencyBody = document.querySelector("#farm-engraving-efficiency-body");
       const farmIncomeCalculateButton = document.querySelector("#farm-income-calculate-button");
       const farmIncomeTotal = document.querySelector("#farm-income-total");
       const farmIncomeSeedCount = document.querySelector("#farm-income-seed-count");
@@ -7416,6 +7494,79 @@
 
       renderEngravingStoneEfficiency();
 
+      const getFarmEngravingContractCost = (level, prices) =>
+        engravingContractByLevel[level] * (prices["price.farm.prosperitySoulContract"] || 0);
+
+      const renderFarmEngravingStoneEfficiency = () => {
+        const prices = getPriceMap();
+
+        farmEngravingBreakEvenBody.innerHTML = Object.values(farmingEngravingData)
+          .flatMap((effect) =>
+            effect.levels.map((levelData) => {
+              const level = levelData.level;
+              const roughPrice = prices[`price.farm.engraving.투박한 ${effect.name} 각인석`] || 0;
+              const attemptGold = engravingAttemptGoldByRarity[effect.rarity];
+              const contractCost = getFarmEngravingContractCost(level, prices);
+              const neatLimit =
+                2 * roughPrice + 2 * attemptGold.투박한 - attemptGold.단정한 + contractCost;
+              const preciseLimit =
+                3 * roughPrice + 3 * attemptGold.투박한 - attemptGold.정교한 + contractCost * 2;
+
+              return `
+                <tr>
+                  <td>${effect.name}</td>
+                  <td>${level}레벨</td>
+                  <td>${formatNumber(Math.round(contractCost))} G</td>
+                  <td>x</td>
+                  <td>${formatFormulaWithOffset("2x", 2 * attemptGold.투박한 - attemptGold.단정한 + contractCost)}</td>
+                  <td>${formatFormulaWithOffset("3x", 3 * attemptGold.투박한 - attemptGold.정교한 + contractCost * 2)}</td>
+                </tr>
+              `;
+            }),
+          )
+          .join("");
+
+        const rows = Object.values(farmingEngravingData).flatMap((effect) =>
+          effect.levels.map((levelData) => {
+            const level = levelData.level;
+            const roughPrice = prices[`price.farm.engraving.투박한 ${effect.name} 각인석`] || 0;
+            const attemptGold = engravingAttemptGoldByRarity[effect.rarity];
+            const contractCost = getFarmEngravingContractCost(level, prices);
+            const neatLimit =
+              2 * roughPrice + 2 * attemptGold.투박한 - attemptGold.단정한 + contractCost;
+            const preciseLimit =
+              3 * roughPrice + 3 * attemptGold.투박한 - attemptGold.정교한 + contractCost * 2;
+            const gradeCosts = engravingStoneGrades.map((grade) => ({
+              grade,
+              ...getFarmEngravingUpgradeCost(effect, level, grade, prices),
+            }));
+            const best = [...gradeCosts].sort((a, b) => a.goldCost - b.goldCost)[0];
+            const costCell = (grade) => {
+              const cost = gradeCosts.find((item) => item.grade === grade);
+              const className = cost.grade === best.grade ? ' class="profit-value"' : "";
+
+              return `<td${className}>${formatNumber(Math.round(cost.goldCost))} G / ${cost.ruby.toFixed(1)} R</td>`;
+            };
+
+            return `
+              <tr>
+                <td>${effect.name}</td>
+                <td>${level}레벨</td>
+                ${costCell("투박한")}
+                ${costCell("단정한")}
+                ${costCell("정교한")}
+                <td class="profit-value">${best.grade}</td>
+                <td>단정 ≤ ${formatNumber(Math.round(neatLimit))} G / 정교 ≤ ${formatNumber(Math.round(preciseLimit))} G</td>
+              </tr>
+            `;
+          }),
+        );
+
+        farmEngravingEfficiencyBody.innerHTML = rows.join("");
+      };
+
+      renderFarmEngravingStoneEfficiency();
+
       const getEngravingOverrideKey = (effectName, nextLevel) => `${effectName}::${nextLevel}`;
 
       const getNextRodCandidate = (profile, prices) => {
@@ -8197,9 +8348,18 @@
         }, 1200);
       });
 
+      farmEngravingEfficiencyButton.addEventListener("click", () => {
+        renderFarmEngravingStoneEfficiency();
+        farmEngravingEfficiencyButton.textContent = "계산됨";
+        window.setTimeout(() => {
+          farmEngravingEfficiencyButton.textContent = "다시 계산";
+        }, 1200);
+      });
+
       document.querySelectorAll('[data-field^="price."]').forEach((field) => {
         field.addEventListener("input", () => {
           renderEngravingStoneEfficiency();
+          renderFarmEngravingStoneEfficiency();
           if (lastIncomePrices && lastIncomeProfile) {
             renderIncomeEstimate(false);
           }
@@ -8236,12 +8396,14 @@
       savePricesButton.addEventListener("click", () => {
         saveFieldGroup("price");
         renderEngravingStoneEfficiency();
+        renderFarmEngravingStoneEfficiency();
         showSavedFeedback(savePricesButton, "시세 저장");
       });
 
       saveStaminaDrinkButton.addEventListener("click", () => {
         saveFieldGroup("price");
         renderEngravingStoneEfficiency();
+        renderFarmEngravingStoneEfficiency();
         if (!staminaDrinkResults.hidden) {
           renderStaminaDrinkEfficiency(false);
         }
@@ -8251,6 +8413,7 @@
       saveFarmPricesButton.addEventListener("click", () => {
         saveFieldGroup("price.farm");
         saveExactFields(["setting.farmSeedPriceMode"]);
+        renderFarmEngravingStoneEfficiency();
         showSavedFeedback(saveFarmPricesButton, "시세 저장");
       });
 
