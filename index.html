@@ -156,7 +156,8 @@
         cursor: pointer;
       }
 
-      .farm-tab-button {
+      .farm-tab-button,
+      .mining-tab-button {
         appearance: none;
         min-height: 44px;
         padding: 0 18px;
@@ -171,7 +172,8 @@
       }
 
       .tab-button[aria-selected="true"],
-      .farm-tab-button[aria-selected="true"] {
+      .farm-tab-button[aria-selected="true"],
+      .mining-tab-button[aria-selected="true"] {
         border-bottom-color: #167f92;
         color: #102331;
       }
@@ -186,12 +188,14 @@
         display: none;
       }
 
-      .farm-tab-panel {
+      .farm-tab-panel,
+      .mining-tab-panel {
         display: none;
       }
 
       .tab-panel.active,
-      .farm-tab-panel.active {
+      .farm-tab-panel.active,
+      .mining-tab-panel.active {
         display: block;
         animation: soft-rise 180ms ease-out;
       }
@@ -1112,6 +1116,7 @@
 
       @media (prefers-reduced-motion: reduce) {
         .farm-tab-panel.active,
+        .mining-tab-panel.active,
         .tab-panel.active,
         .result-table tbody tr.row-changed {
           animation: none;
@@ -1520,6 +1525,9 @@
           </button>
           <button class="module-button" type="button" aria-selected="false" data-module-button="farming">
             재배
+          </button>
+          <button class="module-button" type="button" aria-selected="false" data-module-button="mining">
+            채광
           </button>
         </nav>
       </aside>
@@ -3029,6 +3037,549 @@
             </section>
           </main>
         </section>
+
+        <section class="module-view" data-module="mining">
+          <header>
+            <div class="header-inner">
+              <h1>채광 스펙업 계산기</h1>
+              <span class="admin-mark">DATA STORE</span>
+            </div>
+            <nav class="tabs" aria-label="채광 탭">
+              <button class="mining-tab-button" type="button" aria-selected="true" data-mining-tab="calculator">
+                계산기
+              </button>
+              <button class="mining-tab-button" type="button" aria-selected="false" data-mining-tab="engraving-efficiency">
+                각인석 효율
+              </button>
+              <button class="mining-tab-button" type="button" aria-selected="false" data-mining-tab="income">
+                수익 계산
+              </button>
+              <button class="mining-tab-button" type="button" aria-selected="false" data-mining-tab="prices">
+                시세 입력
+              </button>
+              <button class="mining-tab-button" type="button" aria-selected="false" data-mining-tab="profile">
+                정보 입력
+              </button>
+              <button class="mining-tab-button" type="button" aria-selected="false" data-mining-tab="info">
+                정보
+              </button>
+            </nav>
+          </header>
+
+          <main>
+            <section class="mining-tab-panel active" data-mining-panel="calculator">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">채광 계산기</h2>
+                  <div class="panel-actions">
+                    <span class="status-pill">세이지 곡괭이</span>
+                    <button class="primary-button" type="button" id="mining-calculate-button">효율 계산</button>
+                  </div>
+                </div>
+                <div class="section-body">
+                  <div class="summary-grid" aria-label="채광 계산 기준 요약">
+                    <div class="metric">
+                      <span class="metric-label">기본 스태미나</span>
+                      <span class="metric-value">3000</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">도구</span>
+                      <span class="metric-value">세이지 곡괭이</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">계산 대상</span>
+                      <span class="metric-value">채광 수익</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">상태</span>
+                      <span class="metric-value">데이터 입력 대기</span>
+                    </div>
+                  </div>
+                  <div class="table-wrap">
+                    <table class="result-table" aria-label="채광 스펙업 효율 순위">
+                      <thead>
+                        <tr>
+                          <th>순서</th>
+                          <th>분류</th>
+                          <th>세부</th>
+                          <th>항목</th>
+                          <th>현재</th>
+                          <th>변경</th>
+                          <th>기대 수익 증가</th>
+                          <th>기대 비용</th>
+                          <th>효율</th>
+                        </tr>
+                      </thead>
+                      <tbody id="mining-efficiency-result-body">
+                        <tr>
+                          <td class="result-empty" colspan="9">채광 도구, 각인석, 전문가, 수익 구조 데이터를 입력하면 계산 결과가 표시됩니다.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="pagination" id="mining-result-pagination" hidden>
+                    <button class="page-button" type="button" id="prev-mining-result-page">이전</button>
+                    <span class="pagination-info" id="mining-result-page-info">1 / 1</span>
+                    <button class="page-button" type="button" id="next-mining-result-page">다음</button>
+                  </div>
+                  <div id="mining-efficiency-detail-home">
+                    <section class="efficiency-detail" id="mining-efficiency-detail" aria-live="polite" hidden>
+                      <div class="efficiency-detail-head">
+                        <div>
+                          <span class="efficiency-detail-kicker" id="mining-efficiency-detail-kicker">채광 스펙업 근거</span>
+                          <h3 class="efficiency-detail-title" id="mining-efficiency-detail-title"></h3>
+                          <p class="efficiency-detail-subtitle" id="mining-efficiency-detail-subtitle"></p>
+                        </div>
+                        <button
+                          class="detail-close-button"
+                          type="button"
+                          id="mining-efficiency-detail-close"
+                          aria-label="채광 스펙업 근거 닫기"
+                          title="닫기"
+                        >×</button>
+                      </div>
+                      <div class="efficiency-detail-body">
+                        <div class="evidence-summary" id="mining-efficiency-evidence-summary"></div>
+
+                        <div class="evidence-section">
+                          <h4 class="evidence-section-title">기대 수익 증가 근거</h4>
+                          <div class="table-wrap">
+                            <table class="evidence-table" aria-label="채광 기대 수익 증가 근거">
+                              <thead>
+                                <tr>
+                                  <th>수익원</th>
+                                  <th>적용 전</th>
+                                  <th>적용 후</th>
+                                  <th>증가분</th>
+                                </tr>
+                              </thead>
+                              <tbody id="mining-efficiency-profit-evidence"></tbody>
+                            </table>
+                          </div>
+                        </div>
+
+                        <div class="evidence-section">
+                          <h4 class="evidence-section-title">기대 비용 계산 근거</h4>
+                          <div id="mining-efficiency-cost-evidence"></div>
+                        </div>
+
+                        <p class="evidence-note" id="mining-efficiency-detail-note"></p>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mining-tab-panel" data-mining-panel="engraving-efficiency">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">채광 각인석 효율</h2>
+                  <div class="panel-actions">
+                    <span class="status-pill">각인석 비교</span>
+                    <button class="secondary-button" type="button" id="mining-engraving-efficiency-button">다시 계산</button>
+                  </div>
+                </div>
+                <div class="section-body">
+                  <div class="summary-grid" aria-label="채광 각인석 효율 기준 요약">
+                    <div class="metric">
+                      <span class="metric-label">비교 기준</span>
+                      <span class="metric-value">기대 성공비용</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">투박 성공확률</span>
+                      <span class="metric-value">10%</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">단정 성공확률</span>
+                      <span class="metric-value">20%</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">정교 성공확률</span>
+                      <span class="metric-value">30%</span>
+                    </div>
+                  </div>
+                  <div class="data-section">
+                    <h3 class="data-title">손익분기 공식</h3>
+                    <div class="table-wrap">
+                      <table aria-label="채광 각인석 손익분기 공식">
+                        <thead>
+                          <tr>
+                            <th>효과</th>
+                            <th>목표 레벨</th>
+                            <th>계약서 비용 C</th>
+                            <th>투박한 기준</th>
+                            <th>단정한 기준가</th>
+                            <th>정교한 기준가</th>
+                          </tr>
+                        </thead>
+                        <tbody id="mining-engraving-break-even-body">
+                          <tr>
+                            <td class="result-empty" colspan="6">채광 각인석 데이터와 계약서 정보를 입력하면 비교식이 표시됩니다.</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="data-section">
+                    <h3 class="data-title">현재 시세 기준 비교</h3>
+                    <div class="table-wrap">
+                      <table class="result-table" aria-label="채광 각인석 현재 시세 효율 비교">
+                        <thead>
+                          <tr>
+                            <th>효과</th>
+                            <th>목표 레벨</th>
+                            <th>투박한 기대비용</th>
+                            <th>단정한 기대비용</th>
+                            <th>정교한 기대비용</th>
+                            <th>추천</th>
+                            <th>단정/정교 기준가</th>
+                          </tr>
+                        </thead>
+                        <tbody id="mining-engraving-efficiency-body">
+                          <tr>
+                            <td class="result-empty" colspan="7">채광 각인석 시세와 등급 정보 입력 대기 중입니다.</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mining-tab-panel" data-mining-panel="income">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">채광 수익 계산</h2>
+                  <div class="panel-actions">
+                    <span class="status-pill">3000 스태미나</span>
+                    <button class="primary-button" type="button" id="mining-income-calculate-button">수익 계산</button>
+                  </div>
+                </div>
+                <div class="section-body">
+                  <div class="summary-grid" aria-label="채광 수익 요약">
+                    <div class="metric">
+                      <span class="metric-label">총 기대수익</span>
+                      <span class="metric-value" id="mining-income-total">-</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">기대 광물</span>
+                      <span class="metric-value" id="mining-income-minerals">-</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">계산 기준</span>
+                      <span class="metric-value" id="mining-income-mine-count">-</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">보너스 수익</span>
+                      <span class="metric-value" id="mining-income-bonus">-</span>
+                    </div>
+                  </div>
+                  <div class="table-wrap">
+                    <table class="result-table" aria-label="채광 수익 상세">
+                      <thead>
+                        <tr>
+                          <th>수익원</th>
+                          <th>내용</th>
+                          <th>기대 수량</th>
+                          <th>기대 수익</th>
+                        </tr>
+                      </thead>
+                      <tbody id="mining-income-breakdown-body">
+                        <tr>
+                          <td class="result-empty" colspan="4">채광 수익 구조 데이터를 입력하면 상세 수익을 계산합니다.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mining-tab-panel" data-mining-panel="prices">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">채광 시세 입력</h2>
+                  <div class="panel-actions">
+                    <span class="status-pill">직접 입력</span>
+                    <button class="secondary-button" type="button" id="save-mining-prices-button">시세 저장</button>
+                  </div>
+                </div>
+                <div class="section-body">
+                  <div class="form-section">
+                    <h3 class="form-title">주괴 및 보상 시세</h3>
+                    <div class="form-grid">
+                      <div class="field">
+                        <label for="price-mining-corum-ingot">코룸 주괴</label>
+                        <input id="price-mining-corum-ingot" data-field="price.mining.ingot.corum" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-lifton-ingot">리프톤 주괴</label>
+                        <input id="price-mining-lifton-ingot" data-field="price.mining.ingot.lifton" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-serent-ingot">세렌트 주괴</label>
+                        <input id="price-mining-serent-ingot" data-field="price.mining.ingot.serent" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-artifact-point">유물 100포인트</label>
+                        <input id="price-mining-artifact-point" data-field="price.mining.artifactPoint100" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-skill-pulse">스킬펄스</label>
+                        <input id="price-mining-skill-pulse" data-field="price.mining.skillPulse" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-enhanced-torch-box">강화 횃불 한상자</label>
+                        <input id="price-mining-enhanced-torch-box" data-field="price.mining.enhancedTorchBox" type="number" min="0" placeholder="54세트 가격" />
+                      </div>
+                    </div>
+                    <p class="muted-note">광물은 직접 판매하지 않고 주괴 제작 후 판매하는 기준입니다. 강화 횃불 한상자는 54세트, 3456개로 환산합니다.</p>
+                  </div>
+
+                  <div class="form-section">
+                    <h3 class="form-title">정동석 시세</h3>
+                    <div class="form-grid">
+                      <div class="field">
+                        <label for="price-mining-corum-geode">코룸 정동석</label>
+                        <input id="price-mining-corum-geode" data-field="price.mining.geode.corum" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-lifton-geode">리프톤 정동석</label>
+                        <input id="price-mining-lifton-geode" data-field="price.mining.geode.lifton" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-serent-geode">세렌트 정동석</label>
+                        <input id="price-mining-serent-geode" data-field="price.mining.geode.serent" type="number" min="0" placeholder="골드" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-section">
+                    <h3 class="form-title">채광 공통 재료 시세</h3>
+                    <div class="form-grid">
+                      <div class="field">
+                        <label for="price-mining-low-stone">하급 라이프스톤</label>
+                        <input id="price-mining-low-stone" data-field="price.mining.lowLifeStone" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-mid-stone">중급 라이프스톤</label>
+                        <input id="price-mining-mid-stone" data-field="price.mining.midLifeStone" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-high-stone">상급 라이프스톤</label>
+                        <input id="price-mining-high-stone" data-field="price.mining.highLifeStone" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-fracture-contract">파쇄의 영혼 계약서</label>
+                        <input id="price-mining-fracture-contract" data-field="price.mining.fractureSoulContract" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-ability-stone">어빌리티 스톤</label>
+                        <input id="price-mining-ability-stone" data-field="price.mining.abilityStone" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <label for="price-mining-skill-point">스킬 포인트</label>
+                        <input id="price-mining-skill-point" data-field="price.mining.skillPoint" type="number" min="0" placeholder="골드" />
+                      </div>
+                      <div class="field">
+                        <span class="field-label">스킬 포인트 처리</span>
+                        <label class="choice">
+                          <input id="mining-skill-point-bound" data-field="price.mining.skillPointBound" type="checkbox" />
+                          귀속 스킬 포인트 사용
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-section">
+                    <h3 class="form-title">채광 각인석 시세</h3>
+                    <div class="form-grid" id="mining-engraving-price-fields"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mining-tab-panel" data-mining-panel="profile">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">채광 정보 입력</h2>
+                  <div class="panel-actions">
+                    <span class="status-pill">현재 스펙</span>
+                    <button class="secondary-button" type="button" id="save-mining-profile-button">스펙 저장</button>
+                  </div>
+                </div>
+                <div class="section-body">
+                  <div class="form-section">
+                    <h3 class="form-title">곡괭이</h3>
+                    <div class="form-grid">
+                      <div class="field">
+                        <label for="current-pickaxe-level">현재 곡괭이 강화</label>
+                        <select id="current-pickaxe-level" data-field="mining.profile.pickaxeLevel"></select>
+                      </div>
+                      <div class="field">
+                        <span class="field-label">계산 기준</span>
+                        <label class="choice">
+                          <input type="checkbox" checked disabled />
+                          기본 스태미나 3000
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-section">
+                    <h3 class="form-title">스태미나 배분</h3>
+                    <div class="form-grid">
+                      <div class="field">
+                        <label for="mining-stamina-corum">코룸 사용 스태미나</label>
+                        <input id="mining-stamina-corum" data-field="mining.profile.stamina.corum" type="number" min="0" max="3000" placeholder="0" />
+                      </div>
+                      <div class="field">
+                        <label for="mining-stamina-lifton">리프톤 사용 스태미나</label>
+                        <input id="mining-stamina-lifton" data-field="mining.profile.stamina.lifton" type="number" min="0" max="3000" placeholder="0" />
+                      </div>
+                      <div class="field">
+                        <label for="mining-stamina-serent">세렌트 사용 스태미나</label>
+                        <input id="mining-stamina-serent" data-field="mining.profile.stamina.serent" type="number" min="0" max="3000" placeholder="0" />
+                      </div>
+                    </div>
+                    <p class="muted-note">채광은 1회당 스태미나 10을 사용합니다. 세 값의 합을 3000 기준으로 계산합니다.</p>
+                  </div>
+
+                  <div class="form-section">
+                    <h3 class="form-title">채광 각인석</h3>
+                    <div class="form-grid" id="mining-engraving-profile-fields"></div>
+                  </div>
+
+                  <div class="form-section">
+                    <h3 class="form-title">채광 전문가</h3>
+                    <div class="form-grid" id="mining-expert-profile-fields"></div>
+                    <p class="muted-note">세공 전용으로 분류한 광채 관련 항목은 현재 수익 계산에서 제외합니다.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="mining-tab-panel" data-mining-panel="info">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">채광 정보</h2>
+                </div>
+                <div class="admin-layout">
+                  <section class="info-board" aria-label="채광 계산 기준 정보">
+                    <div class="board-header">반영된 채광 데이터값과 계산식</div>
+                    <div class="data-section">
+                      <h3 class="data-title">채광 기본 기준</h3>
+                      <ul class="formula-list">
+                        <li>기본 스태미나 3000, 채광 1회당 스태미나 10, 총 300회 기준</li>
+                        <li>광물은 직접 판매하지 않고 주괴로 제작한 뒤 판매하는 기준</li>
+                        <li>코비는 일반 코비일 때만 50% 확률로 스킬펄스를 드롭</li>
+                        <li>정동석 코비로 변신하면 스킬펄스는 드롭하지 않고 정동석 1개를 드롭</li>
+                      </ul>
+                    </div>
+
+                    <div class="data-section">
+                      <h3 class="data-title">곡괭이 강화 스펙</h3>
+                      <div class="table-wrap">
+                        <table aria-label="곡괭이 강화 단계별 스펙">
+                          <thead>
+                            <tr>
+                              <th>강화</th>
+                              <th>광물 드롭 수</th>
+                              <th>유물 획득 확률</th>
+                              <th>코비 소환 확률</th>
+                              <th>광채 채굴 속도</th>
+                              <th>광채 채굴 확률</th>
+                            </tr>
+                          </thead>
+                          <tbody id="mining-pickaxe-stat-table"></tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="data-section">
+                      <h3 class="data-title">채광 각인석 데이터</h3>
+                      <div class="table-wrap">
+                        <table aria-label="채광 각인석 데이터">
+                          <thead>
+                            <tr>
+                              <th>효과</th>
+                              <th>등급</th>
+                              <th>레벨</th>
+                              <th>최소 강화</th>
+                              <th>수치</th>
+                              <th>계산 반영</th>
+                            </tr>
+                          </thead>
+                          <tbody id="mining-engraving-data-table"></tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="data-section">
+                      <h3 class="data-title">채광 전문가 데이터</h3>
+                      <div class="table-wrap">
+                        <table aria-label="채광 전문가 데이터">
+                          <thead>
+                            <tr>
+                              <th>전문가</th>
+                              <th>레벨</th>
+                              <th>효과</th>
+                              <th>스킬 포인트</th>
+                              <th>필요 골드</th>
+                              <th>어빌리티 스톤</th>
+                            </tr>
+                          </thead>
+                          <tbody id="mining-expert-data-table"></tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="data-section">
+                      <h3 class="data-title">유물 기대값</h3>
+                      <div class="table-wrap">
+                        <table aria-label="채광 유물 기대값">
+                          <thead>
+                            <tr>
+                              <th>유물</th>
+                              <th>포인트</th>
+                              <th>확률</th>
+                            </tr>
+                          </thead>
+                          <tbody id="mining-artifact-data-table"></tbody>
+                        </table>
+                      </div>
+                      <p class="muted-note">유물 1회 기대 포인트는 250포인트입니다.</p>
+                    </div>
+
+                    <div class="data-section">
+                      <h3 class="data-title">주괴 제작식</h3>
+                      <div class="table-wrap">
+                        <table aria-label="채광 주괴 제작식">
+                          <thead>
+                            <tr>
+                              <th>주괴</th>
+                              <th>필요 광석</th>
+                              <th>필요 강화 횃불</th>
+                              <th>계산 반영</th>
+                            </tr>
+                          </thead>
+                          <tbody id="mining-ingot-recipe-table"></tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div class="data-section">
+                      <h3 class="data-title">채광 계산식</h3>
+                      <ul class="formula-list" id="mining-formula-list"></ul>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </section>
+          </main>
+        </section>
       </div>
     </div>
 
@@ -3189,6 +3740,207 @@
             { level: 8, chance: 8, extraSeeds: 4, skillPoint: 50, gold: 1500000, abilityStone: 100 },
             { level: 9, chance: 9, extraSeeds: 5, skillPoint: 60, gold: 3000000, abilityStone: 120 },
             { level: 10, chance: 10, extraSeeds: 8, skillPoint: 100, gold: 7000000, abilityStone: 200 },
+          ],
+        },
+      };
+
+      const miningRules = {
+        baseStamina: 3000,
+        staminaCostPerMine: 10,
+        kobiSkillPulseChance: 50,
+        minerRouletteDiceSides: 6,
+        minerRouletteNormalMultiplier: 6,
+        minerRouletteGoldChance: 10,
+        minerRouletteGoldMultiplier: 12,
+        mineCartArtifactRange: [1, 3],
+      };
+
+      miningRules.mineCount = miningRules.baseStamina / miningRules.staminaCostPerMine;
+      miningRules.minerRouletteExpectedMinerals =
+        ((1 - miningRules.minerRouletteGoldChance / 100) *
+          ((1 + miningRules.minerRouletteDiceSides) / 2) *
+          miningRules.minerRouletteNormalMultiplier) +
+        (miningRules.minerRouletteGoldChance / 100) *
+          ((1 + miningRules.minerRouletteDiceSides) / 2) *
+          miningRules.minerRouletteGoldMultiplier;
+      miningRules.mineCartAverageArtifacts =
+        (miningRules.mineCartArtifactRange[0] + miningRules.mineCartArtifactRange[1]) / 2;
+
+      const miningOreTypes = [
+        { key: "corum", name: "코룸", geode: "코룸 정동석" },
+        { key: "lifton", name: "리프톤", geode: "리프톤 정동석" },
+        { key: "serent", name: "세렌트", geode: "세렌트 정동석" },
+      ];
+
+      const miningIngotRecipeData = [
+        { oreKey: "corum", ingotName: "코룸 주괴", oreName: "코룸 광석", oreAmount: 16, enhancedTorch: 2 },
+        { oreKey: "lifton", ingotName: "리프톤 주괴", oreName: "리프톤 광석", oreAmount: 16, enhancedTorch: 3 },
+        { oreKey: "serent", ingotName: "세렌트 주괴", oreName: "세렌트 광석", oreAmount: 16, enhancedTorch: 4 },
+      ];
+
+      const miningPickaxeStatData = [
+        { level: 1, miningPower: 20, miningSpeed: 1.5, mineralDrop: 2, artifactChance: 0, kobiChance: 0, shinySpeed: null, shinyChance: null, mineExp: 3 },
+        { level: 2, miningPower: 25, miningSpeed: 1.5, mineralDrop: 3, artifactChance: 1, kobiChance: 1, shinySpeed: null, shinyChance: null, mineExp: 3 },
+        { level: 3, miningPower: 30, miningSpeed: 1.5, mineralDrop: 3, artifactChance: 1, kobiChance: 1, shinySpeed: null, shinyChance: null, mineExp: 10 },
+        { level: 4, miningPower: 40, miningSpeed: 1.5, mineralDrop: 3, artifactChance: 1, kobiChance: 2, shinySpeed: null, shinyChance: null, mineExp: 16 },
+        { level: 5, miningPower: 50, miningSpeed: 1.5, mineralDrop: 4, artifactChance: 2, kobiChance: 2, shinySpeed: null, shinyChance: null, mineExp: 33 },
+        { level: 6, miningPower: 60, miningSpeed: 1.5, mineralDrop: 4, artifactChance: 2, kobiChance: 3, shinySpeed: null, shinyChance: null, mineExp: 34 },
+        { level: 7, miningPower: 100, miningSpeed: 1.5, mineralDrop: 4, artifactChance: 2, kobiChance: 3, shinySpeed: 0, shinyChance: 0, mineExp: 36 },
+        { level: 8, miningPower: 110, miningSpeed: 1.5, mineralDrop: 5, artifactChance: 3, kobiChance: 4, shinySpeed: 10, shinyChance: 0, mineExp: 50 },
+        { level: 9, miningPower: 120, miningSpeed: 1.5, mineralDrop: 5, artifactChance: 3, kobiChance: 5, shinySpeed: 20, shinyChance: 5, mineExp: 50 },
+        { level: 10, miningPower: 130, miningSpeed: 1.0, mineralDrop: 5, artifactChance: 3, kobiChance: 6, shinySpeed: 30, shinyChance: 8, mineExp: 51 },
+        { level: 11, miningPower: 140, miningSpeed: 1.0, mineralDrop: 6, artifactChance: 5, kobiChance: 7, shinySpeed: 40, shinyChance: 11, mineExp: 51 },
+        { level: 12, miningPower: 150, miningSpeed: 1.0, mineralDrop: 6, artifactChance: 5, kobiChance: 8, shinySpeed: 50, shinyChance: 14, mineExp: 51 },
+        { level: 13, miningPower: 160, miningSpeed: 1.0, mineralDrop: 7, artifactChance: 5, kobiChance: 10, shinySpeed: 60, shinyChance: 17, mineExp: 68 },
+        { level: 14, miningPower: 170, miningSpeed: 1.0, mineralDrop: 7, artifactChance: 5, kobiChance: 13, shinySpeed: 70, shinyChance: 20, mineExp: 81 },
+        { level: 15, miningPower: 180, miningSpeed: 0.5, mineralDrop: 12, artifactChance: 10, kobiChance: 15, shinySpeed: 90, shinyChance: 23, mineExp: 102 },
+      ];
+
+      const miningArtifactData = [
+        { name: "달리세르의 나뭇잎", points: 100, chance: 40 },
+        { name: "데르무스의 가죽", points: 200, chance: 25 },
+        { name: "카이로스카의 조각", points: 300, chance: 20 },
+        { name: "실파드라의 손병", points: 500, chance: 10 },
+        { name: "아스트라곤의 뼈", points: 1000, chance: 5 },
+      ];
+
+      const miningArtifactExpectedPoints = miningArtifactData.reduce(
+        (sum, item) => sum + item.points * (item.chance / 100),
+        0,
+      );
+
+      const miningEngravingData = {
+        mineralLuck: {
+          name: "광물 행운",
+          rarity: "Legendary",
+          trigger: "광석 채광 시",
+          levels: [
+            { level: 1, minPickaxeLevel: 5, chance: 25, extraMinerals: 1 },
+            { level: 2, minPickaxeLevel: 7, chance: 50, extraMinerals: 1 },
+            { level: 3, minPickaxeLevel: 9, chance: 75, extraMinerals: 1 },
+            { level: 4, minPickaxeLevel: 11, chance: 100, extraMinerals: 1 },
+          ],
+        },
+        artifactSearch: {
+          name: "유물 탐색",
+          rarity: "Legendary",
+          trigger: "상시",
+          levels: [
+            { level: 1, minPickaxeLevel: 3, artifactChanceBonus: 1 },
+            { level: 2, minPickaxeLevel: 5, artifactChanceBonus: 3 },
+            { level: 3, minPickaxeLevel: 7, artifactChanceBonus: 5 },
+          ],
+        },
+        kobiSearch: {
+          name: "코비 탐색",
+          rarity: "Normal",
+          trigger: "상시",
+          levels: [
+            { level: 1, minPickaxeLevel: 3, kobiChanceBonus: 1 },
+            { level: 2, minPickaxeLevel: 5, kobiChanceBonus: 3 },
+            { level: 3, minPickaxeLevel: 7, kobiChanceBonus: 5 },
+          ],
+        },
+        geodeKobi: {
+          name: "정동석 코비",
+          rarity: "Legendary",
+          trigger: "코비 등장 시",
+          levels: [
+            { level: 1, minPickaxeLevel: 9, transformChance: 5 },
+            { level: 2, minPickaxeLevel: 9, transformChance: 10 },
+            { level: 3, minPickaxeLevel: 11, transformChance: 20 },
+            { level: 4, minPickaxeLevel: 11, transformChance: 30 },
+            { level: 5, minPickaxeLevel: 13, transformChance: 50 },
+          ],
+        },
+        mineCart: {
+          name: "광산 수레",
+          rarity: "Mythic",
+          trigger: "광석 채광 시",
+          levels: [
+            { level: 1, minPickaxeLevel: 7, chance: 0.5 },
+            { level: 2, minPickaxeLevel: 7, chance: 1 },
+            { level: 3, minPickaxeLevel: 9, chance: 1.5 },
+            { level: 4, minPickaxeLevel: 9, chance: 2 },
+            { level: 5, minPickaxeLevel: 11, chance: 3 },
+          ],
+          averageArtifacts: miningRules.mineCartAverageArtifacts,
+        },
+        minerRoulette: {
+          name: "광부 룰렛",
+          rarity: "Legendary",
+          trigger: "광석 채광 시",
+          levels: [
+            { level: 1, minPickaxeLevel: 5, chance: 1 },
+            { level: 2, minPickaxeLevel: 5, chance: 2 },
+            { level: 3, minPickaxeLevel: 7, chance: 3 },
+            { level: 4, minPickaxeLevel: 7, chance: 4 },
+            { level: 5, minPickaxeLevel: 9, chance: 5 },
+          ],
+          expectedMinerals: miningRules.minerRouletteExpectedMinerals,
+        },
+      };
+
+      const miningExpertData = {
+        kobiTime: {
+          name: "[세레니티] 코비 타임",
+          levels: [
+            { level: 1, kobiChanceBonus: 1, skillPoint: 1, gold: 5000, abilityStone: 2 },
+            { level: 2, kobiChanceBonus: 1.5, skillPoint: 3, gold: 100000, abilityStone: 6 },
+            { level: 3, kobiChanceBonus: 2, skillPoint: 7, gold: 300000, abilityStone: 14 },
+            { level: 4, kobiChanceBonus: 2.5, skillPoint: 15, gold: 1000000, abilityStone: 30 },
+            { level: 5, kobiChanceBonus: 3, skillPoint: 30, gold: 2000000, abilityStone: 60 },
+            { level: 6, kobiChanceBonus: 4, skillPoint: 50, gold: 3000000, abilityStone: 100 },
+            { level: 7, kobiChanceBonus: 5, skillPoint: 70, gold: 5000000, abilityStone: 140 },
+          ],
+        },
+        geodeStart: {
+          name: "[세레니티] 반짝임의 시작",
+          levels: [
+            { level: 1, chance: 3, geodes: 1, skillPoint: 1, gold: 5000, abilityStone: 2 },
+            { level: 2, chance: 7, geodes: 1, skillPoint: 30, gold: 1000000, abilityStone: 60 },
+            { level: 3, chance: 10, geodes: 2, skillPoint: 50, gold: 5000000, abilityStone: 100 },
+          ],
+        },
+        geodeSeller: {
+          name: "[세레니티] 반짝반짝 눈이 부셔",
+          levels: [
+            { level: 1, geodeSellBonus: 5, skillPoint: 1, gold: 5000, abilityStone: 2 },
+            { level: 2, geodeSellBonus: 7, skillPoint: 3, gold: 15000, abilityStone: 6 },
+            { level: 3, geodeSellBonus: 10, skillPoint: 5, gold: 200000, abilityStone: 10 },
+            { level: 4, geodeSellBonus: 20, skillPoint: 30, gold: 1000000, abilityStone: 60 },
+            { level: 5, geodeSellBonus: 30, skillPoint: 60, gold: 5000000, abilityStone: 120 },
+            { level: 6, geodeSellBonus: 50, skillPoint: 80, gold: 7000000, abilityStone: 160 },
+          ],
+        },
+        luckyHit: {
+          name: "[세레니티] 럭키 히트",
+          levels: [
+            { level: 1, chance: 1, extraMinerals: 1, skillPoint: 1, gold: 10000, abilityStone: 2 },
+            { level: 2, chance: 2, extraMinerals: 2, skillPoint: 3, gold: 30000, abilityStone: 6 },
+            { level: 3, chance: 3, extraMinerals: 3, skillPoint: 7, gold: 50000, abilityStone: 14 },
+            { level: 4, chance: 4, extraMinerals: 4, skillPoint: 10, gold: 100000, abilityStone: 20 },
+            { level: 5, chance: 5, extraMinerals: 6, skillPoint: 20, gold: 300000, abilityStone: 40 },
+            { level: 6, chance: 6, extraMinerals: 8, skillPoint: 30, gold: 500000, abilityStone: 60 },
+            { level: 7, chance: 7, extraMinerals: 10, skillPoint: 40, gold: 700000, abilityStone: 80 },
+            { level: 8, chance: 8, extraMinerals: 12, skillPoint: 50, gold: 1500000, abilityStone: 100 },
+            { level: 9, chance: 10, extraMinerals: 16, skillPoint: 70, gold: 3000000, abilityStone: 140 },
+            { level: 10, chance: 15, extraMinerals: 20, skillPoint: 100, gold: 5000000, abilityStone: 200 },
+          ],
+        },
+        flamingPickaxe: {
+          name: "[세레니티] 불붙은 곡괭이",
+          levels: [
+            { level: 1, chance: 1, ingots: 1, skillPoint: 1, gold: 10000, abilityStone: 2 },
+            { level: 2, chance: 2, ingots: 1, skillPoint: 3, gold: 30000, abilityStone: 6 },
+            { level: 3, chance: 3, ingots: 1, skillPoint: 7, gold: 50000, abilityStone: 14 },
+            { level: 4, chance: 4, ingots: 1, skillPoint: 10, gold: 300000, abilityStone: 20 },
+            { level: 5, chance: 5, ingots: 1, skillPoint: 20, gold: 700000, abilityStone: 40 },
+            { level: 6, chance: 6, ingots: 1, skillPoint: 35, gold: 1000000, abilityStone: 70 },
+            { level: 7, chance: 7, ingots: 1, skillPoint: 70, gold: 2000000, abilityStone: 140 },
+            { level: 8, chance: 8, ingots: 1, skillPoint: 100, gold: 3000000, abilityStone: 200 },
+            { level: 9, chance: 9, ingots: 1, skillPoint: 120, gold: 5000000, abilityStone: 240 },
+            { level: 10, chance: 15, ingots: 1, skillPoint: 150, gold: 7000000, abilityStone: 300 },
           ],
         },
       };
@@ -3486,11 +4238,11 @@
               { key: "corrosion", seafood: "urchin", name: "부식 에센스", extraMaterials: [{ name: "해초", amount: 3 }, { name: "짙은 참나무 잎", amount: 3 }] },
             ],
             tier2: [
-              { key: "vigorPreserve", name: "활기 보존의 결정", inputs: ["guard", "life"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "청금석 블록", amount: 1 }] },
-              { key: "waveErosion", name: "파도 침식의 결정", inputs: ["wave", "corrosion"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "레드스톤 블록", amount: 1 }] },
-              { key: "defensePollution", name: "방어 오염의 결정", inputs: ["chaos", "guard"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "철 주괴", amount: 3 }] },
-              { key: "torrentRegen", name: "격류 재생의 결정", inputs: ["life", "wave"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "금 주괴", amount: 2 }] },
-              { key: "toxicChaos", name: "맹독 혼란의 결정", inputs: ["corrosion", "chaos"], extraMaterials: [{ name: "켈프", amount: 8 }, { name: "다이아몬드", amount: 1 }] },
+              { key: "vigorPreserve", name: "활기 보존의 결정", inputs: ["guard", "life"], extraMaterials: [{ name: "켈프 더미", amount: 2 }, { name: "청금석 블록", amount: 1 }] },
+              { key: "waveErosion", name: "파도 침식의 결정", inputs: ["wave", "corrosion"], extraMaterials: [{ name: "켈프 더미", amount: 2 }, { name: "레드스톤 블록", amount: 1 }] },
+              { key: "defensePollution", name: "방어 오염의 결정", inputs: ["chaos", "guard"], extraMaterials: [{ name: "켈프 더미", amount: 2 }, { name: "철 주괴", amount: 3 }] },
+              { key: "torrentRegen", name: "격류 재생의 결정", inputs: ["life", "wave"], extraMaterials: [{ name: "켈프 더미", amount: 2 }, { name: "금 주괴", amount: 2 }] },
+              { key: "toxicChaos", name: "맹독 혼란의 결정", inputs: ["corrosion", "chaos"], extraMaterials: [{ name: "켈프 더미", amount: 2 }, { name: "다이아몬드", amount: 1 }] },
             ],
             finals: [
               { key: "trenchCore", name: "해구의 파동 코어 ★★", price: 11131, inputs: ["vigorPreserve", "waveErosion", "torrentRegen"] },
@@ -3515,11 +4267,11 @@
               { key: "corrosion", seafood: "urchin", name: "부식의 엘릭서", extraMaterials: [{ name: "불우렁쉥이", amount: 2 }, { name: "유리병", amount: 3 }, { name: "뒤틀린 자루", amount: 4 }] },
             ],
             tier2: [
-              { key: "immortalRegen", name: "불멸 재생의 영약", inputs: ["guard", "life"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 관 산호 블록", amount: 2 }] },
-              { key: "waveBarrier", name: "파동 장벽의 영약", inputs: ["wave", "guard"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 사방산호 블록", amount: 2 }] },
-              { key: "fallenErosion", name: "타락 침식의 영약", inputs: ["chaos", "corrosion"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 거품 산호 블록", amount: 2 }] },
-              { key: "lifeFrenzy", name: "생명 광란의 영약", inputs: ["life", "chaos"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 불 산호 블록", amount: 2 }] },
-              { key: "toxicWave", name: "맹독 파동의 영약", inputs: ["corrosion", "wave"], extraMaterials: [{ name: "켈프", amount: 12 }, { name: "발광 열매", amount: 4 }, { name: "죽은 뇌 산호 블록", amount: 2 }] },
+              { key: "immortalRegen", name: "불멸 재생의 영약", inputs: ["guard", "life"], extraMaterials: [{ name: "켈프 더미", amount: 3 }, { name: "발광 열매", amount: 4 }, { name: "죽은 관 산호 블록", amount: 2 }] },
+              { key: "waveBarrier", name: "파동 장벽의 영약", inputs: ["wave", "guard"], extraMaterials: [{ name: "켈프 더미", amount: 3 }, { name: "발광 열매", amount: 4 }, { name: "죽은 사방산호 블록", amount: 2 }] },
+              { key: "fallenErosion", name: "타락 침식의 영약", inputs: ["chaos", "corrosion"], extraMaterials: [{ name: "켈프 더미", amount: 3 }, { name: "발광 열매", amount: 4 }, { name: "죽은 거품 산호 블록", amount: 2 }] },
+              { key: "lifeFrenzy", name: "생명 광란의 영약", inputs: ["life", "chaos"], extraMaterials: [{ name: "켈프 더미", amount: 3 }, { name: "발광 열매", amount: 4 }, { name: "죽은 불 산호 블록", amount: 2 }] },
+              { key: "toxicWave", name: "맹독 파동의 영약", inputs: ["corrosion", "wave"], extraMaterials: [{ name: "켈프 더미", amount: 3 }, { name: "발광 열매", amount: 4 }, { name: "죽은 뇌 산호 블록", amount: 2 }] },
             ],
             finals: [
               { key: "aquaPulse", name: "아쿠아 펄스 파편 ★★★", price: 21833, inputs: ["immortalRegen", "waveBarrier", "toxicWave"] },
@@ -3640,12 +4392,94 @@
         return "-";
       };
 
+      const getMiningEngravingValueText = (effect, levelData) => {
+        if (effect.name === "광물 행운") {
+          return `${levelData.chance}% 확률로 광물 +${levelData.extraMinerals}개`;
+        }
+
+        if (effect.name === "유물 탐색") {
+          return `유물 획득 확률 +${levelData.artifactChanceBonus}%`;
+        }
+
+        if (effect.name === "코비 탐색") {
+          return `코비 소환 확률 +${levelData.kobiChanceBonus}%`;
+        }
+
+        if (effect.name === "정동석 코비") {
+          return `코비 등장 시 ${levelData.transformChance}% 확률로 정동석 코비`;
+        }
+
+        if (effect.name === "광산 수레") {
+          return `${levelData.chance}% 확률로 광산 수레 등장, 평균 유물 ${effect.averageArtifacts}개`;
+        }
+
+        if (effect.name === "광부 룰렛") {
+          return `${levelData.chance}% 확률로 주사위 등장, 평균 광물 ${effect.expectedMinerals.toFixed(1)}개`;
+        }
+
+        return "-";
+      };
+
+      const getMiningEngravingFormulaText = (effect) => {
+        if (effect.name === "광물 행운") {
+          return "채광 횟수 × 발동확률 × 1개 × 주괴 환산가";
+        }
+
+        if (effect.name === "유물 탐색") {
+          return "채광 횟수 × 추가 유물확률 × 유물 1회 기대 포인트";
+        }
+
+        if (effect.name === "코비 탐색") {
+          return "채광 횟수 × 추가 코비확률 × 일반 코비 비율 × 50% × 스킬펄스 가격";
+        }
+
+        if (effect.name === "정동석 코비") {
+          return "코비 기대 등장 수 × 변신확률 × 정동석 가격, 일반 코비 스킬펄스 기회는 차감";
+        }
+
+        if (effect.name === "광산 수레") {
+          return "채광 횟수 × 발동확률 × 평균 유물 2개 × 유물 1회 기대 포인트";
+        }
+
+        if (effect.name === "광부 룰렛") {
+          return "채광 횟수 × 발동확률 × 23.1개 × 주괴 환산가";
+        }
+
+        return "-";
+      };
+
+      const getMiningExpertEffectText = (skill, levelData) => {
+        if (skill.name === "[세레니티] 코비 타임") {
+          return `코비 소환 확률 +${levelData.kobiChanceBonus}%`;
+        }
+
+        if (skill.name === "[세레니티] 반짝임의 시작") {
+          return `${levelData.chance}% 확률로 정동석 ${levelData.geodes}개`;
+        }
+
+        if (skill.name === "[세레니티] 반짝반짝 눈이 부셔") {
+          return `정동석 판매가 +${levelData.geodeSellBonus}%`;
+        }
+
+        if (skill.name === "[세레니티] 럭키 히트") {
+          return `${levelData.chance}% 확률로 광물 +${levelData.extraMinerals}개`;
+        }
+
+        if (skill.name === "[세레니티] 불붙은 곡괭이") {
+          return `${levelData.chance}% 확률로 주괴 ${levelData.ingots}개`;
+        }
+
+        return "-";
+      };
+
       const moduleButtons = document.querySelectorAll("[data-module-button]");
       const moduleViews = document.querySelectorAll("[data-module]");
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabPanels = document.querySelectorAll(".tab-panel");
       const farmTabButtons = document.querySelectorAll(".farm-tab-button");
       const farmTabPanels = document.querySelectorAll(".farm-tab-panel");
+      const miningTabButtons = document.querySelectorAll(".mining-tab-button");
+      const miningTabPanels = document.querySelectorAll(".mining-tab-panel");
       const farmCalculateButton = document.querySelector("#farm-calculate-button");
       const farmEfficiencyResultBody = document.querySelector("#farm-efficiency-result-body");
       const farmResultPagination = document.querySelector("#farm-result-pagination");
@@ -3684,6 +4518,43 @@
       const farmEngravingDataTable = document.querySelector("#farm-engraving-data-table");
       const farmExpertDataTable = document.querySelector("#farm-expert-data-table");
       const farmFormulaList = document.querySelector("#farm-formula-list");
+      const currentPickaxeLevel = document.querySelector("#current-pickaxe-level");
+      const miningEngravingPriceFields = document.querySelector("#mining-engraving-price-fields");
+      const miningEngravingProfileFields = document.querySelector("#mining-engraving-profile-fields");
+      const miningExpertProfileFields = document.querySelector("#mining-expert-profile-fields");
+      const saveMiningPricesButton = document.querySelector("#save-mining-prices-button");
+      const saveMiningProfileButton = document.querySelector("#save-mining-profile-button");
+      const miningPickaxeStatTable = document.querySelector("#mining-pickaxe-stat-table");
+      const miningEngravingDataTable = document.querySelector("#mining-engraving-data-table");
+      const miningExpertDataTable = document.querySelector("#mining-expert-data-table");
+      const miningArtifactDataTable = document.querySelector("#mining-artifact-data-table");
+      const miningIngotRecipeTable = document.querySelector("#mining-ingot-recipe-table");
+      const miningFormulaList = document.querySelector("#mining-formula-list");
+      const miningCalculateButton = document.querySelector("#mining-calculate-button");
+      const miningEfficiencyResultBody = document.querySelector("#mining-efficiency-result-body");
+      const miningResultPagination = document.querySelector("#mining-result-pagination");
+      const prevMiningResultPage = document.querySelector("#prev-mining-result-page");
+      const nextMiningResultPage = document.querySelector("#next-mining-result-page");
+      const miningResultPageInfo = document.querySelector("#mining-result-page-info");
+      const miningEfficiencyDetailHome = document.querySelector("#mining-efficiency-detail-home");
+      const miningEfficiencyDetail = document.querySelector("#mining-efficiency-detail");
+      const miningEfficiencyDetailKicker = document.querySelector("#mining-efficiency-detail-kicker");
+      const miningEfficiencyDetailTitle = document.querySelector("#mining-efficiency-detail-title");
+      const miningEfficiencyDetailSubtitle = document.querySelector("#mining-efficiency-detail-subtitle");
+      const miningEfficiencyDetailClose = document.querySelector("#mining-efficiency-detail-close");
+      const miningEfficiencyEvidenceSummary = document.querySelector("#mining-efficiency-evidence-summary");
+      const miningEfficiencyProfitEvidence = document.querySelector("#mining-efficiency-profit-evidence");
+      const miningEfficiencyCostEvidence = document.querySelector("#mining-efficiency-cost-evidence");
+      const miningEfficiencyDetailNote = document.querySelector("#mining-efficiency-detail-note");
+      const miningEngravingEfficiencyButton = document.querySelector("#mining-engraving-efficiency-button");
+      const miningEngravingBreakEvenBody = document.querySelector("#mining-engraving-break-even-body");
+      const miningEngravingEfficiencyBody = document.querySelector("#mining-engraving-efficiency-body");
+      const miningIncomeCalculateButton = document.querySelector("#mining-income-calculate-button");
+      const miningIncomeTotal = document.querySelector("#mining-income-total");
+      const miningIncomeMinerals = document.querySelector("#mining-income-minerals");
+      const miningIncomeMineCount = document.querySelector("#mining-income-mine-count");
+      const miningIncomeBonus = document.querySelector("#mining-income-bonus");
+      const miningIncomeBreakdownBody = document.querySelector("#mining-income-breakdown-body");
       const fishingRodTable = document.querySelector("#fishing-rod-table");
       const fishingRodStatTable = document.querySelector("#fishing-rod-stat-table");
       const engravingEffectTable = document.querySelector("#engraving-effect-table");
@@ -3793,7 +4664,7 @@
         return item.craftMaterials.map((material) => `${material.name} ${material.amount}개`).join(", ");
       };
       const storageKey = "ocean-spec-calculator-inputs";
-      const defaultPriceVersion = "2026-07-02-farming-market-update-v1";
+      const defaultPriceVersion = "2026-07-05-mining-ingot-recipe-v1";
       const defaultAlchemyStockVersion = "2026-06-25-alchemy-stock-v2";
       const resultRowsPerPage = 10;
       let efficiencyCandidates = [];
@@ -3808,6 +4679,12 @@
       let lastFarmCalculationPrices = null;
       let lastFarmCalculationProfile = null;
       let selectedFarmEfficiencyRowKey = null;
+      let miningEfficiencyCandidates = [];
+      let currentMiningResultPage = 1;
+      let miningEngravingGradeOverrides = {};
+      let lastMiningCalculationPrices = null;
+      let lastMiningCalculationProfile = null;
+      let selectedMiningEfficiencyRowKey = null;
       let lastIncomePrices = null;
       let lastIncomeProfile = null;
       let lastAlchemyPlan = null;
@@ -3871,6 +4748,44 @@
         "price.farm.engraving.투박한 농부 룰렛 각인석": 200000,
         "price.farm.engraving.단정한 농부 룰렛 각인석": 390000,
         "price.farm.engraving.정교한 농부 룰렛 각인석": 820000,
+        "price.mining.ingot.corum": 8200,
+        "price.mining.ingot.lifton": 8300,
+        "price.mining.ingot.serent": 8100,
+        "price.mining.artifactPoint100": 6000,
+        "price.mining.skillPulse": 1352,
+        "price.mining.enhancedTorchBox": 0,
+        "price.mining.geode.corum": 8000,
+        "price.mining.geode.lifton": 8500,
+        "price.mining.geode.serent": 9000,
+        "price.mining.lowLifeStone": 17000,
+        "price.mining.midLifeStone": 40000,
+        "price.mining.highLifeStone": 81000,
+        "price.mining.fractureSoulContract": 28000,
+        "price.mining.abilityStone": 25000,
+        "price.mining.skillPoint": 80000,
+        "price.mining.skillPointBound": false,
+        "mining.profile.pickaxeLevel": 1,
+        "mining.profile.stamina.corum": 1000,
+        "mining.profile.stamina.lifton": 1000,
+        "mining.profile.stamina.serent": 1000,
+        "price.mining.engraving.투박한 광물 행운 각인석": 310000,
+        "price.mining.engraving.단정한 광물 행운 각인석": 680000,
+        "price.mining.engraving.정교한 광물 행운 각인석": 1440000,
+        "price.mining.engraving.투박한 유물 탐색 각인석": 310000,
+        "price.mining.engraving.단정한 유물 탐색 각인석": 882000,
+        "price.mining.engraving.정교한 유물 탐색 각인석": 1867000,
+        "price.mining.engraving.투박한 코비 탐색 각인석": 229000,
+        "price.mining.engraving.단정한 코비 탐색 각인석": 560000,
+        "price.mining.engraving.정교한 코비 탐색 각인석": 1090000,
+        "price.mining.engraving.투박한 정동석 코비 각인석": 240000,
+        "price.mining.engraving.단정한 정동석 코비 각인석": 790000,
+        "price.mining.engraving.정교한 정동석 코비 각인석": 1490000,
+        "price.mining.engraving.투박한 광산 수레 각인석": 298000,
+        "price.mining.engraving.단정한 광산 수레 각인석": 700000,
+        "price.mining.engraving.정교한 광산 수레 각인석": 1660000,
+        "price.mining.engraving.투박한 광부 룰렛 각인석": 270000,
+        "price.mining.engraving.단정한 광부 룰렛 각인석": 540000,
+        "price.mining.engraving.정교한 광부 룰렛 각인석": 1370000,
       };
       const defaultAlchemyStockValues = {
         "alchemy.stock.oyster.grade1.box": 0,
@@ -4343,6 +5258,64 @@
         })
         .join("");
 
+      currentPickaxeLevel.innerHTML = miningPickaxeStatData
+        .map((item) => `<option value="${item.level}">${item.level}강</option>`)
+        .join("");
+
+      miningEngravingPriceFields.innerHTML = Object.values(miningEngravingData)
+        .flatMap((effect) =>
+          engravingStoneGrades.map((grade) => {
+            const itemName = `${grade} ${effect.name} 각인석`;
+            const id = `price-mining-engraving-${createSafeId(`${grade}-${effect.name}`)}`;
+
+            return `
+              <div class="field">
+                <label for="${id}">${itemName}</label>
+                <input id="${id}" data-field="price.mining.engraving.${itemName}" type="number" min="0" placeholder="골드" />
+              </div>
+            `;
+          }),
+        )
+        .join("");
+
+      miningEngravingProfileFields.innerHTML = Object.values(miningEngravingData)
+        .map((effect) => {
+          const id = `mining-profile-engraving-${createSafeId(effect.name)}`;
+          const options = [
+            '<option value="0">없음</option>',
+            ...effect.levels.map((item) => `<option value="${item.level}">${item.level}레벨</option>`),
+          ].join("");
+
+          return `
+            <div class="field">
+              <label for="${id}">${effect.name}</label>
+              <select id="${id}" data-field="mining.profile.engraving.${effect.name}">
+                ${options}
+              </select>
+            </div>
+          `;
+        })
+        .join("");
+
+      miningExpertProfileFields.innerHTML = Object.entries(miningExpertData)
+        .map(([, skill]) => {
+          const id = `mining-profile-expert-${createSafeId(skill.name)}`;
+          const options = [
+            '<option value="0">0레벨</option>',
+            ...skill.levels.map((item) => `<option value="${item.level}">${item.level}레벨</option>`),
+          ].join("");
+
+          return `
+            <div class="field">
+              <label for="${id}">${skill.name}</label>
+              <select id="${id}" data-field="mining.profile.expert.${skill.name}">
+                ${options}
+              </select>
+            </div>
+          `;
+        })
+        .join("");
+
       loadSavedInputs();
       artifactSaleRateInput.value = getSavedInputs()["setting.artifactSaleRate"] || "100";
       updateArtifactSaleRateLabel();
@@ -4351,6 +5324,9 @@
       }
       if (!currentHoeLevel.value) {
         currentHoeLevel.value = "1";
+      }
+      if (!currentPickaxeLevel.value) {
+        currentPickaxeLevel.value = "1";
       }
       formatPriceFields();
 
@@ -4548,6 +5524,103 @@
         )
         .join("");
 
+      miningPickaxeStatTable.innerHTML = miningPickaxeStatData
+        .map(
+          (item) => `
+            <tr>
+              <td>${item.level}강</td>
+              <td>${item.mineralDrop}개</td>
+              <td>${item.artifactChance}%</td>
+              <td>${item.kobiChance}%</td>
+              <td>${item.shinySpeed === null ? "-" : `${item.shinySpeed}%`}</td>
+              <td>${item.shinyChance === null ? "-" : `${item.shinyChance}%`}</td>
+            </tr>
+          `,
+        )
+        .join("");
+
+      miningEngravingDataTable.innerHTML = Object.values(miningEngravingData)
+        .flatMap((effect) =>
+          effect.levels.map(
+            (levelData) => `
+              <tr>
+                <td>${effect.name}</td>
+                <td>${effect.rarity}</td>
+                <td>${levelData.level}레벨</td>
+                <td>${levelData.minPickaxeLevel}강</td>
+                <td>${getMiningEngravingValueText(effect, levelData)}</td>
+                <td>${getMiningEngravingFormulaText(effect)}</td>
+              </tr>
+            `,
+          ),
+        )
+        .join("");
+
+      miningExpertDataTable.innerHTML = Object.values(miningExpertData)
+        .flatMap((skill) =>
+          skill.levels.map(
+            (levelData) => `
+              <tr>
+                <td>${skill.name}</td>
+                <td>${levelData.level}레벨</td>
+                <td>${getMiningExpertEffectText(skill, levelData)}</td>
+                <td>${levelData.skillPoint}</td>
+                <td>${formatNumber(levelData.gold)} G</td>
+                <td>${levelData.abilityStone}</td>
+              </tr>
+            `,
+          ),
+        )
+        .join("");
+
+      miningArtifactDataTable.innerHTML = miningArtifactData
+        .map(
+          (item) => `
+            <tr>
+              <td>${item.name}</td>
+              <td>${formatNumber(item.points)}포인트</td>
+              <td>${item.chance}%</td>
+            </tr>
+          `,
+        )
+        .join("");
+
+      miningIngotRecipeTable.innerHTML = miningIngotRecipeData
+        .map(
+          (item) => `
+            <tr>
+              <td>${item.ingotName}</td>
+              <td>${item.oreName} ${item.oreAmount}개</td>
+              <td>강화 횃불 ${item.enhancedTorch}개</td>
+              <td>주괴 판매가 - 강화 횃불 개당가 × ${item.enhancedTorch}</td>
+            </tr>
+          `,
+        )
+        .join("");
+
+      miningFormulaList.innerHTML = [
+        ["채광 횟수", "사용 스태미나 / 10. 3000 스태미나 전체 사용 시 300회"],
+        ["강화 횃불 개당가", "강화 횃불 한상자 가격 / 3456"],
+        ["주괴 순가치", "주괴 시세 - 강화 횃불 개당가 × 주괴별 필요 횃불 수"],
+        ["광물 수익", "(광물 기대 수량 / 16) × 주괴 순가치"],
+        ["유물 수익", "채광 횟수 × 최종 유물 획득 확률 × 250포인트 × (유물 100포인트 시세 / 100)"],
+        ["일반 코비 수익", "채광 횟수 × 최종 코비 확률 × (1 - 정동석 코비 변신확률) × 50% × 스킬펄스 시세"],
+        ["정동석 코비 수익", "채광 횟수 × 최종 코비 확률 × 정동석 코비 변신확률 × 정동석 시세 × 정동석 판매가 보너스"],
+        ["광산 수레 수익", "채광 횟수 × 등장확률 × 평균 유물 2개 × 250포인트 × (유물 100포인트 시세 / 100)"],
+        ["광부 룰렛 수익", "채광 횟수 × 등장확률 × ((일반 주사위 90% × 평균눈 3.5 × 6개) + (골드 주사위 10% × 평균눈 3.5 × 12개)) = 등장확률 × 23.1개"],
+        ["각인 비용", "(각인석 시세 + 등급·품질별 시도 골드 + 목표 레벨 계약서 수량×파쇄 계약서 시세) × (100 / 각인석 성공확률)"],
+        ["전문가 비용", "골드 + 어빌리티스톤×시세 + 스킬포인트×시세. 귀속 체크 시 스킬포인트 비용 제외"],
+      ]
+        .map(
+          ([name, formula]) => `
+            <li>
+              <span class="formula-name">${name}</span>
+              <pre class="formula-code">${formula}</pre>
+            </li>
+          `,
+        )
+        .join("");
+
       formulaList.innerHTML = [
         ["채집 횟수", "기본 스태미나 3000 / 채집 1회 스태미나 15 = 200회"],
         ["어패류 1개 기대가", "1성가격×P(1성) + 2성가격×P(2성) + 3성가격×P(3성). 개별 시세 모드는 각 등급의 5종 평균 가격 사용"],
@@ -4618,6 +5691,16 @@
 
         farmTabPanels.forEach((panel) => {
           panel.classList.toggle("active", panel.dataset.farmPanel === tabName);
+        });
+      };
+
+      const activateMiningTab = (tabName) => {
+        miningTabButtons.forEach((item) => {
+          item.setAttribute("aria-selected", String(item.dataset.miningTab === tabName));
+        });
+
+        miningTabPanels.forEach((panel) => {
+          panel.classList.toggle("active", panel.dataset.miningPanel === tabName);
         });
       };
 
@@ -4849,6 +5932,29 @@
         return profile;
       };
 
+      const getCurrentMiningProfile = () => {
+        const profile = {
+          pickaxeLevel: Math.max(1, Number(currentPickaxeLevel.value) || 1),
+          stamina: {},
+          engravings: {},
+          experts: {},
+        };
+
+        miningOreTypes.forEach((ore) => {
+          profile.stamina[ore.key] = getNumberField(`mining.profile.stamina.${ore.key}`);
+        });
+
+        Object.values(miningEngravingData).forEach((effect) => {
+          profile.engravings[effect.name] = getNumberField(`mining.profile.engraving.${effect.name}`);
+        });
+
+        Object.entries(miningExpertData).forEach(([key, skill]) => {
+          profile.experts[key] = getNumberField(`mining.profile.expert.${skill.name}`);
+        });
+
+        return profile;
+      };
+
       const getLevelData = (data, level) => data.levels.find((item) => item.level === level);
       const getRodStats = (level) =>
         fishingRodStatData.find((item) => item.level === level) || {
@@ -4862,6 +5968,14 @@
           level: 0,
           seedDrop: 1,
           moleChance: 0,
+        };
+
+      const getPickaxeStats = (level) =>
+        miningPickaxeStatData.find((item) => item.level === level) || {
+          level: 0,
+          mineralDrop: 1,
+          artifactChance: 0,
+          kobiChance: 0,
         };
 
       const getFarmSeedUnitPrice = (prices) => {
@@ -6632,6 +7746,1041 @@
       };
 
       const cloneProfile = (profile) => JSON.parse(JSON.stringify(profile));
+
+      const getMiningStaminaTotal = (profile) =>
+        miningOreTypes.reduce((sum, ore) => sum + (profile.stamina[ore.key] || 0), 0);
+
+      const getMiningMineCount = (profile) =>
+        getMiningStaminaTotal(profile) / miningRules.staminaCostPerMine;
+
+      const getMiningEnhancedTorchUnitPrice = (prices) =>
+        (prices["price.mining.enhancedTorchBox"] || 0) / (alchemyData.boxToSets * alchemyData.setToPieces);
+
+      const getMiningIngotRecipe = (oreKey) =>
+        miningIngotRecipeData.find((recipe) => recipe.oreKey === oreKey);
+
+      const getMiningIngotPrice = (oreKey, prices) => prices[`price.mining.ingot.${oreKey}`] || 0;
+
+      const getMiningGeodePrice = (oreKey, prices) => prices[`price.mining.geode.${oreKey}`] || 0;
+
+      const getMiningIngotNetValue = (oreKey, prices) => {
+        const recipe = getMiningIngotRecipe(oreKey);
+
+        return getMiningIngotPrice(oreKey, prices) - getMiningEnhancedTorchUnitPrice(prices) * recipe.enhancedTorch;
+      };
+
+      const getMiningProduction = (profile, prices) => {
+        const stats = getPickaxeStats(profile.pickaxeLevel);
+        const mineralLuckData = getLevelData(
+          miningEngravingData.mineralLuck,
+          profile.engravings[miningEngravingData.mineralLuck.name] || 0,
+        );
+        const artifactSearchData = getLevelData(
+          miningEngravingData.artifactSearch,
+          profile.engravings[miningEngravingData.artifactSearch.name] || 0,
+        );
+        const kobiSearchData = getLevelData(
+          miningEngravingData.kobiSearch,
+          profile.engravings[miningEngravingData.kobiSearch.name] || 0,
+        );
+        const geodeKobiData = getLevelData(
+          miningEngravingData.geodeKobi,
+          profile.engravings[miningEngravingData.geodeKobi.name] || 0,
+        );
+        const mineCartData = getLevelData(
+          miningEngravingData.mineCart,
+          profile.engravings[miningEngravingData.mineCart.name] || 0,
+        );
+        const minerRouletteData = getLevelData(
+          miningEngravingData.minerRoulette,
+          profile.engravings[miningEngravingData.minerRoulette.name] || 0,
+        );
+        const kobiTimeData = getLevelData(miningExpertData.kobiTime, profile.experts.kobiTime || 0);
+        const geodeStartData = getLevelData(miningExpertData.geodeStart, profile.experts.geodeStart || 0);
+        const geodeSellerData = getLevelData(miningExpertData.geodeSeller, profile.experts.geodeSeller || 0);
+        const luckyHitData = getLevelData(miningExpertData.luckyHit, profile.experts.luckyHit || 0);
+        const flamingPickaxeData = getLevelData(
+          miningExpertData.flamingPickaxe,
+          profile.experts.flamingPickaxe || 0,
+        );
+        const artifactPointPrice = prices["price.mining.artifactPoint100"] || 0;
+        const artifactUnitValue = (miningArtifactExpectedPoints / 100) * artifactPointPrice;
+        const totalMineCount = getMiningMineCount(profile);
+        const artifactChance =
+          (stats.artifactChance || 0) + (artifactSearchData?.artifactChanceBonus || 0);
+        const kobiChance =
+          (stats.kobiChance || 0) +
+          (kobiSearchData?.kobiChanceBonus || 0) +
+          (kobiTimeData?.kobiChanceBonus || 0);
+        const geodeTransformChance = geodeKobiData?.transformChance || 0;
+        const geodeMultiplier = 1 + (geodeSellerData?.geodeSellBonus || 0) / 100;
+        const sources = [];
+        let totalProfit = 0;
+        let totalMinerals = 0;
+        let baseMineralProfit = 0;
+
+        miningOreTypes.forEach((ore) => {
+          const stamina = profile.stamina[ore.key] || 0;
+          const mineCount = stamina / miningRules.staminaCostPerMine;
+          const recipe = getMiningIngotRecipe(ore.key);
+          const ingotNetValue = getMiningIngotNetValue(ore.key, prices);
+          const ingotPrice = getMiningIngotPrice(ore.key, prices);
+          const geodePrice = getMiningGeodePrice(ore.key, prices);
+          const baseMinerals = mineCount * stats.mineralDrop;
+          const mineralLuckMinerals =
+            mineCount *
+            ((mineralLuckData?.chance || 0) / 100) *
+            (mineralLuckData?.extraMinerals || 0);
+          const rouletteMinerals =
+            mineCount *
+            ((minerRouletteData?.chance || 0) / 100) *
+            miningEngravingData.minerRoulette.expectedMinerals;
+          const luckyHitMinerals =
+            mineCount *
+            ((luckyHitData?.chance || 0) / 100) *
+            (luckyHitData?.extraMinerals || 0);
+          const minerals = baseMinerals + mineralLuckMinerals + rouletteMinerals + luckyHitMinerals;
+          const ingots = minerals / recipe.oreAmount;
+          const mineralProfit = ingots * ingotNetValue;
+          const baseIngots = baseMinerals / recipe.oreAmount;
+          const oreBaseMineralProfit = baseIngots * ingotNetValue;
+          const flamingIngots =
+            mineCount *
+            ((flamingPickaxeData?.chance || 0) / 100) *
+            (flamingPickaxeData?.ingots || 0);
+          const flamingProfit = flamingIngots * ingotPrice;
+          const kobiCount = mineCount * (kobiChance / 100);
+          const geodeKobiCount = kobiCount * (geodeTransformChance / 100);
+          const normalKobiCount = kobiCount - geodeKobiCount;
+          const skillPulseCount = normalKobiCount * (miningRules.kobiSkillPulseChance / 100);
+          const skillPulseProfit = skillPulseCount * (prices["price.mining.skillPulse"] || 0);
+          const geodeKobiProfit = geodeKobiCount * geodePrice * geodeMultiplier;
+          const directGeodeCount =
+            mineCount * ((geodeStartData?.chance || 0) / 100) * (geodeStartData?.geodes || 0);
+          const directGeodeProfit = directGeodeCount * geodePrice * geodeMultiplier;
+
+          totalMinerals += minerals;
+          totalProfit += mineralProfit + flamingProfit + skillPulseProfit + geodeKobiProfit + directGeodeProfit;
+          baseMineralProfit += oreBaseMineralProfit;
+
+          sources.push({
+            type: "광물",
+            name: `${ore.name} 광석 → ${ore.name} 주괴`,
+            countText: `${formatCount(minerals, "광석")} / ${formatCount(ingots, "주괴")}`,
+            count: minerals,
+            profit: mineralProfit,
+          });
+
+          if (flamingIngots > 0) {
+            sources.push({
+              type: "주괴",
+              name: `${ore.name} 불붙은 곡괭이`,
+              countText: formatCount(flamingIngots, "주괴"),
+              count: flamingIngots,
+              profit: flamingProfit,
+            });
+          }
+
+          if (skillPulseCount > 0) {
+            sources.push({
+              type: "코비",
+              name: `${ore.name} 일반 코비 스킬펄스`,
+              countText: formatCount(skillPulseCount),
+              count: skillPulseCount,
+              profit: skillPulseProfit,
+            });
+          }
+
+          if (geodeKobiCount > 0) {
+            sources.push({
+              type: "정동석",
+              name: `${ore.name} 정동석 코비`,
+              countText: formatCount(geodeKobiCount),
+              count: geodeKobiCount,
+              profit: geodeKobiProfit,
+            });
+          }
+
+          if (directGeodeCount > 0) {
+            sources.push({
+              type: "정동석",
+              name: `${ore.name} 반짝임의 시작`,
+              countText: formatCount(directGeodeCount),
+              count: directGeodeCount,
+              profit: directGeodeProfit,
+            });
+          }
+        });
+
+        const artifactCount = totalMineCount * (artifactChance / 100);
+        const artifactProfit = artifactCount * artifactUnitValue;
+        const mineCartArtifactCount =
+          totalMineCount *
+          ((mineCartData?.chance || 0) / 100) *
+          miningEngravingData.mineCart.averageArtifacts;
+        const mineCartProfit = mineCartArtifactCount * artifactUnitValue;
+
+        totalProfit += artifactProfit + mineCartProfit;
+
+        if (artifactCount > 0) {
+          sources.push({
+            type: "유물",
+            name: "기본 유물 획득",
+            countText: `${formatCount(artifactCount)} / ${formatNumber(Math.round(artifactCount * miningArtifactExpectedPoints))}포인트`,
+            count: artifactCount,
+            profit: artifactProfit,
+          });
+        }
+
+        if (mineCartArtifactCount > 0) {
+          sources.push({
+            type: "유물",
+            name: "광산 수레",
+            countText: `${formatCount(mineCartArtifactCount)} / ${formatNumber(Math.round(mineCartArtifactCount * miningArtifactExpectedPoints))}포인트`,
+            count: mineCartArtifactCount,
+            profit: mineCartProfit,
+          });
+        }
+
+        return {
+          totalMineCount,
+          totalMinerals,
+          totalProfit,
+          baseMineralProfit,
+          bonusProfit: totalProfit - baseMineralProfit,
+          sources,
+        };
+      };
+
+      const getMiningExpectedProfit = (profile, prices) => getMiningProduction(profile, prices).totalProfit;
+
+      const getMiningPickaxeUpgradeCost = (targetLevel, prices) => {
+        const data = fishingRodEnhancementData.find((item) => item.level === targetLevel);
+        const attemptCost =
+          data.gold +
+          data.lowStone * prices["price.mining.lowLifeStone"] +
+          data.midStone * prices["price.mining.midLifeStone"] +
+          data.highStone * prices["price.mining.highLifeStone"];
+        const expectedAttempts = 100 / data.successRate;
+
+        return {
+          goldCost: attemptCost * expectedAttempts,
+          ruby: data.ruby * expectedAttempts,
+        };
+      };
+
+      const getMiningPickaxeUpgradeRangeCost = (startLevel, targetLevel, prices) => {
+        let goldCost = 0;
+        let ruby = 0;
+
+        for (let level = startLevel + 1; level <= targetLevel; level += 1) {
+          const cost = getMiningPickaxeUpgradeCost(level, prices);
+          goldCost += cost.goldCost;
+          ruby += cost.ruby;
+        }
+
+        return { goldCost, ruby };
+      };
+
+      const getMiningExpertUpgradeCost = (levelData, prices) => ({
+        goldCost:
+          levelData.gold +
+          levelData.abilityStone * prices["price.mining.abilityStone"] +
+          levelData.skillPoint *
+            (prices["price.mining.skillPointBound"] ? 0 : prices["price.mining.skillPoint"]),
+        ruby: 0,
+      });
+
+      const getMiningEngravingUpgradeCost = (effect, nextLevel, grade, prices) => {
+        const stone = engravingStoneData[grade];
+        const itemName = `${grade} ${effect.name} 각인석`;
+        const attemptGold = engravingAttemptGoldByRarity[effect.rarity][grade];
+        const attemptCost =
+          attemptGold +
+          prices[`price.mining.engraving.${itemName}`] +
+          engravingContractByLevel[nextLevel] * prices["price.mining.fractureSoulContract"];
+        const expectedAttempts = 100 / stone.successRate;
+
+        return {
+          goldCost: attemptCost * expectedAttempts,
+          ruby: stone.ruby * expectedAttempts,
+        };
+      };
+
+      const getNextMiningPickaxeCandidate = (profile, prices) => {
+        if (profile.pickaxeLevel >= 15) {
+          return null;
+        }
+
+        const previousProfit = getMiningExpectedProfit(profile, prices);
+
+        for (let targetLevel = profile.pickaxeLevel + 1; targetLevel <= 15; targetLevel += 1) {
+          const nextProfile = cloneProfile(profile);
+          nextProfile.pickaxeLevel = targetLevel;
+          const profitGain = getMiningExpectedProfit(nextProfile, prices) - previousProfit;
+
+          if (profitGain > 0) {
+            const cost = getMiningPickaxeUpgradeRangeCost(profile.pickaxeLevel, targetLevel, prices);
+            const isBundled = targetLevel - profile.pickaxeLevel > 1;
+
+            return {
+              category: "곡괭이",
+              detail: isBundled ? "강화 묶음" : "강화",
+              item: "세이지 곡괭이",
+              current: `${profile.pickaxeLevel}강`,
+              target: `${targetLevel}강`,
+              apply: { type: "pickaxe", level: targetLevel },
+              profitGain,
+              ...cost,
+            };
+          }
+        }
+
+        return null;
+      };
+
+      const getMiningImmediateCandidates = (profile, prices) => {
+        const candidates = [];
+        const pickaxeCandidate = getNextMiningPickaxeCandidate(profile, prices);
+
+        if (pickaxeCandidate) {
+          candidates.push(pickaxeCandidate);
+        }
+
+        Object.values(miningEngravingData).forEach((effect) => {
+          const currentLevel = profile.engravings[effect.name] || 0;
+          const nextLevel = currentLevel + 1;
+          const nextLevelData = effect.levels[nextLevel - 1];
+
+          if (!nextLevelData || nextLevelData.minPickaxeLevel > profile.pickaxeLevel) {
+            return;
+          }
+
+          const nextProfile = cloneProfile(profile);
+          nextProfile.engravings[effect.name] = nextLevel;
+          const profitGain = getMiningExpectedProfit(nextProfile, prices) - getMiningExpectedProfit(profile, prices);
+
+          if (profitGain <= 0) {
+            return;
+          }
+
+          const gradeOptions = engravingStoneGrades
+            .map((grade) => {
+              const cost = getMiningEngravingUpgradeCost(effect, nextLevel, grade, prices);
+
+              return {
+                grade,
+                profitGain,
+                efficiency: cost.goldCost > 0 ? profitGain / cost.goldCost : 0,
+                ...cost,
+              };
+            })
+            .sort((a, b) => b.efficiency - a.efficiency);
+          const bestGrade = gradeOptions[0]?.grade;
+          const overrideKey = getEngravingOverrideKey(effect.name, nextLevel);
+          const selectedGrades = miningEngravingGradeOverrides[overrideKey]
+            ? [miningEngravingGradeOverrides[overrideKey]]
+            : engravingStoneGrades;
+
+          selectedGrades.forEach((grade) => {
+            const selected = gradeOptions.find((option) => option.grade === grade);
+
+            if (!selected) {
+              return;
+            }
+
+            candidates.push({
+              category: "각인석",
+              detail: `${selected.grade} 각인`,
+              item: effect.name,
+              current: `${currentLevel}레벨`,
+              target: `${nextLevel}레벨`,
+              apply: { type: "engraving", name: effect.name, level: nextLevel },
+              grade: selected.grade,
+              bestGrade,
+              overrideKey,
+              gradeOptions,
+              profitGain,
+              goldCost: selected.goldCost,
+              ruby: selected.ruby,
+            });
+          });
+        });
+
+        Object.entries(miningExpertData).forEach(([skillKey, skill]) => {
+          const currentLevel = profile.experts[skillKey] || 0;
+          const nextLevel = currentLevel + 1;
+          const nextLevelData = skill.levels[nextLevel - 1];
+
+          if (!nextLevelData) {
+            return;
+          }
+
+          const nextProfile = cloneProfile(profile);
+          nextProfile.experts[skillKey] = nextLevel;
+          const profitGain = getMiningExpectedProfit(nextProfile, prices) - getMiningExpectedProfit(profile, prices);
+
+          if (profitGain <= 0) {
+            return;
+          }
+
+          const cost = getMiningExpertUpgradeCost(nextLevelData, prices);
+
+          candidates.push({
+            category: "전문가",
+            detail: "스킬 레벨",
+            item: skill.name,
+            current: `${currentLevel}레벨`,
+            target: `${nextLevel}레벨`,
+            apply: { type: "expert", key: skillKey, level: nextLevel },
+            profitGain,
+            ...cost,
+          });
+        });
+
+        return candidates
+          .map((candidate) => ({
+            ...candidate,
+            efficiency: candidate.goldCost > 0 ? candidate.profitGain / candidate.goldCost : 0,
+          }))
+          .filter((candidate) => candidate.goldCost > 0 && candidate.profitGain > 0)
+          .sort((a, b) => b.efficiency - a.efficiency);
+      };
+
+      const applyMiningUpgradeToProfile = (profile, candidate) => {
+        if (candidate.apply.type === "pickaxe") {
+          profile.pickaxeLevel = candidate.apply.level;
+        }
+
+        if (candidate.apply.type === "engraving") {
+          profile.engravings[candidate.apply.name] = candidate.apply.level;
+        }
+
+        if (candidate.apply.type === "expert") {
+          profile.experts[candidate.apply.key] = candidate.apply.level;
+        }
+      };
+
+      const buildMiningEfficiencyRoadmap = (profile, prices) => {
+        const workingProfile = cloneProfile(profile);
+        const roadmap = [];
+        const maxSteps = 160;
+
+        for (let step = 1; step <= maxSteps; step += 1) {
+          const candidates = getMiningImmediateCandidates(workingProfile, prices);
+
+          if (candidates.length === 0) {
+            break;
+          }
+
+          const selected = candidates[0];
+          const beforeProfile = cloneProfile(workingProfile);
+          applyMiningUpgradeToProfile(workingProfile, selected);
+          const afterProfile = cloneProfile(workingProfile);
+          roadmap.push({ ...selected, order: step, beforeProfile, afterProfile });
+        }
+
+        return roadmap;
+      };
+
+      const getMiningCostText = (candidate) =>
+        `${formatGold(candidate.goldCost)}${candidate.ruby ? ` / ${candidate.ruby.toFixed(1)} R` : ""}`;
+
+      const resetMiningEfficiencyDetailPlacement = () => {
+        const inlineRow = miningEfficiencyResultBody.querySelector(".inline-evidence-row");
+
+        if (miningEfficiencyDetail.parentElement !== miningEfficiencyDetailHome) {
+          miningEfficiencyDetailHome.append(miningEfficiencyDetail);
+        }
+
+        inlineRow?.remove();
+      };
+
+      const closeMiningEfficiencyDetail = () => {
+        selectedMiningEfficiencyRowKey = null;
+        miningEfficiencyDetail.hidden = true;
+        resetMiningEfficiencyDetailPlacement();
+        miningEfficiencyResultBody
+          .querySelectorAll("tr.selected-result")
+          .forEach((row) => {
+            row.classList.remove("selected-result");
+            row.setAttribute("aria-selected", "false");
+          });
+      };
+
+      const getMiningVisibleRowPositions = () => {
+        const positions = new Map();
+
+        miningEfficiencyResultBody.querySelectorAll("tr[data-row-key]").forEach((row) => {
+          positions.set(row.dataset.rowKey, row.getBoundingClientRect());
+        });
+
+        return positions;
+      };
+
+      const animateMiningRowMovement = (previousPositions) => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          return;
+        }
+
+        const transitionRow = (row, fromTransform, fromOpacity = "1") => {
+          row.style.transition = "none";
+          row.style.transform = fromTransform;
+          row.style.opacity = fromOpacity;
+
+          window.requestAnimationFrame(() => {
+            row.style.transition =
+              "transform 260ms cubic-bezier(0.2, 0, 0, 1), opacity 180ms ease-out";
+            row.style.transform = "translateY(0)";
+            row.style.opacity = "1";
+          });
+
+          window.setTimeout(() => {
+            row.style.transition = "";
+            row.style.transform = "";
+            row.style.opacity = "";
+          }, 280);
+        };
+
+        miningEfficiencyResultBody.querySelectorAll("tr[data-row-key]").forEach((row) => {
+          const previousPosition = previousPositions.get(row.dataset.rowKey);
+
+          if (!previousPosition) {
+            row.classList.add("row-changed");
+            transitionRow(row, "translateY(8px)", "0");
+            return;
+          }
+
+          const currentPosition = row.getBoundingClientRect();
+          const deltaY = previousPosition.top - currentPosition.top;
+
+          if (Math.abs(deltaY) < 1) {
+            return;
+          }
+
+          row.classList.add("row-changed");
+          transitionRow(row, `translateY(${deltaY}px)`);
+        });
+
+        window.setTimeout(() => {
+          miningEfficiencyResultBody
+            .querySelectorAll("tr.row-changed")
+            .forEach((row) => row.classList.remove("row-changed"));
+        }, 920);
+      };
+
+      const renderMiningPickaxeCostEvidence = (candidate, prices) => {
+        const startLevel = candidate.beforeProfile.pickaxeLevel;
+        const targetLevel = candidate.afterProfile.pickaxeLevel;
+        const rows = [];
+
+        for (let level = startLevel + 1; level <= targetLevel; level += 1) {
+          const data = fishingRodEnhancementData.find((item) => item.level === level);
+          const materials = [
+            data.lowStone ? `하급 ${data.lowStone}개` : "",
+            data.midStone ? `중급 ${data.midStone}개` : "",
+            data.highStone ? `상급 ${data.highStone}개` : "",
+          ]
+            .filter(Boolean)
+            .join(", ");
+          const attemptCost =
+            data.gold +
+            data.lowStone * prices["price.mining.lowLifeStone"] +
+            data.midStone * prices["price.mining.midLifeStone"] +
+            data.highStone * prices["price.mining.highLifeStone"];
+          const expectedAttempts = 100 / data.successRate;
+          const expectedCost = attemptCost * expectedAttempts;
+
+          rows.push([
+            `${level - 1}강 → ${level}강`,
+            materials || "-",
+            formatGold(attemptCost),
+            `${data.successRate}%`,
+            `${expectedAttempts.toFixed(2)}회`,
+            `${formatGold(expectedCost)}${data.ruby ? ` / ${(data.ruby * expectedAttempts).toFixed(1)} R` : ""}`,
+          ]);
+        }
+
+        return renderEvidenceTable(
+          ["단계", "1회 재료", "1회 비용", "성공률", "기대 시도", "단계 기대비용"],
+          rows,
+          "곡괭이 강화 기대비용",
+        );
+      };
+
+      const renderMiningEngravingCostEvidence = (candidate, prices) => {
+        const effect = Object.values(miningEngravingData).find(
+          (item) => item.name === candidate.apply.name,
+        );
+        const stone = engravingStoneData[candidate.grade];
+        const level = candidate.apply.level;
+        const itemName = `${candidate.grade} ${effect.name} 각인석`;
+        const stonePrice = prices[`price.mining.engraving.${itemName}`];
+        const attemptGold = engravingAttemptGoldByRarity[effect.rarity][candidate.grade];
+        const contractAmount = engravingContractByLevel[level];
+        const contractCost = contractAmount * prices["price.mining.fractureSoulContract"];
+        const attemptTotal = stonePrice + attemptGold + contractCost;
+        const expectedAttempts = 100 / stone.successRate;
+
+        return renderEvidenceTable(
+          ["비용 항목", "수량·기준", "단가", "1회 금액"],
+          [
+            [`${candidate.grade} 각인석`, "1개", formatGold(stonePrice), formatGold(stonePrice)],
+            ["각인 시도 골드", `${effect.rarity} 등급`, "-", formatGold(attemptGold)],
+            [
+              "파쇄의 영혼 계약서",
+              `${contractAmount}장`,
+              formatGold(prices["price.mining.fractureSoulContract"]),
+              formatGold(contractCost),
+            ],
+            ["1회 시도 합계", "-", "-", formatGold(attemptTotal)],
+            [
+              "성공까지 기대비용",
+              `${stone.successRate}% · ${expectedAttempts.toFixed(2)}회`,
+              "-",
+              `${formatGold(candidate.goldCost)} / ${candidate.ruby.toFixed(1)} R`,
+            ],
+          ],
+          "채광 각인석 기대비용",
+        );
+      };
+
+      const renderMiningExpertCostEvidence = (candidate, prices) => {
+        const skill = miningExpertData[candidate.apply.key];
+        const levelData = skill.levels[candidate.apply.level - 1];
+        const skillPointBound = Boolean(prices["price.mining.skillPointBound"]);
+        const skillPointCost = skillPointBound
+          ? 0
+          : levelData.skillPoint * prices["price.mining.skillPoint"];
+        const abilityStoneCost = levelData.abilityStone * prices["price.mining.abilityStone"];
+
+        return renderEvidenceTable(
+          ["비용 항목", "수량", "단가", "금액"],
+          [
+            ["기본 골드", "-", "-", formatGold(levelData.gold)],
+            [
+              "어빌리티 스톤",
+              `${levelData.abilityStone}개`,
+              formatGold(prices["price.mining.abilityStone"]),
+              formatGold(abilityStoneCost),
+            ],
+            [
+              `스킬 포인트${skillPointBound ? " (귀속)" : ""}`,
+              `${levelData.skillPoint} Point`,
+              skillPointBound ? "0 G" : formatGold(prices["price.mining.skillPoint"]),
+              formatGold(skillPointCost),
+            ],
+            ["합계", "-", "-", formatGold(candidate.goldCost)],
+          ],
+          "채광 전문가 기대비용",
+        );
+      };
+
+      const renderMiningEfficiencyEvidence = (candidate) => {
+        if (!candidate?.beforeProfile || !candidate?.afterProfile || !lastMiningCalculationPrices) {
+          return;
+        }
+
+        selectedMiningEfficiencyRowKey = getCandidateRowKey(candidate);
+        const before = getMiningProduction(candidate.beforeProfile, lastMiningCalculationPrices);
+        const after = getMiningProduction(candidate.afterProfile, lastMiningCalculationPrices);
+        const beforeSourceMap = new Map(
+          before.sources.map((source) => [`${source.type}::${source.name}`, source.profit]),
+        );
+        const afterSourceMap = new Map(
+          after.sources.map((source) => [`${source.type}::${source.name}`, source.profit]),
+        );
+        const sourceKeys = [
+          ...new Set([
+            ...before.sources.map((source) => `${source.type}::${source.name}`),
+            ...after.sources.map((source) => `${source.type}::${source.name}`),
+          ]),
+        ];
+
+        miningEfficiencyDetailKicker.textContent = `${candidate.order}순위 · ${candidate.category}`;
+        miningEfficiencyDetailTitle.textContent = `${candidate.item} ${candidate.current} → ${candidate.target}`;
+        miningEfficiencyDetailSubtitle.textContent =
+          "이 단계 직전의 채광 스펙과 스태미나 배분을 기준으로 3000 스태미나 사용 시 변화를 계산했습니다.";
+        miningEfficiencyEvidenceSummary.innerHTML = [
+          ["기대 수익 증가", `+${formatGold(candidate.profitGain)}`, "positive"],
+          ["기대 광물 증가", `+${formatCount(after.totalMinerals - before.totalMinerals, "광석")}`, "positive"],
+          ["기대 비용", formatGold(candidate.goldCost), ""],
+          ["효율", `${(candidate.efficiency * 1000000).toFixed(2)} / 100만G`, "positive"],
+          ["기대 루비", candidate.ruby > 0 ? `${candidate.ruby.toFixed(1)} R` : "없음", ""],
+        ]
+          .map(
+            ([label, value, className]) => `
+              <div class="evidence-metric">
+                <span class="evidence-metric-label">${label}</span>
+                <strong class="evidence-metric-value ${className}">${value}</strong>
+              </div>
+            `,
+          )
+          .join("");
+
+        miningEfficiencyProfitEvidence.innerHTML = [
+          ...sourceKeys.map((key) => {
+            const [type, name] = key.split("::");
+            const beforeProfit = beforeSourceMap.get(key) || 0;
+            const afterProfit = afterSourceMap.get(key) || 0;
+            const delta = afterProfit - beforeProfit;
+
+            return `
+              <tr>
+                <td>${type} · ${name}</td>
+                <td>${formatGold(beforeProfit)}</td>
+                <td>${formatGold(afterProfit)}</td>
+                <td class="evidence-delta">${delta > 0 ? "+" : ""}${formatGold(delta)}</td>
+              </tr>
+            `;
+          }),
+          `
+            <tr>
+              <td>총 기대 수익</td>
+              <td>${formatGold(before.totalProfit)}</td>
+              <td>${formatGold(after.totalProfit)}</td>
+              <td class="evidence-delta">+${formatGold(candidate.profitGain)}</td>
+            </tr>
+          `,
+        ].join("");
+
+        if (candidate.apply.type === "pickaxe") {
+          miningEfficiencyCostEvidence.innerHTML = renderMiningPickaxeCostEvidence(
+            candidate,
+            lastMiningCalculationPrices,
+          );
+          miningEfficiencyDetailNote.textContent =
+            "곡괭이는 순서대로 강화합니다. 광물 드롭 수, 유물 확률, 코비 확률 등 수익 기대값이 오르는 다음 강화 구간까지의 단계 기대비용을 합산합니다.";
+        }
+
+        if (candidate.apply.type === "engraving") {
+          miningEfficiencyCostEvidence.innerHTML = renderMiningEngravingCostEvidence(
+            candidate,
+            lastMiningCalculationPrices,
+          );
+          miningEfficiencyDetailNote.textContent =
+            "채광 각인석 시세, 효과 등급별 시도 골드, 목표 레벨의 파쇄 계약서 비용을 1회 비용에 포함한 뒤 선택한 각인석의 성공률로 기대비용을 계산합니다.";
+        }
+
+        if (candidate.apply.type === "expert") {
+          miningEfficiencyCostEvidence.innerHTML = renderMiningExpertCostEvidence(
+            candidate,
+            lastMiningCalculationPrices,
+          );
+          miningEfficiencyDetailNote.textContent = lastMiningCalculationPrices["price.mining.skillPointBound"]
+            ? "스킬 포인트가 귀속으로 설정되어 있어 스킬 포인트의 골드 가치는 0 G로 계산했습니다."
+            : "채광 전문가 비용은 기본 골드, 어빌리티 스톤 시세, 스킬 포인트 시세를 합산합니다.";
+        }
+
+        miningEfficiencyResultBody.querySelectorAll("tr[data-row-key]").forEach((row) => {
+          const selected = row.dataset.rowKey === selectedMiningEfficiencyRowKey;
+          row.classList.toggle("selected-result", selected);
+          row.setAttribute("aria-selected", String(selected));
+        });
+
+        const selectedRow = miningEfficiencyResultBody.querySelector(
+          `tr[data-row-key="${CSS.escape(selectedMiningEfficiencyRowKey)}"]`,
+        );
+
+        if (!selectedRow) {
+          closeMiningEfficiencyDetail();
+          return;
+        }
+
+        resetMiningEfficiencyDetailPlacement();
+        const detailRow = document.createElement("tr");
+        const detailCell = document.createElement("td");
+        detailRow.className = "inline-evidence-row";
+        detailCell.colSpan = 9;
+        detailCell.append(miningEfficiencyDetail);
+        detailRow.append(detailCell);
+        selectedRow.after(detailRow);
+        miningEfficiencyDetail.hidden = false;
+      };
+
+      const refreshSelectedMiningEfficiencyEvidence = () => {
+        if (!selectedMiningEfficiencyRowKey) {
+          return;
+        }
+
+        const candidate = miningEfficiencyCandidates.find(
+          (item) => getCandidateRowKey(item) === selectedMiningEfficiencyRowKey,
+        );
+        const visibleRow = miningEfficiencyResultBody.querySelector(
+          `tr[data-row-key="${CSS.escape(selectedMiningEfficiencyRowKey)}"]`,
+        );
+
+        if (candidate && visibleRow) {
+          renderMiningEfficiencyEvidence(candidate);
+        } else {
+          closeMiningEfficiencyDetail();
+        }
+      };
+
+      const renderMiningEfficiencyResults = (candidates, page = 1) => {
+        const previousPositions = getMiningVisibleRowPositions();
+        resetMiningEfficiencyDetailPlacement();
+
+        if (candidates.length === 0) {
+          miningResultPagination.hidden = true;
+          miningEfficiencyResultBody.innerHTML = `
+            <tr>
+              <td class="result-empty" colspan="9">현재 입력값 기준으로 수익이 증가하는 다음 스펙업 후보가 없습니다.</td>
+            </tr>
+          `;
+          closeMiningEfficiencyDetail();
+          return;
+        }
+
+        const pageCount = Math.ceil(candidates.length / resultRowsPerPage);
+        currentMiningResultPage = Math.min(Math.max(page, 1), pageCount);
+        const startIndex = (currentMiningResultPage - 1) * resultRowsPerPage;
+        const pageCandidates = candidates.slice(startIndex, startIndex + resultRowsPerPage);
+
+        const renderDetailCell = (candidate) => {
+          if (candidate.category !== "각인석") {
+            return candidate.detail;
+          }
+
+          const gradeOptionMap = new Map(candidate.gradeOptions.map((option) => [option.grade, option]));
+          const options = engravingStoneGrades
+            .map((grade) => gradeOptionMap.get(grade))
+            .filter(Boolean)
+            .map((option) => {
+              const selected = option.grade === candidate.grade ? "selected" : "";
+              const label =
+                option.grade === candidate.bestGrade
+                  ? `${option.grade} 각인 (효율 제일 좋음)`
+                  : `${option.grade} 각인`;
+
+              return `<option value="${option.grade}" ${selected}>${label}</option>`;
+            })
+            .join("");
+
+          return `
+            <select class="inline-select" data-mining-engraving-override="${candidate.overrideKey}" aria-label="${candidate.item} 각인석 등급 선택">
+              ${options}
+            </select>
+          `;
+        };
+
+        miningEfficiencyResultBody.innerHTML = pageCandidates
+          .map((candidate) => {
+            const rowKey = getCandidateRowKey(candidate);
+
+            return `
+              <tr
+                data-row-key="${rowKey}"
+                tabindex="0"
+                role="button"
+                aria-label="${candidate.item} ${candidate.current}에서 ${candidate.target} 채광 근거 보기"
+                aria-selected="${rowKey === selectedMiningEfficiencyRowKey}"
+                class="${rowKey === selectedMiningEfficiencyRowKey ? "selected-result" : ""}"
+              >
+                <td>${candidate.order}</td>
+                <td>${candidate.category}</td>
+                <td>${renderDetailCell(candidate)}</td>
+                <td>${candidate.item}</td>
+                <td>${candidate.current}</td>
+                <td>${candidate.target}</td>
+                <td class="profit-value">+${formatNumber(Math.round(candidate.profitGain))} G</td>
+                <td>${getMiningCostText(candidate)}</td>
+                <td>${(candidate.efficiency * 1000000).toFixed(2)} / 100만G</td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        miningResultPagination.hidden = pageCount <= 1;
+        miningResultPageInfo.textContent = `${currentMiningResultPage} / ${pageCount}`;
+        prevMiningResultPage.disabled = currentMiningResultPage <= 1;
+        nextMiningResultPage.disabled = currentMiningResultPage >= pageCount;
+        animateMiningRowMovement(previousPositions);
+        refreshSelectedMiningEfficiencyEvidence();
+      };
+
+      const renderMiningInputError = (message, targetBody = miningEfficiencyResultBody, colspan = 9) => {
+        targetBody.innerHTML = `
+          <tr>
+            <td class="result-empty error" colspan="${colspan}">${message}</td>
+          </tr>
+        `;
+      };
+
+      const validateMiningProfile = (profile) => {
+        const totalStamina = getMiningStaminaTotal(profile);
+
+        if (totalStamina <= 0) {
+          return "코룸/리프톤/세렌트에 사용할 스태미나를 입력해야 합니다.";
+        }
+
+        if (totalStamina > miningRules.baseStamina) {
+          return `스태미나 배분 합계가 ${formatNumber(totalStamina)}입니다. 3000 이하로 맞춰주세요.`;
+        }
+
+        return "";
+      };
+
+      const renderMiningEfficiency = () => {
+        const missingPrices = validatePrices();
+
+        if (missingPrices.length > 0) {
+          renderMiningInputError(
+            `시세 입력이 비어 있어 계산할 수 없습니다. 누락: ${missingPrices.slice(0, 8).join(", ")}${missingPrices.length > 8 ? " 외" : ""}`,
+          );
+          activateModule("mining");
+          activateMiningTab("prices");
+          return;
+        }
+
+        const prices = getPriceMap();
+        const profile = getCurrentMiningProfile();
+        const profileError = validateMiningProfile(profile);
+
+        if (profileError) {
+          renderMiningInputError(profileError);
+          activateModule("mining");
+          activateMiningTab("profile");
+          return;
+        }
+
+        lastMiningCalculationPrices = prices;
+        lastMiningCalculationProfile = profile;
+        closeMiningEfficiencyDetail();
+        miningEfficiencyCandidates = buildMiningEfficiencyRoadmap(profile, prices);
+        renderMiningEfficiencyResults(miningEfficiencyCandidates, 1);
+        activateModule("mining");
+        activateMiningTab("calculator");
+      };
+
+      const renderMiningIncomeEstimate = (shouldActivate = true) => {
+        const missingPrices = validatePrices();
+
+        if (missingPrices.length > 0) {
+          renderMiningInputError(
+            `시세 입력이 비어 있어 계산할 수 없습니다. 누락: ${missingPrices.slice(0, 8).join(", ")}${missingPrices.length > 8 ? " 외" : ""}`,
+            miningIncomeBreakdownBody,
+            4,
+          );
+          [miningIncomeTotal, miningIncomeMinerals, miningIncomeMineCount, miningIncomeBonus].forEach((item) => {
+            item.textContent = "-";
+          });
+          if (shouldActivate) {
+            activateModule("mining");
+            activateMiningTab("prices");
+          }
+          return;
+        }
+
+        const prices = getPriceMap();
+        const profile = getCurrentMiningProfile();
+        const profileError = validateMiningProfile(profile);
+
+        if (profileError) {
+          renderMiningInputError(profileError, miningIncomeBreakdownBody, 4);
+          if (shouldActivate) {
+            activateModule("mining");
+            activateMiningTab("profile");
+          }
+          return;
+        }
+
+        const production = getMiningProduction(profile, prices);
+        miningIncomeTotal.textContent = formatGold(production.totalProfit);
+        miningIncomeMinerals.textContent = formatCount(production.totalMinerals, "광석");
+        miningIncomeMineCount.textContent = formatCount(production.totalMineCount, "회");
+        miningIncomeBonus.textContent = formatGold(production.bonusProfit);
+
+        miningIncomeBreakdownBody.innerHTML = production.sources
+          .filter((source) => Math.abs(source.profit) > 0 || source.count > 0)
+          .map(
+            (source) => `
+              <tr>
+                <td>${source.type}</td>
+                <td>${source.name}</td>
+                <td>${source.countText}</td>
+                <td class="${source.profit >= 0 ? "profit-value" : ""}">${formatGold(source.profit)}</td>
+              </tr>
+            `,
+          )
+          .join("");
+
+        if (shouldActivate) {
+          activateModule("mining");
+          activateMiningTab("income");
+        }
+      };
+
+      const getMiningEngravingContractCost = (level, prices) =>
+        engravingContractByLevel[level] * (prices["price.mining.fractureSoulContract"] || 0);
+
+      const renderMiningEngravingStoneEfficiency = () => {
+        const prices = getPriceMap();
+
+        miningEngravingBreakEvenBody.innerHTML = Object.values(miningEngravingData)
+          .flatMap((effect) =>
+            effect.levels.map((levelData) => {
+              const level = levelData.level;
+              const contractCost = getMiningEngravingContractCost(level, prices);
+              const roughPrice = prices[`price.mining.engraving.투박한 ${effect.name} 각인석`] || 0;
+              const attemptGold = engravingAttemptGoldByRarity[effect.rarity];
+              const neatLimit =
+                2 * roughPrice + 2 * attemptGold.투박한 - attemptGold.단정한 + contractCost;
+              const preciseLimit =
+                3 * roughPrice + 3 * attemptGold.투박한 - attemptGold.정교한 + contractCost * 2;
+
+              return `
+                <tr>
+                  <td>${effect.name}</td>
+                  <td>${level}레벨</td>
+                  <td>${formatGold(contractCost)}</td>
+                  <td>x</td>
+                  <td>${formatGold(neatLimit)}</td>
+                  <td>${formatGold(preciseLimit)}</td>
+                </tr>
+              `;
+            }),
+          )
+          .join("");
+
+        miningEngravingEfficiencyBody.innerHTML = Object.values(miningEngravingData)
+          .flatMap((effect) =>
+            effect.levels.map((levelData) => {
+              const level = levelData.level;
+              const roughPrice = prices[`price.mining.engraving.투박한 ${effect.name} 각인석`] || 0;
+              const attemptGold = engravingAttemptGoldByRarity[effect.rarity];
+              const contractCost = getMiningEngravingContractCost(level, prices);
+              const neatLimit =
+                2 * roughPrice + 2 * attemptGold.투박한 - attemptGold.단정한 + contractCost;
+              const preciseLimit =
+                3 * roughPrice + 3 * attemptGold.투박한 - attemptGold.정교한 + contractCost * 2;
+              const gradeCosts = engravingStoneGrades.map((grade) => ({
+                grade,
+                ...getMiningEngravingUpgradeCost(effect, level, grade, prices),
+              }));
+              const best = [...gradeCosts].sort((a, b) => a.goldCost - b.goldCost)[0];
+              const costCell = (grade) => {
+                const cost = gradeCosts.find((item) => item.grade === grade);
+                const className = cost.grade === best.grade ? ' class="profit-value"' : "";
+
+                return `<td${className}>${formatNumber(Math.round(cost.goldCost))} G / ${cost.ruby.toFixed(1)} R</td>`;
+              };
+
+              return `
+                <tr>
+                  <td>${effect.name}</td>
+                  <td>${level}레벨</td>
+                  ${costCell("투박한")}
+                  ${costCell("단정한")}
+                  ${costCell("정교한")}
+                  <td><span class="category-pill">${best.grade}</span></td>
+                  <td>단정 ≤ ${formatGold(neatLimit)} / 정교 ≤ ${formatGold(preciseLimit)}</td>
+                </tr>
+              `;
+            }),
+          )
+          .join("");
+      };
 
       const getRodUpgradeCost = (targetLevel, prices) => {
         const data = fishingRodEnhancementData.find((item) => item.level === targetLevel);
@@ -8427,6 +10576,85 @@
         showSavedFeedback(saveFarmProfileButton, "스펙 저장");
       });
 
+      saveMiningPricesButton.addEventListener("click", () => {
+        saveFieldGroup("price.mining");
+        showSavedFeedback(saveMiningPricesButton, "시세 저장");
+      });
+
+      saveMiningProfileButton.addEventListener("click", () => {
+        saveFieldGroup("mining.profile");
+        showSavedFeedback(saveMiningProfileButton, "스펙 저장");
+      });
+
+      miningCalculateButton.addEventListener("click", renderMiningEfficiency);
+      miningIncomeCalculateButton.addEventListener("click", renderMiningIncomeEstimate);
+      miningEngravingEfficiencyButton.addEventListener("click", () => {
+        renderMiningEngravingStoneEfficiency();
+        activateModule("mining");
+        activateMiningTab("engraving-efficiency");
+      });
+
+      miningEfficiencyResultBody.addEventListener("change", (event) => {
+        const selector = event.target.closest("[data-mining-engraving-override]");
+
+        if (!selector || !lastMiningCalculationPrices || !lastMiningCalculationProfile) {
+          return;
+        }
+
+        miningEngravingGradeOverrides[selector.dataset.miningEngravingOverride] = selector.value;
+        miningEfficiencyCandidates = buildMiningEfficiencyRoadmap(
+          lastMiningCalculationProfile,
+          lastMiningCalculationPrices,
+        );
+        renderMiningEfficiencyResults(miningEfficiencyCandidates, currentMiningResultPage);
+      });
+
+      const openMiningEvidenceFromRow = (row) => {
+        const candidate = miningEfficiencyCandidates.find(
+          (item) => getCandidateRowKey(item) === row.dataset.rowKey,
+        );
+
+        if (candidate) {
+          renderMiningEfficiencyEvidence(candidate);
+          miningEfficiencyDetail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      };
+
+      miningEfficiencyResultBody.addEventListener("click", (event) => {
+        if (event.target.closest("select, button, input, a")) {
+          return;
+        }
+
+        const row = event.target.closest("tr[data-row-key]");
+        if (row) {
+          openMiningEvidenceFromRow(row);
+        }
+      });
+
+      miningEfficiencyResultBody.addEventListener("keydown", (event) => {
+        if (!["Enter", " "].includes(event.key) || event.target.closest("select, button, input, a")) {
+          return;
+        }
+
+        const row = event.target.closest("tr[data-row-key]");
+        if (row) {
+          event.preventDefault();
+          openMiningEvidenceFromRow(row);
+        }
+      });
+
+      miningEfficiencyDetailClose.addEventListener("click", closeMiningEfficiencyDetail);
+
+      prevMiningResultPage.addEventListener("click", () => {
+        closeMiningEfficiencyDetail();
+        renderMiningEfficiencyResults(miningEfficiencyCandidates, currentMiningResultPage - 1);
+      });
+
+      nextMiningResultPage.addEventListener("click", () => {
+        closeMiningEfficiencyDetail();
+        renderMiningEfficiencyResults(miningEfficiencyCandidates, currentMiningResultPage + 1);
+      });
+
       saveTradePricesButton.addEventListener("click", () => {
         saveFieldGroup("trade");
         showSavedFeedback(saveTradePricesButton, "가격 저장");
@@ -8496,6 +10724,12 @@
       farmTabButtons.forEach((button) => {
         button.addEventListener("click", () => {
           activateFarmTab(button.dataset.farmTab);
+        });
+      });
+
+      miningTabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          activateMiningTab(button.dataset.miningTab);
         });
       });
 
