@@ -769,11 +769,9 @@
 
       .alchemy-stage-board {
         display: grid;
-        grid-template-columns: repeat(3, minmax(360px, 1fr));
+        grid-template-columns: 1fr;
         align-items: start;
-        gap: 14px;
-        overflow-x: auto;
-        overscroll-behavior-x: contain;
+        gap: 10px;
         padding-bottom: 6px;
       }
 
@@ -807,9 +805,9 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        padding: 12px 14px;
+        padding: 9px 12px;
         border-bottom: 1px solid #e5edf3;
-        background: #f8fbfd;
+        background: #f3f8fc;
       }
 
       .alchemy-stage-heading {
@@ -846,7 +844,7 @@
 
       .alchemy-stage-final-total {
         color: #17212b;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 900;
         white-space: nowrap;
       }
@@ -854,17 +852,16 @@
       .alchemy-stage-columns {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 12px;
-        padding: 12px;
+        gap: 7px;
+        padding: 9px;
         background: #fbfcfd;
       }
 
       .alchemy-stage-column {
         display: grid;
-        grid-template-rows: auto 1fr;
-        gap: 10px;
+        gap: 5px;
         min-width: 0;
-        padding: 10px;
+        padding: 7px;
         border: 1px solid #e0e8ef;
         border-radius: 8px;
         background: #ffffff;
@@ -875,7 +872,7 @@
         align-items: start;
         justify-content: space-between;
         gap: 10px;
-        padding-bottom: 8px;
+        padding-bottom: 5px;
         border-bottom: 1px dashed #d8e3ec;
       }
 
@@ -886,18 +883,18 @@
 
       .alchemy-stage-column-title span {
         color: #6a7a89;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 900;
       }
 
       .alchemy-stage-column-title strong {
         color: #17212b;
-        font-size: 14px;
+        font-size: 13px;
       }
 
       .alchemy-stage-column-total {
         color: #526373;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 900;
         text-align: right;
         white-space: nowrap;
@@ -906,18 +903,32 @@
       .alchemy-stage-items {
         display: grid;
         align-content: start;
-        gap: 8px;
+        gap: 4px;
       }
 
       .alchemy-stage-item {
-        display: grid;
-        gap: 5px;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4px;
         min-width: 0;
-        padding: 8px 9px;
+        padding: 5px 6px;
         border: 1px solid #e2eaf1;
         border-left: 3px solid #94a3b8;
         border-radius: 7px;
         background: #fbfdfe;
+      }
+
+      .alchemy-stage-made {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        max-width: 100%;
+        padding: 3px 6px;
+        border: 1px solid #cfe0ed;
+        border-radius: 6px;
+        background: #ffffff;
+        line-height: 1.35;
       }
 
       .alchemy-stage-card.grade-1 .alchemy-stage-item {
@@ -939,33 +950,34 @@
       .alchemy-stage-item-name {
         overflow-wrap: anywhere;
         color: #17212b;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 900;
-        line-height: 1.35;
       }
 
       .alchemy-stage-item .leftover-amount {
+        display: inline;
         color: #344456;
-        font-size: 12px;
+        font-size: 11px;
+        white-space: nowrap;
       }
 
       .alchemy-stage-zero-note {
         color: #0f766e;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 900;
       }
 
       .alchemy-stage-ingredients {
-        display: grid;
-        gap: 5px;
-        margin-top: 2px;
-        padding-top: 6px;
-        border-top: 1px dashed #d8e3ec;
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4px;
+        min-width: 0;
       }
 
       .alchemy-stage-ingredients-label {
         color: #6d7a87;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 900;
       }
 
@@ -978,14 +990,14 @@
       .alchemy-stage-ingredient {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 4px;
         max-width: 100%;
-        padding: 4px 6px;
+        padding: 3px 5px;
         border: 1px solid #d8e5ef;
         border-radius: 6px;
         background: #ffffff;
         color: #39495a;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 800;
         line-height: 1.35;
       }
@@ -1005,8 +1017,7 @@
       }
 
       .alchemy-stage-ingredients.extra {
-        border-top-color: #d4e8dc;
-        background: #f8fdf9;
+        background: transparent;
       }
 
       .alchemy-stage-ingredients.extra .alchemy-stage-ingredient {
@@ -1016,7 +1027,7 @@
 
       .alchemy-stage-empty {
         display: grid;
-        min-height: 58px;
+        min-height: 30px;
         place-items: center;
         border: 1px dashed #d8e3ec;
         border-radius: 7px;
@@ -1487,7 +1498,7 @@
         }
 
         .alchemy-stage-board {
-          grid-template-columns: repeat(3, minmax(310px, 1fr));
+          grid-template-columns: 1fr;
         }
 
         .alchemy-stage-card-head {
@@ -2007,6 +2018,7 @@
               <button class="secondary-button" type="button" id="open-alchemy-add-button">재료 추가</button>
               <button class="secondary-button" type="button" id="alchemy-optimize-button">남은 재료 최적화</button>
               <button class="secondary-button" type="button" id="alchemy-optimize-set-button">세트 단위 최적화</button>
+              <button class="secondary-button" type="button" id="clear-alchemy-stock-button">재고 초기화</button>
               <button class="secondary-button" type="button" id="save-alchemy-stock-button">재고 저장</button>
               <button class="primary-button" type="button" id="alchemy-calculate-button">연금 계산</button>
             </div>
@@ -4629,6 +4641,7 @@
       const clearAlchemyAddButton = document.querySelector("#clear-alchemy-add-button");
       const applyAlchemyAddButton = document.querySelector("#apply-alchemy-add-button");
       const alchemyAddStockBody = document.querySelector("#alchemy-add-stock-body");
+      const clearAlchemyStockButton = document.querySelector("#clear-alchemy-stock-button");
       const saveAlchemyStockButton = document.querySelector("#save-alchemy-stock-button");
       const alchemyCalculateButton = document.querySelector("#alchemy-calculate-button");
       const alchemyIncludeDiluted = document.querySelector("#alchemy-include-diluted");
@@ -4665,7 +4678,7 @@
       };
       const storageKey = "ocean-spec-calculator-inputs";
       const defaultPriceVersion = "2026-07-05-mining-ingot-recipe-v1";
-      const defaultAlchemyStockVersion = "2026-06-25-alchemy-stock-v2";
+      const defaultAlchemyStockVersion = "2026-07-05-alchemy-stock-v3";
       const resultRowsPerPage = 10;
       let efficiencyCandidates = [];
       let currentResultPage = 1;
@@ -4788,51 +4801,51 @@
         "price.mining.engraving.정교한 광부 룰렛 각인석": 1370000,
       };
       const defaultAlchemyStockValues = {
-        "alchemy.stock.oyster.grade1.box": 0,
-        "alchemy.stock.oyster.grade1.set": 47,
-        "alchemy.stock.oyster.grade1.piece": 32,
+        "alchemy.stock.oyster.grade1.box": 1,
+        "alchemy.stock.oyster.grade1.set": 36,
+        "alchemy.stock.oyster.grade1.piece": 60,
         "alchemy.stock.oyster.grade2.box": 0,
-        "alchemy.stock.oyster.grade2.set": 24,
-        "alchemy.stock.oyster.grade2.piece": 40,
+        "alchemy.stock.oyster.grade2.set": 42,
+        "alchemy.stock.oyster.grade2.piece": 60,
         "alchemy.stock.oyster.grade3.box": 0,
-        "alchemy.stock.oyster.grade3.set": 9,
-        "alchemy.stock.oyster.grade3.piece": 32,
-        "alchemy.stock.conch.grade1.box": 0,
-        "alchemy.stock.conch.grade1.set": 48,
-        "alchemy.stock.conch.grade1.piece": 1,
+        "alchemy.stock.oyster.grade3.set": 20,
+        "alchemy.stock.oyster.grade3.piece": 45,
+        "alchemy.stock.conch.grade1.box": 1,
+        "alchemy.stock.conch.grade1.set": 43,
+        "alchemy.stock.conch.grade1.piece": 9,
         "alchemy.stock.conch.grade2.box": 0,
-        "alchemy.stock.conch.grade2.set": 25,
-        "alchemy.stock.conch.grade2.piece": 13,
+        "alchemy.stock.conch.grade2.set": 46,
+        "alchemy.stock.conch.grade2.piece": 0,
         "alchemy.stock.conch.grade3.box": 0,
-        "alchemy.stock.conch.grade3.set": 10,
-        "alchemy.stock.conch.grade3.piece": 53,
-        "alchemy.stock.octopus.grade1.box": 0,
-        "alchemy.stock.octopus.grade1.set": 48,
-        "alchemy.stock.octopus.grade1.piece": 56,
+        "alchemy.stock.conch.grade3.set": 19,
+        "alchemy.stock.conch.grade3.piece": 45,
+        "alchemy.stock.octopus.grade1.box": 1,
+        "alchemy.stock.octopus.grade1.set": 36,
+        "alchemy.stock.octopus.grade1.piece": 38,
         "alchemy.stock.octopus.grade2.box": 0,
-        "alchemy.stock.octopus.grade2.set": 24,
-        "alchemy.stock.octopus.grade2.piece": 57,
+        "alchemy.stock.octopus.grade2.set": 46,
+        "alchemy.stock.octopus.grade2.piece": 25,
         "alchemy.stock.octopus.grade3.box": 0,
-        "alchemy.stock.octopus.grade3.set": 10,
-        "alchemy.stock.octopus.grade3.piece": 35,
-        "alchemy.stock.seaweed.grade1.box": 0,
-        "alchemy.stock.seaweed.grade1.set": 46,
-        "alchemy.stock.seaweed.grade1.piece": 30,
+        "alchemy.stock.octopus.grade3.set": 19,
+        "alchemy.stock.octopus.grade3.piece": 60,
+        "alchemy.stock.seaweed.grade1.box": 1,
+        "alchemy.stock.seaweed.grade1.set": 29,
+        "alchemy.stock.seaweed.grade1.piece": 4,
         "alchemy.stock.seaweed.grade2.box": 0,
-        "alchemy.stock.seaweed.grade2.set": 24,
-        "alchemy.stock.seaweed.grade2.piece": 23,
+        "alchemy.stock.seaweed.grade2.set": 44,
+        "alchemy.stock.seaweed.grade2.piece": 63,
         "alchemy.stock.seaweed.grade3.box": 0,
-        "alchemy.stock.seaweed.grade3.set": 10,
-        "alchemy.stock.seaweed.grade3.piece": 35,
-        "alchemy.stock.urchin.grade1.box": 0,
-        "alchemy.stock.urchin.grade1.set": 48,
-        "alchemy.stock.urchin.grade1.piece": 50,
+        "alchemy.stock.seaweed.grade3.set": 19,
+        "alchemy.stock.seaweed.grade3.piece": 58,
+        "alchemy.stock.urchin.grade1.box": 1,
+        "alchemy.stock.urchin.grade1.set": 30,
+        "alchemy.stock.urchin.grade1.piece": 19,
         "alchemy.stock.urchin.grade2.box": 0,
-        "alchemy.stock.urchin.grade2.set": 23,
-        "alchemy.stock.urchin.grade2.piece": 14,
+        "alchemy.stock.urchin.grade2.set": 47,
+        "alchemy.stock.urchin.grade2.piece": 53,
         "alchemy.stock.urchin.grade3.box": 0,
-        "alchemy.stock.urchin.grade3.set": 11,
-        "alchemy.stock.urchin.grade3.piece": 13,
+        "alchemy.stock.urchin.grade3.set": 19,
+        "alchemy.stock.urchin.grade3.piece": 58,
       };
       const engravingStoneGrades = ["투박한", "단정한", "정교한"];
       const engravingEffects = [
@@ -5784,6 +5797,15 @@
         document.querySelectorAll("[data-add-field]").forEach((field) => {
           field.value = "";
         });
+      };
+
+      const clearAlchemyStockFields = () => {
+        document.querySelectorAll('[data-field^="alchemy.stock."]').forEach((field) => {
+          field.value = "0";
+        });
+
+        updateAlchemyStockTotals();
+        saveFieldGroup("alchemy");
       };
 
       const updateAlchemyStockTotals = () => {
@@ -7001,8 +7023,10 @@
               .map(
                 (item) => `
                   <div class="alchemy-stage-item">
-                    <span class="alchemy-stage-item-name">${item.name}</span>
-                    <span class="leftover-amount">${formatSetPieceAmount(item.count)}</span>
+                    <span class="alchemy-stage-made">
+                      <span class="alchemy-stage-item-name">${item.name}</span>
+                      <span class="leftover-amount">${formatSetPieceText(item.count)}</span>
+                    </span>
                     ${
                       item.zeroCount > 0
                         ? `<span class="alchemy-stage-zero-note">(0성 재료 ${formatSetPieceText(item.zeroCount)})</span>`
@@ -7012,7 +7036,7 @@
                       item.ingredients?.length
                         ? `
                           <div class="alchemy-stage-ingredients">
-                            <span class="alchemy-stage-ingredients-label">필요 재료</span>
+                            <span class="alchemy-stage-ingredients-label">재료</span>
                             <div class="alchemy-stage-ingredient-list">
                               ${item.ingredients
                                 .filter((ingredient) => ingredient.count > 0)
@@ -7039,7 +7063,7 @@
                       item.extraMaterials?.length
                         ? `
                           <div class="alchemy-stage-ingredients extra">
-                            <span class="alchemy-stage-ingredients-label">추가 재료</span>
+                            <span class="alchemy-stage-ingredients-label">추가</span>
                             <div class="alchemy-stage-ingredient-list">
                               ${item.extraMaterials
                                 .filter((material) => material.count > 0)
@@ -10702,6 +10726,12 @@
       saveAlchemyStockButton.addEventListener("click", () => {
         saveFieldGroup("alchemy");
         showSavedFeedback(saveAlchemyStockButton, "재고 저장");
+      });
+
+      clearAlchemyStockButton.addEventListener("click", () => {
+        clearAlchemyStockFields();
+        renderAlchemyCalculator();
+        showSavedFeedback(clearAlchemyStockButton, "재고 초기화");
       });
 
       alchemyCalculateButton.addEventListener("click", renderAlchemyCalculator);
