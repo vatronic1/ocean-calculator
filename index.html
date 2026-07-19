@@ -2205,23 +2205,51 @@
                   <span class="metric-value" id="alchemy-profit-sale-total">-</span>
                 </div>
                 <div class="metric">
-                  <span class="metric-label">재료 구매 비용</span>
+                  <span class="metric-label">추가 재료비</span>
                   <span class="metric-value" id="alchemy-profit-material-cost">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">어패류 원가</span>
+                  <span class="metric-value" id="alchemy-profit-seafood-cost">-</span>
                 </div>
                 <div class="metric">
                   <span class="metric-label">순수익</span>
                   <span class="metric-value" id="alchemy-profit-net">-</span>
                 </div>
                 <div class="metric">
-                  <span class="metric-label">제작 시간</span>
+                  <span class="metric-label">순수익 어패류 포함</span>
+                  <span class="metric-value" id="alchemy-profit-net-with-seafood">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">이론상 최단 시간</span>
                   <span class="metric-value" id="alchemy-profit-craft-time">-</span>
                 </div>
                 <div class="metric">
                   <span class="metric-label">시간당 순수익</span>
                   <span class="metric-value" id="alchemy-profit-per-hour">-</span>
                 </div>
+                <div class="metric">
+                  <span class="metric-label">시간당 어패류 포함</span>
+                  <span class="metric-value" id="alchemy-profit-per-hour-with-seafood">-</span>
+                </div>
               </div>
               <div class="comparison-verdict" id="alchemy-profit-verdict"></div>
+              <div class="table-wrap">
+                <table aria-label="어패류 연금 등급별 순수익">
+                  <thead>
+                    <tr>
+                      <th>구분</th>
+                      <th>판매가</th>
+                      <th>추가 재료비</th>
+                      <th>어패류 원가</th>
+                      <th>순수익</th>
+                      <th>순수익 어패류 포함</th>
+                    </tr>
+                  </thead>
+                  <tbody id="alchemy-grade-profit-body"></tbody>
+                </table>
+              </div>
+              <p class="muted-note">0성 희석된 추출액은 1성·2성·3성 재료를 함께 쓰므로 별도 행으로 분리합니다.</p>
               <div class="table-wrap">
                 <table aria-label="어패류 연금 재료 원가 입력">
                   <thead>
@@ -4751,10 +4779,14 @@
       const alchemyTimeReduction = document.querySelector("#alchemy-time-reduction");
       const alchemyProfitSaleTotal = document.querySelector("#alchemy-profit-sale-total");
       const alchemyProfitMaterialCost = document.querySelector("#alchemy-profit-material-cost");
+      const alchemyProfitSeafoodCost = document.querySelector("#alchemy-profit-seafood-cost");
       const alchemyProfitNet = document.querySelector("#alchemy-profit-net");
+      const alchemyProfitNetWithSeafood = document.querySelector("#alchemy-profit-net-with-seafood");
       const alchemyProfitCraftTime = document.querySelector("#alchemy-profit-craft-time");
       const alchemyProfitPerHour = document.querySelector("#alchemy-profit-per-hour");
+      const alchemyProfitPerHourWithSeafood = document.querySelector("#alchemy-profit-per-hour-with-seafood");
       const alchemyProfitVerdict = document.querySelector("#alchemy-profit-verdict");
+      const alchemyGradeProfitBody = document.querySelector("#alchemy-grade-profit-body");
       const alchemyMaterialCostBody = document.querySelector("#alchemy-material-cost-body");
       const alchemyStageBody = document.querySelector("#alchemy-stage-body");
       const alchemyLeftoverBody = document.querySelector("#alchemy-leftover-body");
@@ -4789,6 +4821,7 @@
       const storageKey = "ocean-spec-calculator-inputs";
       const defaultPriceVersion = "2026-07-09-ocean-price-v1";
       const defaultAlchemyStockVersion = "2026-07-20-alchemy-stock-v4";
+      const defaultAlchemyMaterialPriceVersion = "2026-07-20-alchemy-material-prices-v1";
       const resultRowsPerPage = 10;
       let efficiencyCandidates = [];
       let currentResultPage = 1;
@@ -4958,6 +4991,43 @@
         "alchemy.stock.urchin.grade3.set": 27,
         "alchemy.stock.urchin.grade3.piece": 54,
       };
+      const defaultAlchemyMaterialPriceValues = {
+        "alchemy.profit.material.점토.set": 5000,
+        "alchemy.profit.material.모래.set": 2000,
+        "alchemy.profit.material.흙.box": 60000,
+        "alchemy.profit.material.자갈.set": 3400,
+        "alchemy.profit.material.화강암.set": 2400,
+        "alchemy.profit.material.깐 새우.set": 26976,
+        "alchemy.profit.material.도미 회.set": 27200,
+        "alchemy.profit.material.청어 회.set": 26240,
+        "alchemy.profit.material.금붕어 회.set": 15168,
+        "alchemy.profit.material.농어 회.set": 7588,
+        "alchemy.profit.material.해초.box": 80000,
+        "alchemy.profit.material.참나무 잎.box": 190000,
+        "alchemy.profit.material.가문비나무 잎.box": 190000,
+        "alchemy.profit.material.자작나무 잎.box": 190000,
+        "alchemy.profit.material.벚나무 잎.box": 150000,
+        "alchemy.profit.material.짙은 참나무 잎.box": 190000,
+        "alchemy.profit.material.켈프 더미.set": 1292,
+        "alchemy.profit.material.청금석 블록.set": 35000,
+        "alchemy.profit.material.레드스톤 블록.set": 3000,
+        "alchemy.profit.material.철 주괴.set": 7777,
+        "alchemy.profit.material.금 주괴.set": 20000,
+        "alchemy.profit.material.다이아몬드.set": 210000,
+        "alchemy.profit.material.불우렁쉥이.box": 150000,
+        "alchemy.profit.material.유리병.box": 90000,
+        "alchemy.profit.material.네더랙.set": 700,
+        "alchemy.profit.material.마그마 블록.set": 7000,
+        "alchemy.profit.material.영혼 흙.set": 7000,
+        "alchemy.profit.material.진홍빛 자루.box": 350000,
+        "alchemy.profit.material.뒤틀린 자루.box": 350000,
+        "alchemy.profit.material.발광 열매.box": 65000,
+        "alchemy.profit.material.죽은 관 산호 블록.set": 10000,
+        "alchemy.profit.material.죽은 사방산호 블록.set": 10000,
+        "alchemy.profit.material.죽은 거품 산호 블록.set": 10000,
+        "alchemy.profit.material.죽은 불 산호 블록.set": 10000,
+        "alchemy.profit.material.죽은 뇌 산호 블록.set": 10000,
+      };
       const engravingStoneGrades = ["투박한", "단정한", "정교한"];
       const engravingEffects = [
         engravingEffectData.shellSearch.name,
@@ -5015,6 +5085,22 @@
 
           Object.assign(savedInputs, defaultAlchemyStockValues, {
             "system.defaultAlchemyStockVersion": defaultAlchemyStockVersion,
+          });
+          shouldSave = true;
+        }
+
+        if (
+          savedInputs["system.defaultAlchemyMaterialPriceVersion"] !==
+          defaultAlchemyMaterialPriceVersion
+        ) {
+          Object.keys(savedInputs).forEach((key) => {
+            if (key.startsWith("alchemy.profit.material.")) {
+              delete savedInputs[key];
+            }
+          });
+
+          Object.assign(savedInputs, defaultAlchemyMaterialPriceValues, {
+            "system.defaultAlchemyMaterialPriceVersion": defaultAlchemyMaterialPriceVersion,
           });
           shouldSave = true;
         }
@@ -7145,33 +7231,81 @@
       };
 
       const getAlchemyBaseCraftSeconds = (plan) => {
-        let seconds = plan.zeroCount * 60;
+        const info = getAlchemyCraftTimeByFacility(plan);
+
+        return info.serialSeconds;
+      };
+
+      const getAlchemyCraftTimeByFacility = (plan) => {
+        let regularSeconds = 0;
+        let precisionSeconds = plan.zeroCount * 60;
+        let precisionTailSeconds = plan.zeroCount > 0 ? 60 : 0;
 
         plan.gradePlans.forEach((gradePlan) => {
           const grade = gradePlan.gradeData.grade;
           const tier1SecondsPerOutput = grade === 3 ? 10 : 2.5;
           const tier2SecondsPerOutput = grade === 3 ? 20 : 10;
           const finalSecondsPerOutput = grade === 3 ? 60 : 30;
+          const finalCount = gradePlan.finalCounts.reduce((sum, count) => sum + count, 0);
 
-          seconds +=
+          regularSeconds +=
             gradePlan.tier1Crafted.reduce((sum, count) => sum + count, 0) *
             tier1SecondsPerOutput;
-          seconds +=
+          regularSeconds +=
             gradePlan.tier2Counts.reduce((sum, count) => sum + count, 0) *
             tier2SecondsPerOutput;
-          seconds +=
-            gradePlan.finalCounts.reduce((sum, count) => sum + count, 0) *
-            finalSecondsPerOutput;
+
+          precisionSeconds += finalCount * finalSecondsPerOutput;
+
+          if (finalCount > 0) {
+            precisionTailSeconds =
+              precisionTailSeconds > 0
+                ? Math.min(precisionTailSeconds, finalSecondsPerOutput)
+                : finalSecondsPerOutput;
+          }
         });
 
-        return seconds;
+        return {
+          precisionSeconds,
+          precisionTailSeconds,
+          regularSeconds,
+          serialSeconds: regularSeconds + precisionSeconds,
+        };
       };
 
       const getAlchemyTimeReductionRate = () =>
         Math.min(100, Math.max(0, getNumberField("alchemy.profit.timeReduction")));
 
+      const getAlchemyParallelCraftSeconds = (plan) => {
+        const { precisionSeconds, precisionTailSeconds, regularSeconds } =
+          getAlchemyCraftTimeByFacility(plan);
+
+        if (regularSeconds <= 0) {
+          return precisionSeconds;
+        }
+
+        if (precisionSeconds <= 0) {
+          return regularSeconds;
+        }
+
+        return Math.max(regularSeconds + precisionTailSeconds, precisionSeconds);
+      };
+
       const getAlchemyReducedCraftSeconds = (plan) =>
-        getAlchemyBaseCraftSeconds(plan) * (1 - getAlchemyTimeReductionRate() / 100);
+        getAlchemyParallelCraftSeconds(plan) * (1 - getAlchemyTimeReductionRate() / 100);
+
+      const getAlchemyReducedCraftTimeInfo = (plan) => {
+        const multiplier = 1 - getAlchemyTimeReductionRate() / 100;
+        const info = getAlchemyCraftTimeByFacility(plan);
+
+        return {
+          parallelSeconds: getAlchemyParallelCraftSeconds(plan) * multiplier,
+          precisionSeconds: info.precisionSeconds * multiplier,
+          regularSeconds: info.regularSeconds * multiplier,
+          serialSeconds: info.serialSeconds * multiplier,
+          tailSeconds: info.precisionTailSeconds * multiplier,
+        };
+      };
 
       const getAlchemyMaterialPriceField = (name, unit) =>
         `alchemy.profit.material.${name}.${unit}`;
@@ -7207,7 +7341,9 @@
         [...alchemyMaterialCostBody.querySelectorAll("[data-alchemy-material-row]")];
 
       const getAlchemyMaterialCostSummary = () => {
+        const missingNames = new Set();
         let totalCost = 0;
+        const unitCostByName = new Map();
         let missingCount = 0;
 
         lastAlchemyExtraMaterials.forEach((material, index) => {
@@ -7224,13 +7360,18 @@
           let materialCost = null;
 
           if (boxPrice > 0) {
-            materialCost = (material.amount / (alchemyData.boxToSets * alchemyData.setToPieces)) * boxPrice;
+            const unitCost = boxPrice / (alchemyData.boxToSets * alchemyData.setToPieces);
+            unitCostByName.set(material.name, unitCost);
+            materialCost = material.amount * unitCost;
           } else if (setPrice > 0) {
-            materialCost = (material.amount / alchemyData.setToPieces) * setPrice;
+            const unitCost = setPrice / alchemyData.setToPieces;
+            unitCostByName.set(material.name, unitCost);
+            materialCost = material.amount * unitCost;
           }
 
           if (materialCost === null) {
             missingCount += 1;
+            missingNames.add(material.name);
             if (costCell) {
               costCell.textContent = "-";
             }
@@ -7242,7 +7383,144 @@
           }
         });
 
-        return { missingCount, totalCost };
+        return { missingCount, missingNames, totalCost, unitCostByName };
+      };
+
+      const getAlchemyExtraMaterialCost = (materials, costSummary) => {
+        let cost = 0;
+        let missingCount = 0;
+
+        materials.forEach((material) => {
+          if (material.count <= 0) {
+            return;
+          }
+
+          const unitCost = costSummary.unitCostByName.get(material.name);
+          if (unitCost === undefined) {
+            missingCount += 1;
+          } else {
+            cost += material.count * unitCost;
+          }
+        });
+
+        return { cost, missingCount };
+      };
+
+      const getAlchemySeafoodUnitPrice = (seafoodKey, grade) => {
+        const prices = getPriceMap();
+        const mode = document.querySelector('input[name="seafood-price-mode"]:checked')?.value || "grouped";
+        const seafoodName = alchemyData.seafoodTypes.find((item) => item.key === seafoodKey)?.name;
+
+        if (mode === "individual" && seafoodName) {
+          return prices[`price.seafood.${seafoodName}.grade${grade}`] || 0;
+        }
+
+        return prices[`price.seafood.grade${grade}`] || 0;
+      };
+
+      const getAlchemySeafoodCost = (gradePlan, counts) =>
+        alchemyData.seafoodTypes.reduce(
+          (sum, seafood, index) =>
+            sum + (counts[index] || 0) * getAlchemySeafoodUnitPrice(seafood.key, gradePlan.gradeData.grade),
+          0,
+        );
+
+      const getAlchemyProductSaleByGrade = (gradePlan) =>
+        gradePlan.gradeData.finals.reduce(
+          (sum, final, index) =>
+            sum + gradePlan.finalCounts[index] * getAlchemySalePrice(final.price),
+          0,
+        );
+
+      const getAlchemyExtraMaterialsForGradeCounts = (gradeData, tier1Counts, tier2Counts) => {
+        const materials = new Map();
+
+        gradeData.tier1.forEach((item, index) => {
+          getScaledExtraMaterials(item.extraMaterials, tier1Counts[index] || 0).forEach((material) => {
+            materials.set(material.name, (materials.get(material.name) || 0) + material.count);
+          });
+        });
+
+        gradeData.tier2.forEach((item, index) => {
+          getScaledExtraMaterials(item.extraMaterials, tier2Counts[index] || 0).forEach((material) => {
+            materials.set(material.name, (materials.get(material.name) || 0) + material.count);
+          });
+        });
+
+        return [...materials.entries()].map(([name, count]) => ({ name, count }));
+      };
+
+      const getAlchemyFinancialRows = (plan, costSummary) => {
+        const rows = [];
+        let zeroExtraCost = 0;
+        let zeroExtraMissing = 0;
+        let zeroSeafoodCost = 0;
+
+        plan.gradePlans.forEach((gradePlan) => {
+          const zeroMaterials = getAlchemyExtraMaterialsForGradeCounts(
+            gradePlan.gradeData,
+            gradePlan.zeroTier1Demand,
+            gradePlan.zeroTier2Counts,
+          );
+          const totalMaterials = getAlchemyExtraMaterialsForGradeCounts(
+            gradePlan.gradeData,
+            gradePlan.tier1Crafted,
+            gradePlan.tier2Counts,
+          );
+          const totalExtra = getAlchemyExtraMaterialCost(totalMaterials, costSummary);
+          const zeroExtra = getAlchemyExtraMaterialCost(zeroMaterials, costSummary);
+          const totalSeafood = getAlchemySeafoodCost(gradePlan, gradePlan.tier1Crafted);
+          const zeroSeafood = getAlchemySeafoodCost(gradePlan, gradePlan.zeroTier1Demand);
+
+          zeroExtraCost += zeroExtra.cost;
+          zeroExtraMissing += zeroExtra.missingCount;
+          zeroSeafoodCost += zeroSeafood;
+
+          rows.push({
+            label: gradePlan.gradeData.label,
+            sale: getAlchemyProductSaleByGrade(gradePlan),
+            extraCost: Math.max(0, totalExtra.cost - zeroExtra.cost),
+            extraMissingCount: totalExtra.missingCount + zeroExtra.missingCount,
+            seafoodCost: Math.max(0, totalSeafood - zeroSeafood),
+          });
+        });
+
+        if (plan.zeroCount > 0) {
+          rows.push({
+            label: "0성",
+            sale: plan.zeroCount * getAlchemySalePrice(alchemyData.zeroProduct.price),
+            extraCost: zeroExtraCost,
+            extraMissingCount: zeroExtraMissing,
+            seafoodCost: zeroSeafoodCost,
+          });
+        }
+
+        return rows;
+      };
+
+      const renderAlchemyGradeProfitRows = (rows, hasMissingPrices) => {
+        alchemyGradeProfitBody.innerHTML = rows
+          .map((row) => {
+            const netWithoutSeafood = row.sale - row.extraCost;
+            const netWithSeafood = netWithoutSeafood - row.seafoodCost;
+            const missingText = hasMissingPrices ? "입력 필요" : "";
+
+            return `
+              <tr>
+                <td>${row.label}</td>
+                <td>${formatGold(row.sale)}</td>
+                <td>${hasMissingPrices ? missingText : formatGold(row.extraCost)}</td>
+                <td>${formatGold(row.seafoodCost)}</td>
+                <td class="${!hasMissingPrices && netWithoutSeafood >= 0 ? "profit-value" : ""}">
+                  ${hasMissingPrices ? "-" : formatGold(netWithoutSeafood)}
+                </td>
+                <td class="${!hasMissingPrices && netWithSeafood >= 0 ? "profit-value" : ""}">
+                  ${hasMissingPrices ? "-" : formatGold(netWithSeafood)}
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
       };
 
       const renderAlchemyProfitSummary = () => {
@@ -7250,34 +7528,47 @@
           return;
         }
 
-        const { missingCount, totalCost } = getAlchemyMaterialCostSummary();
+        const costSummary = getAlchemyMaterialCostSummary();
+        const { missingCount, totalCost } = costSummary;
         const saleTotal = lastAlchemyPlan.totalValue;
-        const baseSeconds = getAlchemyBaseCraftSeconds(lastAlchemyPlan);
-        const reducedSeconds = getAlchemyReducedCraftSeconds(lastAlchemyPlan);
+        const timeInfo = getAlchemyReducedCraftTimeInfo(lastAlchemyPlan);
+        const reducedSeconds = timeInfo.parallelSeconds;
+        const gradeRows = getAlchemyFinancialRows(lastAlchemyPlan, costSummary);
+        const seafoodCost = gradeRows.reduce((sum, row) => sum + row.seafoodCost, 0);
 
         alchemyProfitSaleTotal.textContent = formatGold(saleTotal);
         alchemyProfitMaterialCost.textContent =
           missingCount > 0 ? `${formatGold(totalCost)} 외 ${missingCount}개 입력 필요` : formatGold(totalCost);
+        alchemyProfitSeafoodCost.textContent = formatGold(seafoodCost);
         alchemyProfitCraftTime.textContent = formatDuration(reducedSeconds);
+        renderAlchemyGradeProfitRows(gradeRows, missingCount > 0);
 
         if (missingCount > 0) {
           alchemyProfitNet.textContent = "-";
+          alchemyProfitNetWithSeafood.textContent = "-";
           alchemyProfitPerHour.textContent = "-";
+          alchemyProfitPerHourWithSeafood.textContent = "-";
           alchemyProfitVerdict.innerHTML = `
             <strong>재료 시세 ${missingCount}개를 더 입력하면 순수익을 계산할 수 있습니다.</strong>
-            <p>제작 시간은 기본 ${formatDuration(baseSeconds)}에서 시간 감소율 ${formatNumber(getAlchemyTimeReductionRate())}%를 반영해 ${formatDuration(reducedSeconds)}로 계산합니다.</p>
+            <p>제작 시간은 일반 제작대 ${formatDuration(timeInfo.regularSeconds)}, 정밀 제작대 ${formatDuration(timeInfo.precisionSeconds)}를 동시에 돌리는 이론상 최단시간 ${formatDuration(reducedSeconds)} 기준입니다.</p>
           `;
           return;
         }
 
         const netProfit = saleTotal - totalCost;
+        const netProfitWithSeafood = netProfit - seafoodCost;
         const profitPerHour = reducedSeconds > 0 ? (netProfit / reducedSeconds) * 3600 : 0;
+        const profitPerHourWithSeafood =
+          reducedSeconds > 0 ? (netProfitWithSeafood / reducedSeconds) * 3600 : 0;
 
         alchemyProfitNet.textContent = formatGold(netProfit);
+        alchemyProfitNetWithSeafood.textContent = formatGold(netProfitWithSeafood);
         alchemyProfitPerHour.textContent = reducedSeconds > 0 ? formatGold(profitPerHour) : "-";
+        alchemyProfitPerHourWithSeafood.textContent =
+          reducedSeconds > 0 ? formatGold(profitPerHourWithSeafood) : "-";
         alchemyProfitVerdict.innerHTML = `
-          <strong>순수익 ${formatGold(netProfit)}, 시간당 순수익 ${reducedSeconds > 0 ? formatGold(profitPerHour) : "-"}입니다.</strong>
-          <p>판매가 ${formatGold(saleTotal)}에서 입력한 추가 재료 구매 비용 ${formatGold(totalCost)}를 차감했습니다. 제작 시간은 기본 ${formatDuration(baseSeconds)}에서 시간 감소율 ${formatNumber(getAlchemyTimeReductionRate())}%를 반영했습니다.</p>
+          <strong>시간당 순수익은 ${reducedSeconds > 0 ? formatGold(profitPerHour) : "-"}, 어패류 원가 포함 시 ${reducedSeconds > 0 ? formatGold(profitPerHourWithSeafood) : "-"}입니다.</strong>
+          <p>일반 제작대는 1차·2차를 ${formatDuration(timeInfo.regularSeconds)}, 정밀 제작대는 완제품·0성을 ${formatDuration(timeInfo.precisionSeconds)} 처리합니다. 병목을 반영한 이론상 최단시간 ${formatDuration(reducedSeconds)} 기준이며, 단순 합산 시간은 ${formatDuration(timeInfo.serialSeconds)}입니다.</p>
         `;
       };
 
