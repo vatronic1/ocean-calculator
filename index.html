@@ -1083,6 +1083,51 @@
         text-align: center;
       }
 
+      .alchemy-profit-toolbar {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .alchemy-profit-toolbar .field {
+        max-width: 220px;
+        margin: 0;
+      }
+
+      .alchemy-cost-inputs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(110px, 1fr));
+        gap: 8px;
+        min-width: 260px;
+      }
+
+      .alchemy-cost-inputs label {
+        display: grid;
+        gap: 4px;
+        color: #5f7181;
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .alchemy-cost-inputs input {
+        min-height: 34px;
+        text-align: right;
+      }
+
+      .alchemy-cost-inputs input:disabled {
+        background: #eef3f7;
+        color: #92a0ad;
+        cursor: not-allowed;
+      }
+
+      .alchemy-cost-note {
+        color: #718092;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
       .alchemy-list-item {
         display: grid;
         gap: 2px;
@@ -2141,6 +2186,55 @@
               <h3 class="data-title">필요 추가 재료 합계</h3>
               <p class="muted-note">완제품 제작 과정에서 어패류 외에 추가로 들어가는 재료만 합산합니다.</p>
               <div class="alchemy-extra-board" id="alchemy-extra-material-board" aria-label="어패류 연금 필요 추가 재료 합계"></div>
+            </div>
+
+            <div class="data-section" id="alchemy-profit-section" hidden>
+              <div class="alchemy-profit-toolbar">
+                <div>
+                  <h3 class="data-title">재료 원가 / 시간당 순수익</h3>
+                  <p class="muted-note">현재 연금 계산 결과에 필요한 추가 재료를 전부 구매한다고 보고 계산합니다. 각 재료는 상자당 또는 세트당 가격 중 하나만 입력할 수 있습니다.</p>
+                </div>
+                <div class="field">
+                  <label for="alchemy-time-reduction">제작 시간 감소율</label>
+                  <input id="alchemy-time-reduction" data-field="alchemy.profit.timeReduction" type="number" min="0" max="100" value="70" />
+                </div>
+              </div>
+              <div class="summary-grid" aria-label="어패류 연금 순수익 요약">
+                <div class="metric">
+                  <span class="metric-label">판매가</span>
+                  <span class="metric-value" id="alchemy-profit-sale-total">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">재료 구매 비용</span>
+                  <span class="metric-value" id="alchemy-profit-material-cost">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">순수익</span>
+                  <span class="metric-value" id="alchemy-profit-net">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">제작 시간</span>
+                  <span class="metric-value" id="alchemy-profit-craft-time">-</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">시간당 순수익</span>
+                  <span class="metric-value" id="alchemy-profit-per-hour">-</span>
+                </div>
+              </div>
+              <div class="comparison-verdict" id="alchemy-profit-verdict"></div>
+              <div class="table-wrap">
+                <table aria-label="어패류 연금 재료 원가 입력">
+                  <thead>
+                    <tr>
+                      <th>재료</th>
+                      <th>필요량</th>
+                      <th>시세 입력</th>
+                      <th>계산 비용</th>
+                    </tr>
+                  </thead>
+                  <tbody id="alchemy-material-cost-body"></tbody>
+                </table>
+              </div>
             </div>
 
             <div class="data-section">
@@ -4653,6 +4747,15 @@
       const alchemyLeftoverCount = document.querySelector("#alchemy-leftover-count");
       const alchemyProductBody = document.querySelector("#alchemy-product-body");
       const alchemyExtraMaterialBoard = document.querySelector("#alchemy-extra-material-board");
+      const alchemyProfitSection = document.querySelector("#alchemy-profit-section");
+      const alchemyTimeReduction = document.querySelector("#alchemy-time-reduction");
+      const alchemyProfitSaleTotal = document.querySelector("#alchemy-profit-sale-total");
+      const alchemyProfitMaterialCost = document.querySelector("#alchemy-profit-material-cost");
+      const alchemyProfitNet = document.querySelector("#alchemy-profit-net");
+      const alchemyProfitCraftTime = document.querySelector("#alchemy-profit-craft-time");
+      const alchemyProfitPerHour = document.querySelector("#alchemy-profit-per-hour");
+      const alchemyProfitVerdict = document.querySelector("#alchemy-profit-verdict");
+      const alchemyMaterialCostBody = document.querySelector("#alchemy-material-cost-body");
       const alchemyStageBody = document.querySelector("#alchemy-stage-body");
       const alchemyLeftoverBody = document.querySelector("#alchemy-leftover-body");
       const alchemyIntermediateBody = document.querySelector("#alchemy-intermediate-body");
@@ -4666,6 +4769,13 @@
       const applyAlchemyRecommendationButton = document.querySelector("#apply-alchemy-recommendation-button");
 
       const formatNumber = (value) => value.toLocaleString("ko-KR");
+      const escapeHtml = (value) =>
+        String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
       const getArtifactItem = (artifactName) =>
         artifactData.items.find((item) => item.artifact === artifactName);
       const getCraftMaterialText = (artifactName) => {
@@ -4678,7 +4788,7 @@
       };
       const storageKey = "ocean-spec-calculator-inputs";
       const defaultPriceVersion = "2026-07-09-ocean-price-v1";
-      const defaultAlchemyStockVersion = "2026-07-05-alchemy-stock-v3";
+      const defaultAlchemyStockVersion = "2026-07-20-alchemy-stock-v4";
       const resultRowsPerPage = 10;
       let efficiencyCandidates = [];
       let currentResultPage = 1;
@@ -4703,6 +4813,7 @@
       let lastAlchemyPlan = null;
       let lastAlchemyStock = null;
       let lastAlchemyRecommendation = null;
+      let lastAlchemyExtraMaterials = [];
       const defaultPriceValues = {
         "price.lowLifeStone": 14000,
         "price.midLifeStone": 38000,
@@ -4801,51 +4912,51 @@
         "price.mining.engraving.정교한 광부 룰렛 각인석": 1370000,
       };
       const defaultAlchemyStockValues = {
-        "alchemy.stock.oyster.grade1.box": 1,
-        "alchemy.stock.oyster.grade1.set": 36,
-        "alchemy.stock.oyster.grade1.piece": 60,
-        "alchemy.stock.oyster.grade2.box": 0,
-        "alchemy.stock.oyster.grade2.set": 42,
-        "alchemy.stock.oyster.grade2.piece": 60,
+        "alchemy.stock.oyster.grade1.box": 2,
+        "alchemy.stock.oyster.grade1.set": 26,
+        "alchemy.stock.oyster.grade1.piece": 24,
+        "alchemy.stock.oyster.grade2.box": 1,
+        "alchemy.stock.oyster.grade2.set": 10,
+        "alchemy.stock.oyster.grade2.piece": 46,
         "alchemy.stock.oyster.grade3.box": 0,
-        "alchemy.stock.oyster.grade3.set": 20,
-        "alchemy.stock.oyster.grade3.piece": 45,
-        "alchemy.stock.conch.grade1.box": 1,
-        "alchemy.stock.conch.grade1.set": 43,
-        "alchemy.stock.conch.grade1.piece": 9,
-        "alchemy.stock.conch.grade2.box": 0,
-        "alchemy.stock.conch.grade2.set": 46,
-        "alchemy.stock.conch.grade2.piece": 0,
+        "alchemy.stock.oyster.grade3.set": 30,
+        "alchemy.stock.oyster.grade3.piece": 62,
+        "alchemy.stock.conch.grade1.box": 2,
+        "alchemy.stock.conch.grade1.set": 22,
+        "alchemy.stock.conch.grade1.piece": 45,
+        "alchemy.stock.conch.grade2.box": 1,
+        "alchemy.stock.conch.grade2.set": 11,
+        "alchemy.stock.conch.grade2.piece": 57,
         "alchemy.stock.conch.grade3.box": 0,
-        "alchemy.stock.conch.grade3.set": 19,
-        "alchemy.stock.conch.grade3.piece": 45,
-        "alchemy.stock.octopus.grade1.box": 1,
-        "alchemy.stock.octopus.grade1.set": 36,
-        "alchemy.stock.octopus.grade1.piece": 38,
-        "alchemy.stock.octopus.grade2.box": 0,
-        "alchemy.stock.octopus.grade2.set": 46,
-        "alchemy.stock.octopus.grade2.piece": 25,
+        "alchemy.stock.conch.grade3.set": 29,
+        "alchemy.stock.conch.grade3.piece": 53,
+        "alchemy.stock.octopus.grade1.box": 2,
+        "alchemy.stock.octopus.grade1.set": 22,
+        "alchemy.stock.octopus.grade1.piece": 35,
+        "alchemy.stock.octopus.grade2.box": 1,
+        "alchemy.stock.octopus.grade2.set": 7,
+        "alchemy.stock.octopus.grade2.piece": 10,
         "alchemy.stock.octopus.grade3.box": 0,
-        "alchemy.stock.octopus.grade3.set": 19,
-        "alchemy.stock.octopus.grade3.piece": 60,
-        "alchemy.stock.seaweed.grade1.box": 1,
-        "alchemy.stock.seaweed.grade1.set": 29,
-        "alchemy.stock.seaweed.grade1.piece": 4,
-        "alchemy.stock.seaweed.grade2.box": 0,
-        "alchemy.stock.seaweed.grade2.set": 44,
-        "alchemy.stock.seaweed.grade2.piece": 63,
+        "alchemy.stock.octopus.grade3.set": 27,
+        "alchemy.stock.octopus.grade3.piece": 56,
+        "alchemy.stock.seaweed.grade1.box": 2,
+        "alchemy.stock.seaweed.grade1.set": 22,
+        "alchemy.stock.seaweed.grade1.piece": 12,
+        "alchemy.stock.seaweed.grade2.box": 1,
+        "alchemy.stock.seaweed.grade2.set": 11,
+        "alchemy.stock.seaweed.grade2.piece": 61,
         "alchemy.stock.seaweed.grade3.box": 0,
-        "alchemy.stock.seaweed.grade3.set": 19,
-        "alchemy.stock.seaweed.grade3.piece": 58,
-        "alchemy.stock.urchin.grade1.box": 1,
-        "alchemy.stock.urchin.grade1.set": 30,
-        "alchemy.stock.urchin.grade1.piece": 19,
-        "alchemy.stock.urchin.grade2.box": 0,
-        "alchemy.stock.urchin.grade2.set": 47,
-        "alchemy.stock.urchin.grade2.piece": 53,
+        "alchemy.stock.seaweed.grade3.set": 29,
+        "alchemy.stock.seaweed.grade3.piece": 51,
+        "alchemy.stock.urchin.grade1.box": 2,
+        "alchemy.stock.urchin.grade1.set": 24,
+        "alchemy.stock.urchin.grade1.piece": 27,
+        "alchemy.stock.urchin.grade2.box": 1,
+        "alchemy.stock.urchin.grade2.set": 9,
+        "alchemy.stock.urchin.grade2.piece": 6,
         "alchemy.stock.urchin.grade3.box": 0,
-        "alchemy.stock.urchin.grade3.set": 19,
-        "alchemy.stock.urchin.grade3.piece": 58,
+        "alchemy.stock.urchin.grade3.set": 27,
+        "alchemy.stock.urchin.grade3.piece": 54,
       };
       const engravingStoneGrades = ["투박한", "단정한", "정교한"];
       const engravingEffects = [
@@ -7010,6 +7121,253 @@
           : '<div class="alchemy-extra-empty">필요 추가 재료가 없습니다.</div>';
       };
 
+      const formatDuration = (seconds) => {
+        let remaining = Math.max(0, Math.round(seconds));
+        const hours = Math.floor(remaining / 3600);
+        remaining %= 3600;
+        const minutes = Math.floor(remaining / 60);
+        const secs = remaining % 60;
+        const parts = [];
+
+        if (hours > 0) {
+          parts.push(`${formatNumber(hours)}시간`);
+        }
+
+        if (minutes > 0) {
+          parts.push(`${minutes}분`);
+        }
+
+        if (secs > 0 || !parts.length) {
+          parts.push(`${secs}초`);
+        }
+
+        return parts.join(" ");
+      };
+
+      const getAlchemyBaseCraftSeconds = (plan) => {
+        let seconds = plan.zeroCount * 60;
+
+        plan.gradePlans.forEach((gradePlan) => {
+          const grade = gradePlan.gradeData.grade;
+          const tier1SecondsPerOutput = grade === 3 ? 10 : 2.5;
+          const tier2SecondsPerOutput = grade === 3 ? 20 : 10;
+          const finalSecondsPerOutput = grade === 3 ? 60 : 30;
+
+          seconds +=
+            gradePlan.tier1Crafted.reduce((sum, count) => sum + count, 0) *
+            tier1SecondsPerOutput;
+          seconds +=
+            gradePlan.tier2Counts.reduce((sum, count) => sum + count, 0) *
+            tier2SecondsPerOutput;
+          seconds +=
+            gradePlan.finalCounts.reduce((sum, count) => sum + count, 0) *
+            finalSecondsPerOutput;
+        });
+
+        return seconds;
+      };
+
+      const getAlchemyTimeReductionRate = () =>
+        Math.min(100, Math.max(0, getNumberField("alchemy.profit.timeReduction")));
+
+      const getAlchemyReducedCraftSeconds = (plan) =>
+        getAlchemyBaseCraftSeconds(plan) * (1 - getAlchemyTimeReductionRate() / 100);
+
+      const getAlchemyMaterialPriceField = (name, unit) =>
+        `alchemy.profit.material.${name}.${unit}`;
+
+      const saveAlchemyMaterialPriceInput = (field) => {
+        const savedInputs = getSavedInputs();
+
+        if (field.value === "" || parseNumericInput(field.value) <= 0) {
+          delete savedInputs[field.dataset.field];
+        } else {
+          savedInputs[field.dataset.field] = parseNumericInput(field.value);
+        }
+
+        localStorage.setItem(storageKey, JSON.stringify(savedInputs));
+      };
+
+      const syncAlchemyMaterialCostRow = (row) => {
+        const boxInput = row.querySelector('[data-alchemy-material-unit="box"]');
+        const setInput = row.querySelector('[data-alchemy-material-unit="set"]');
+        const hasBoxPrice = parseNumericInput(boxInput.value) > 0;
+        const hasSetPrice = parseNumericInput(setInput.value) > 0;
+
+        if (hasBoxPrice && hasSetPrice) {
+          setInput.value = "";
+          saveAlchemyMaterialPriceInput(setInput);
+        }
+
+        setInput.disabled = hasBoxPrice;
+        boxInput.disabled = !hasBoxPrice && hasSetPrice;
+      };
+
+      const getAlchemyMaterialCostRows = () =>
+        [...alchemyMaterialCostBody.querySelectorAll("[data-alchemy-material-row]")];
+
+      const getAlchemyMaterialCostSummary = () => {
+        let totalCost = 0;
+        let missingCount = 0;
+
+        lastAlchemyExtraMaterials.forEach((material, index) => {
+          const row = alchemyMaterialCostBody.querySelector(
+            `[data-alchemy-material-row="${index}"]`,
+          );
+          const costCell = row?.querySelector("[data-alchemy-material-cost]");
+          const boxPrice = row
+            ? parseNumericInput(row.querySelector('[data-alchemy-material-unit="box"]').value)
+            : 0;
+          const setPrice = row
+            ? parseNumericInput(row.querySelector('[data-alchemy-material-unit="set"]').value)
+            : 0;
+          let materialCost = null;
+
+          if (boxPrice > 0) {
+            materialCost = (material.amount / (alchemyData.boxToSets * alchemyData.setToPieces)) * boxPrice;
+          } else if (setPrice > 0) {
+            materialCost = (material.amount / alchemyData.setToPieces) * setPrice;
+          }
+
+          if (materialCost === null) {
+            missingCount += 1;
+            if (costCell) {
+              costCell.textContent = "-";
+            }
+          } else {
+            totalCost += materialCost;
+            if (costCell) {
+              costCell.textContent = formatGold(materialCost);
+            }
+          }
+        });
+
+        return { missingCount, totalCost };
+      };
+
+      const renderAlchemyProfitSummary = () => {
+        if (!lastAlchemyPlan) {
+          return;
+        }
+
+        const { missingCount, totalCost } = getAlchemyMaterialCostSummary();
+        const saleTotal = lastAlchemyPlan.totalValue;
+        const baseSeconds = getAlchemyBaseCraftSeconds(lastAlchemyPlan);
+        const reducedSeconds = getAlchemyReducedCraftSeconds(lastAlchemyPlan);
+
+        alchemyProfitSaleTotal.textContent = formatGold(saleTotal);
+        alchemyProfitMaterialCost.textContent =
+          missingCount > 0 ? `${formatGold(totalCost)} 외 ${missingCount}개 입력 필요` : formatGold(totalCost);
+        alchemyProfitCraftTime.textContent = formatDuration(reducedSeconds);
+
+        if (missingCount > 0) {
+          alchemyProfitNet.textContent = "-";
+          alchemyProfitPerHour.textContent = "-";
+          alchemyProfitVerdict.innerHTML = `
+            <strong>재료 시세 ${missingCount}개를 더 입력하면 순수익을 계산할 수 있습니다.</strong>
+            <p>제작 시간은 기본 ${formatDuration(baseSeconds)}에서 시간 감소율 ${formatNumber(getAlchemyTimeReductionRate())}%를 반영해 ${formatDuration(reducedSeconds)}로 계산합니다.</p>
+          `;
+          return;
+        }
+
+        const netProfit = saleTotal - totalCost;
+        const profitPerHour = reducedSeconds > 0 ? (netProfit / reducedSeconds) * 3600 : 0;
+
+        alchemyProfitNet.textContent = formatGold(netProfit);
+        alchemyProfitPerHour.textContent = reducedSeconds > 0 ? formatGold(profitPerHour) : "-";
+        alchemyProfitVerdict.innerHTML = `
+          <strong>순수익 ${formatGold(netProfit)}, 시간당 순수익 ${reducedSeconds > 0 ? formatGold(profitPerHour) : "-"}입니다.</strong>
+          <p>판매가 ${formatGold(saleTotal)}에서 입력한 추가 재료 구매 비용 ${formatGold(totalCost)}를 차감했습니다. 제작 시간은 기본 ${formatDuration(baseSeconds)}에서 시간 감소율 ${formatNumber(getAlchemyTimeReductionRate())}%를 반영했습니다.</p>
+        `;
+      };
+
+      const bindAlchemyMaterialCostInputs = () => {
+        getAlchemyMaterialCostRows().forEach((row) => {
+          syncAlchemyMaterialCostRow(row);
+
+          row.querySelectorAll(".alchemy-material-price-input").forEach((field) => {
+            field.addEventListener("input", () => {
+              field.value = formatInputNumber(field.value);
+
+              const otherUnit = field.dataset.alchemyMaterialUnit === "box" ? "set" : "box";
+              const other = row.querySelector(`[data-alchemy-material-unit="${otherUnit}"]`);
+              if (parseNumericInput(field.value) > 0) {
+                other.value = "";
+                saveAlchemyMaterialPriceInput(other);
+              }
+
+              syncAlchemyMaterialCostRow(row);
+              saveAlchemyMaterialPriceInput(field);
+              renderAlchemyProfitSummary();
+            });
+          });
+        });
+      };
+
+      const renderAlchemyProfitSection = (plan, materialTotals) => {
+        lastAlchemyExtraMaterials = [...materialTotals.entries()]
+          .filter(([, amount]) => amount > 0)
+          .map(([name, amount]) => ({ name, amount }));
+        alchemyProfitSection.hidden = lastAlchemyExtraMaterials.length === 0;
+
+        if (!lastAlchemyExtraMaterials.length) {
+          alchemyMaterialCostBody.innerHTML = "";
+          return;
+        }
+
+        const savedInputs = getSavedInputs();
+
+        alchemyMaterialCostBody.innerHTML = lastAlchemyExtraMaterials
+          .map((material, index) => {
+            const boxField = getAlchemyMaterialPriceField(material.name, "box");
+            const setField = getAlchemyMaterialPriceField(material.name, "set");
+            const boxValue = savedInputs[boxField] > 0 ? formatInputNumber(savedInputs[boxField]) : "";
+            const setValue = savedInputs[setField] > 0 ? formatInputNumber(savedInputs[setField]) : "";
+
+            return `
+              <tr data-alchemy-material-row="${index}">
+                <td>${escapeHtml(material.name)}</td>
+                <td><span class="leftover-amount">${formatBoxSetPieceText(material.amount)}</span></td>
+                <td>
+                  <div class="alchemy-cost-inputs">
+                    <label>
+                      상자당
+                      <input
+                        class="alchemy-material-price-input"
+                        data-field="${escapeHtml(boxField)}"
+                        data-alchemy-material-unit="box"
+                        type="text"
+                        inputmode="numeric"
+                        value="${boxValue}"
+                        placeholder="골드"
+                        aria-label="${escapeHtml(material.name)} 상자당 가격"
+                      />
+                    </label>
+                    <label>
+                      세트당
+                      <input
+                        class="alchemy-material-price-input"
+                        data-field="${escapeHtml(setField)}"
+                        data-alchemy-material-unit="set"
+                        type="text"
+                        inputmode="numeric"
+                        value="${setValue}"
+                        placeholder="골드"
+                        aria-label="${escapeHtml(material.name)} 세트당 가격"
+                      />
+                    </label>
+                  </div>
+                </td>
+                <td data-alchemy-material-cost>-</td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        bindAlchemyMaterialCostInputs();
+        renderAlchemyProfitSummary();
+      };
+
       const formatAlchemyStageList = (items) => {
         const visible = items.filter((item) => item.count > 0);
 
@@ -7250,6 +7608,7 @@
           .join("");
 
         renderAlchemyExtraMaterialTotals(extraMaterialTotals);
+        renderAlchemyProfitSection(plan, extraMaterialTotals);
         alchemyStageBody.innerHTML = gradeStageCards;
 
         alchemyLeftoverBody.innerHTML = alchemyData.seafoodTypes
@@ -10722,6 +11081,12 @@
 
       alchemyOptimizeButton.addEventListener("click", () => renderAlchemyOptimization("piece"));
       alchemyOptimizeSetButton.addEventListener("click", () => renderAlchemyOptimization("set"));
+
+      alchemyTimeReduction.addEventListener("input", () => {
+        alchemyTimeReduction.value = formatInputNumber(alchemyTimeReduction.value);
+        saveExactFields(["alchemy.profit.timeReduction"]);
+        renderAlchemyProfitSummary();
+      });
 
       saveAlchemyStockButton.addEventListener("click", () => {
         saveFieldGroup("alchemy");
