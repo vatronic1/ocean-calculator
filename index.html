@@ -2736,6 +2736,9 @@
               <button class="farm-tab-button" type="button" aria-selected="false" data-farm-tab="income">
                 수익 계산
               </button>
+              <button class="farm-tab-button" type="button" aria-selected="false" data-farm-tab="stamina-drink">
+                스태미나 드링크
+              </button>
               <button class="farm-tab-button" type="button" aria-selected="false" data-farm-tab="prices">
                 시세 입력
               </button>
@@ -2972,6 +2975,115 @@
                         </tbody>
                       </table>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="farm-tab-panel" data-farm-panel="stamina-drink">
+              <div class="workspace">
+                <div class="panel-head">
+                  <h2 class="panel-title">재배 스태미나 드링크</h2>
+                  <div class="panel-actions">
+                    <span class="status-pill">하루 최대 5회</span>
+                    <button class="secondary-button" type="button" id="save-farm-stamina-drink-button">가격 저장</button>
+                    <button class="primary-button" type="button" id="farm-stamina-drink-calculate-button">드링크 효율 계산</button>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <h3 class="form-title">스태미나 드링크 가격</h3>
+                  <p class="muted-note">현재 재배 정보 입력 탭의 스펙과 재배 시세 입력값을 기준으로, 추가 스태미나를 사용했을 때의 씨앗 기대수익을 계산합니다.</p>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="price-farm-stamina-drink-1">스태미나 드링크 1</label>
+                      <input id="price-farm-stamina-drink-1" data-field="price.farm.staminaDrink.1" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <label for="price-farm-stamina-drink-2">스태미나 드링크 2</label>
+                      <input id="price-farm-stamina-drink-2" data-field="price.farm.staminaDrink.2" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <label for="price-farm-stamina-drink-3">스태미나 드링크 3</label>
+                      <input id="price-farm-stamina-drink-3" data-field="price.farm.staminaDrink.3" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <label for="price-farm-stamina-drink-4">스태미나 드링크 4</label>
+                      <input id="price-farm-stamina-drink-4" data-field="price.farm.staminaDrink.4" type="number" min="0" placeholder="골드" />
+                    </div>
+                    <div class="field">
+                      <label for="price-farm-stamina-drink-5">스태미나 드링크 5</label>
+                      <input id="price-farm-stamina-drink-5" data-field="price.farm.staminaDrink.5" type="number" min="0" placeholder="골드" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="section-body" id="farm-stamina-drink-results" hidden>
+                  <div class="comparison-verdict" id="farm-stamina-drink-verdict"></div>
+
+                  <div class="summary-grid" aria-label="재배 스태미나 드링크 계산 요약">
+                    <div class="metric">
+                      <span class="metric-label">3000 스태미나 기대수익</span>
+                      <span class="metric-value" id="farm-stamina-drink-base-profit">-</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">1스태미나 기대수익</span>
+                      <span class="metric-value" id="farm-stamina-drink-profit-per-stamina">-</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">채집 1회 기대수익</span>
+                      <span class="metric-value" id="farm-stamina-drink-profit-per-gather">-</span>
+                    </div>
+                    <div class="metric">
+                      <span class="metric-label">추천 드링크</span>
+                      <span class="metric-value" id="farm-stamina-drink-best">-</span>
+                    </div>
+                  </div>
+
+                  <div class="data-section">
+                    <h3 class="data-title">개별 드링크 효율</h3>
+                    <div class="table-wrap">
+                      <table class="result-table" aria-label="재배 스태미나 드링크 개별 효율">
+                        <thead>
+                          <tr>
+                            <th>드링크</th>
+                            <th>추가 스태미나</th>
+                            <th>추가 채집</th>
+                            <th>가격</th>
+                            <th>기대 추가수익</th>
+                            <th>순이익</th>
+                            <th>회수율</th>
+                            <th>판정</th>
+                          </tr>
+                        </thead>
+                        <tbody id="farm-stamina-drink-body">
+                          <tr>
+                            <td class="result-empty" colspan="8">가격과 현재 재배 스펙을 입력한 뒤 계산하세요.</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="data-section">
+                    <h3 class="data-title">하루 5회 기준</h3>
+                    <div class="table-wrap">
+                      <table class="result-table" aria-label="재배 스태미나 드링크 하루 5회 전략">
+                        <thead>
+                          <tr>
+                            <th>전략</th>
+                            <th>마시는 횟수</th>
+                            <th>추가 스태미나</th>
+                            <th>추가 채집</th>
+                            <th>총 가격</th>
+                            <th>기대 추가수익</th>
+                            <th>순이익</th>
+                          </tr>
+                        </thead>
+                        <tbody id="farm-stamina-drink-daily-body"></tbody>
+                      </table>
+                    </div>
+                    <p class="muted-note">추천 반복은 같은 단계 드링크를 여러 번 구매할 수 있다는 기준입니다. 구매 제한이 단계별 1개라면 1~5 각 1개씩 행을 기준으로 보면 됩니다.</p>
                   </div>
                 </div>
               </div>
@@ -4639,6 +4751,16 @@
       const farmIncomeSeedPrice = document.querySelector("#farm-income-seed-price");
       const farmIncomeGatherCount = document.querySelector("#farm-income-gather-count");
       const farmIncomeBreakdownBody = document.querySelector("#farm-income-breakdown-body");
+      const farmStaminaDrinkCalculateButton = document.querySelector("#farm-stamina-drink-calculate-button");
+      const saveFarmStaminaDrinkButton = document.querySelector("#save-farm-stamina-drink-button");
+      const farmStaminaDrinkResults = document.querySelector("#farm-stamina-drink-results");
+      const farmStaminaDrinkVerdict = document.querySelector("#farm-stamina-drink-verdict");
+      const farmStaminaDrinkBaseProfit = document.querySelector("#farm-stamina-drink-base-profit");
+      const farmStaminaDrinkProfitPerStamina = document.querySelector("#farm-stamina-drink-profit-per-stamina");
+      const farmStaminaDrinkProfitPerGather = document.querySelector("#farm-stamina-drink-profit-per-gather");
+      const farmStaminaDrinkBest = document.querySelector("#farm-stamina-drink-best");
+      const farmStaminaDrinkBody = document.querySelector("#farm-stamina-drink-body");
+      const farmStaminaDrinkDailyBody = document.querySelector("#farm-stamina-drink-daily-body");
       const farmSeedPriceMode = document.querySelector("#farm-seed-price-mode");
       const farmSeedPieceField = document.querySelector("#farm-seed-piece-field");
       const farmSeedSetField = document.querySelector("#farm-seed-set-field");
@@ -4896,6 +5018,11 @@
         "price.farm.abilityStone": 22000,
         "price.farm.skillPoint": 90000,
         "price.farm.skillPointBound": false,
+        "price.farm.staminaDrink.1": 0,
+        "price.farm.staminaDrink.2": 0,
+        "price.farm.staminaDrink.3": 0,
+        "price.farm.staminaDrink.4": 0,
+        "price.farm.staminaDrink.5": 0,
         "price.farm.engraving.투박한 씨앗 행운 각인석": 210000,
         "price.farm.engraving.단정한 씨앗 행운 각인석": 420000,
         "price.farm.engraving.정교한 씨앗 행운 각인석": 860000,
@@ -10205,6 +10332,179 @@
         }
       };
 
+      const getFarmStaminaDrinkRows = (income, prices) => {
+        const profitPerStamina = income.totalProfit / farmingRules.baseStamina;
+
+        return staminaDrinkData.map((drink) => {
+          const price = prices[`price.farm.staminaDrink.${drink.level}`] || 0;
+          const expectedProfit = profitPerStamina * drink.stamina;
+          const netProfit = expectedProfit - price;
+          const gatherCount = drink.stamina / farmingRules.staminaCostPerGather;
+          const recoveryRate = price > 0 ? (expectedProfit / price) * 100 : null;
+
+          return {
+            ...drink,
+            price,
+            expectedProfit,
+            netProfit,
+            gatherCount,
+            recoveryRate,
+          };
+        });
+      };
+
+      const renderFarmStaminaDrinkDailyRow = (label, rows) => {
+        const total = rows.reduce(
+          (sum, row) => ({
+            count: sum.count + 1,
+            stamina: sum.stamina + row.stamina,
+            gatherCount: sum.gatherCount + row.gatherCount,
+            price: sum.price + row.price,
+            expectedProfit: sum.expectedProfit + row.expectedProfit,
+            netProfit: sum.netProfit + row.netProfit,
+          }),
+          { count: 0, stamina: 0, gatherCount: 0, price: 0, expectedProfit: 0, netProfit: 0 },
+        );
+
+        return `
+          <tr>
+            <td>${label}</td>
+            <td>${formatCount(total.count, "회")}</td>
+            <td>${formatCount(total.stamina, " 스태미나")}</td>
+            <td>${formatCount(total.gatherCount, "회")}</td>
+            <td>${formatGold(total.price)}</td>
+            <td class="profit-value">${formatGold(total.expectedProfit)}</td>
+            <td class="${total.netProfit >= 0 ? "profit-value" : ""}">${formatGold(total.netProfit)}</td>
+          </tr>
+        `;
+      };
+
+      const renderFarmStaminaDrinkEfficiency = (shouldActivate = true) => {
+        const missingPrices = validatePrices();
+
+        farmStaminaDrinkResults.hidden = false;
+
+        if (missingPrices.length > 0) {
+          farmStaminaDrinkVerdict.innerHTML = `
+            <strong>시세 입력 필요</strong>
+            <p>시세 입력이 비어 있어 계산할 수 없습니다. 누락: ${missingPrices.slice(0, 8).join(", ")}${missingPrices.length > 8 ? " 외" : ""}</p>
+          `;
+          [farmStaminaDrinkBaseProfit, farmStaminaDrinkProfitPerStamina, farmStaminaDrinkProfitPerGather, farmStaminaDrinkBest].forEach(
+            (item) => {
+              item.textContent = "-";
+            },
+          );
+          farmStaminaDrinkBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="8">시세 입력을 먼저 채워주세요.</td>
+            </tr>
+          `;
+          farmStaminaDrinkDailyBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="7">시세 입력을 먼저 채워주세요.</td>
+            </tr>
+          `;
+          if (shouldActivate) {
+            activateModule("farming");
+            activateFarmTab("prices");
+          }
+          return;
+        }
+
+        const prices = getPriceMap();
+        const seedUnitPrice = getFarmSeedUnitPrice(prices);
+
+        if (seedUnitPrice <= 0) {
+          farmStaminaDrinkVerdict.innerHTML = `
+            <strong>씨앗 시세 입력 필요</strong>
+            <p>재배 시세 입력 탭에서 씨앗 개당 가격이나 세트 가격을 먼저 입력해야 합니다.</p>
+          `;
+          [farmStaminaDrinkBaseProfit, farmStaminaDrinkProfitPerStamina, farmStaminaDrinkProfitPerGather, farmStaminaDrinkBest].forEach(
+            (item) => {
+              item.textContent = "-";
+            },
+          );
+          farmStaminaDrinkBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="8">씨앗 시세를 먼저 입력해주세요.</td>
+            </tr>
+          `;
+          farmStaminaDrinkDailyBody.innerHTML = `
+            <tr>
+              <td class="result-empty error" colspan="7">씨앗 시세를 먼저 입력해주세요.</td>
+            </tr>
+          `;
+          if (shouldActivate) {
+            activateModule("farming");
+            activateFarmTab("prices");
+          }
+          return;
+        }
+
+        const profile = getCurrentFarmProfile();
+        const production = getFarmSeedProduction(profile);
+        const income = {
+          totalProfit: production.totalSeeds * seedUnitPrice,
+          production,
+        };
+        const profitPerStamina = income.totalProfit / farmingRules.baseStamina;
+        const profitPerGather = income.totalProfit / production.gatherCount;
+        const rows = getFarmStaminaDrinkRows(income, prices);
+        const bestRow = [...rows].sort((a, b) => b.netProfit - a.netProfit)[0];
+        const bestPositiveRow = bestRow && bestRow.netProfit > 0 ? bestRow : null;
+        const repeatedRows = bestPositiveRow ? Array.from({ length: 5 }, () => bestPositiveRow) : [];
+        const onceLimitedRows = [...rows]
+          .filter((row) => row.netProfit > 0)
+          .sort((a, b) => b.netProfit - a.netProfit)
+          .slice(0, 5);
+
+        farmStaminaDrinkBaseProfit.textContent = formatGold(income.totalProfit);
+        farmStaminaDrinkProfitPerStamina.textContent = `${formatGold(profitPerStamina)} / 스태미나`;
+        farmStaminaDrinkProfitPerGather.textContent = `${formatGold(profitPerGather)} / 회`;
+        farmStaminaDrinkBest.textContent = bestPositiveRow ? `${bestPositiveRow.level}단계` : "구매 안 함";
+
+        farmStaminaDrinkVerdict.innerHTML = bestPositiveRow
+          ? `
+            <strong>${bestPositiveRow.level}단계 추천</strong>
+            <p>현재 재배 스펙과 씨앗 시세 기준 1회당 ${formatGold(bestPositiveRow.netProfit)} 순이익으로 가장 좋습니다.</p>
+          `
+          : `
+            <strong>구매 비추천</strong>
+            <p>현재 재배 스펙과 가격 기준 이득인 스태미나 드링크가 없습니다.</p>
+          `;
+
+        farmStaminaDrinkBody.innerHTML = rows
+          .map(
+            (row) => `
+              <tr class="${row === bestPositiveRow ? "comparison-best-row" : ""}">
+                <td>${row.level}단계</td>
+                <td>${formatCount(row.stamina, " 스태미나")}</td>
+                <td>${formatCount(row.gatherCount, "회")}</td>
+                <td>${formatGold(row.price)}</td>
+                <td class="profit-value">${formatGold(row.expectedProfit)}</td>
+                <td class="${row.netProfit >= 0 ? "profit-value" : ""}">${formatGold(row.netProfit)}</td>
+                <td>${row.recoveryRate === null ? "-" : `${row.recoveryRate.toFixed(1)}%`}</td>
+                <td>${getStaminaDrinkVerdictText(row.netProfit)}</td>
+              </tr>
+            `,
+          )
+          .join("");
+
+        farmStaminaDrinkDailyBody.innerHTML = [
+          renderFarmStaminaDrinkDailyRow(
+            bestPositiveRow ? `${bestPositiveRow.level}단계 5회 반복` : "구매 안 함",
+            repeatedRows,
+          ),
+          renderFarmStaminaDrinkDailyRow("단계별 1회 제한 최적", onceLimitedRows),
+          renderFarmStaminaDrinkDailyRow("1~5단계 각 1회", rows),
+        ].join("");
+
+        if (shouldActivate) {
+          activateModule("farming");
+          activateFarmTab("stamina-drink");
+        }
+      };
+
       const renderFarmEfficiency = () => {
         const missingPrices = validatePrices();
 
@@ -11039,9 +11339,13 @@
       staminaDrinkCalculateButton.addEventListener("click", renderStaminaDrinkEfficiency);
       farmCalculateButton.addEventListener("click", renderFarmEfficiency);
       farmIncomeCalculateButton.addEventListener("click", renderFarmIncomeEstimate);
+      farmStaminaDrinkCalculateButton.addEventListener("click", renderFarmStaminaDrinkEfficiency);
 
       farmSeedPriceMode.addEventListener("change", () => {
         updateFarmSeedPriceMode();
+        if (!farmStaminaDrinkResults.hidden) {
+          renderFarmStaminaDrinkEfficiency(false);
+        }
       });
 
       farmEfficiencyResultBody.addEventListener("change", (event) => {
@@ -11189,6 +11493,9 @@
           if (!staminaDrinkResults.hidden) {
             renderStaminaDrinkEfficiency(false);
           }
+          if (!farmStaminaDrinkResults.hidden) {
+            renderFarmStaminaDrinkEfficiency(false);
+          }
         });
       });
 
@@ -11199,6 +11506,14 @@
           }
           if (!staminaDrinkResults.hidden) {
             renderStaminaDrinkEfficiency(false);
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-field^="farm.profile."]').forEach((field) => {
+        field.addEventListener("change", () => {
+          if (!farmStaminaDrinkResults.hidden) {
+            renderFarmStaminaDrinkEfficiency(false);
           }
         });
       });
@@ -11237,7 +11552,18 @@
         saveFieldGroup("price.farm");
         saveExactFields(["setting.farmSeedPriceMode"]);
         renderFarmEngravingStoneEfficiency();
+        if (!farmStaminaDrinkResults.hidden) {
+          renderFarmStaminaDrinkEfficiency(false);
+        }
         showSavedFeedback(saveFarmPricesButton, "시세 저장");
+      });
+
+      saveFarmStaminaDrinkButton.addEventListener("click", () => {
+        saveFieldGroup("price.farm.staminaDrink");
+        if (!farmStaminaDrinkResults.hidden) {
+          renderFarmStaminaDrinkEfficiency(false);
+        }
+        showSavedFeedback(saveFarmStaminaDrinkButton, "가격 저장");
       });
 
       saveProfileButton.addEventListener("click", () => {
